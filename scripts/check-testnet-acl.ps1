@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [switch]$Repair,
-    [string]$WalletDirectory = ""
+    [string]$WalletDirectory = "",
+    [string]$EnvironmentFile = ""
 )
 
 Set-StrictMode -Version Latest
@@ -27,11 +28,16 @@ function Test-PathWithin {
 }
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$environmentPath = Join-Path $projectRoot ".env"
+$environmentPath = if ([string]::IsNullOrWhiteSpace($EnvironmentFile)) {
+    Join-Path $projectRoot ".env"
+} else {
+    [IO.Path]::GetFullPath($EnvironmentFile)
+}
 $configuredWalletDirectory = [IO.Path]::GetFullPath(
     (Join-Path $env:LOCALAPPDATA "REIST\base-sepolia-wallets")
 )
 $usesConfiguredWalletDirectory = [string]::IsNullOrWhiteSpace($WalletDirectory)
+$checksEnvironmentFile = $usesConfiguredWalletDirectory -or -not [string]::IsNullOrWhiteSpace($EnvironmentFile)
 $targetWalletDirectory = if ($usesConfiguredWalletDirectory) {
     $configuredWalletDirectory
 } else {
@@ -56,6 +62,9 @@ $expectedWalletFiles = @(
     "RECOVERY.txt",
     "research-treasury.keystore.json"
 )
+$optionalWalletFiles = @(
+    ".base-sepolia-smoke-transfer.journal.json"
+)
 $walletFiles = @(
     Get-ChildItem -LiteralPath $targetWalletDirectory -File -Force |
         Sort-Object Name
@@ -65,8 +74,8 @@ $walletDirectories = @(
 )
 if (
     $walletDirectories.Count -ne 0 -or
-    $walletFiles.Count -ne $expectedWalletFiles.Count -or
-    (Compare-Object -ReferenceObject $expectedWalletFiles -DifferenceObject @($walletFiles.Name)) -or
+    (Compare-Object -ReferenceObject $expectedWalletFiles -DifferenceObject @($walletFiles.Name | Where-Object { $_ -notin $optionalWalletFiles })) -or
+    @($walletFiles | Where-Object { $_.Name -notin ($expectedWalletFiles + $optionalWalletFiles) }).Count -ne 0 -or
     @($walletFiles | Where-Object {
         ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0
     }).Count -ne 0
@@ -87,10 +96,16 @@ if (-not $usesConfiguredWalletDirectory) {
         throw "Externer Keystore-Pfad ist fuer eine ACL-Aenderung zu weit gefasst."
     }
 }
-if ($usesConfiguredWalletDirectory) {
+if ($checksEnvironmentFile) {
     if (-not (Test-Path -LiteralPath $environmentPath -PathType Leaf)) {
         throw "Lokale .env-Konfiguration fehlt."
     }
+    $environmentItem = Get-Item -LiteralPath $environmentPath -Force
+    if (($environmentItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+        throw "Lokale .env-Konfiguration darf kein symbolischer Link sein."
+    }
+}
+if ($usesConfiguredWalletDirectory) {
     $keystoreEntry = Get-Content -LiteralPath $environmentPath -Encoding UTF8 | Where-Object {
         $_ -match "^\s*REIST_KEYSTORE_DIRECTORY\s*="
     } | Select-Object -First 1
@@ -114,7 +129,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "Windows-Zugriffsrechte des Keystore-Verzeichnisses konnten nicht repariert werden."
         }
-        if ($usesConfiguredWalletDirectory) {
+        if ($checksEnvironmentFile) {
             & $icaclsCommand.Source $environmentPath "/inheritance:r" "/grant:r" $sidGrant "/Q"
             if ($LASTEXITCODE -ne 0) {
                 throw "Windows-Zugriffsrechte der lokalen .env konnten nicht repariert werden."
@@ -125,7 +140,7 @@ try {
     $targets = @(
         Get-Item -LiteralPath $targetWalletDirectory
     ) + @(Get-ChildItem -LiteralPath $targetWalletDirectory -Recurse -Force)
-    if ($usesConfiguredWalletDirectory) {
+    if ($checksEnvironmentFile) {
         $targets = @(Get-Item -LiteralPath $environmentPath) + $targets
     }
 
@@ -135,7 +150,7 @@ try {
         } else {
             $acl = [System.IO.File]::GetAccessControl($target.FullName)
         }
-        if (-not $acl.AreAccessRulesProtected) {
+        if (-not $acl.AreAccessRulesProtected -and $target.Name -notin $optionalWalletFiles) {
             throw "ACL-Vererbung ist aktiv: $($target.Name)."
         }
         $hasCurrentUserFullControl = $false

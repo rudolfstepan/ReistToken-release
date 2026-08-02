@@ -226,6 +226,36 @@ Explorer-Verifikation ersetzt kein Sicherheitsaudit.
 - Transaktion im Beitragsregister verlinken,
 - Website neu bauen und angezeigte Adressen gegen Explorer prüfen.
 
+### Gebundener Treasury-Transfer
+
+Für den ersten technischen Treasury-Schritt existiert ein absichtlich nicht
+allgemeines Ausführungswerkzeug:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/execute-base-sepolia-smoke.ps1
+```
+
+Der Ablauf ist dauerhaft an Base Sepolia, den verifizierten Pilotvertrag und
+genau zwei Transaktionen gebunden: `0,000005` Test-ETH vom Deployer an die
+Research Treasury und anschließend `1 REIST` von der Research Treasury an die
+Ecosystem Treasury. Andere Netzwerke, Adressen, Beträge oder Nonces werden
+abgelehnt. Das Werkzeug verlangt einen sauberen veröffentlichten Git-Stand,
+prüft L2-, L1- und Operatorgebühren gegen feste Grenzen und validiert beide
+Receipts, Blockkanonizität, Balanceänderungen und das Transfer-Event.
+
+Wird aus einem separaten öffentlichen Release-Clone gearbeitet, kann die
+lokale, nicht veröffentlichte Konfiguration mit `-EnvironmentFile` angegeben
+werden. Das Keystore-Passwort wird einmal als `SecureString` gelesen und nur
+über die Standardeingabe an Node übergeben. Vor jedem Broadcast wird ein
+geheimnisfreies Recovery-Journal im geschützten Keystore-Verzeichnis atomar
+geschrieben; signierte Rohtransaktionen werden niemals gespeichert. Ein
+unklares RPC-Ergebnis wird ausschließlich über denselben gebundenen Hash
+wiederaufgenommen und darf nicht durch einen neuen Transfer ersetzt werden.
+
+Der Treasury-Transfer ist kein Bounty, keine Contribution und noch nicht der
+vollständige Smoke-Test dieser Checkliste. Nach erfolgreicher Ausführung wird
+ein öffentliches, maschinenlesbares Operations-Manifest erzeugt.
+
 ## Mainnet-Gate
 
 Ein Mainnet-Deployment verlangt die vollständige
