@@ -30,9 +30,15 @@ vergeben.
 - Netzwerk und Treasury-Adresse,
 - Verfahren bei mehreren Einreichungen.
 
-Entwürfe stehen maschinenlesbar in [`data/bounties.json`](../data/bounties.json).
-Sie werden erst durch ein verlinktes öffentliches Issue und einen dokumentierten
-Treasury-Beschluss aktiv.
+Das maschinenlesbare Register steht in
+[`data/bounties.json`](../data/bounties.json). Ein Eintrag wird erst durch ein
+verlinktes öffentliches Issue, einen benannten Reviewer und eine dokumentierte
+Reservierungsentscheidung aktiv. Aktive Forschungsbountys sind an die
+veröffentlichte Research-Treasury gebunden.
+
+Eine Aktivierung vor dem Token-Deployment öffnet nur die Einreichungsphase. Ein
+Testnet-REIST-Transfer ist erst nach Deployment, dokumentierter Annahme und
+öffentlicher Treasury-Transaktion möglich.
 
 ## Prüfung einer Einreichung
 

@@ -53,6 +53,61 @@ function readJson(path) {
   return JSON.parse(readFileSync(resolve(path), "utf8"));
 }
 
+function isIsoCalendarDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function validateActiveBounty(bounty, researchTreasuryAddress) {
+  const expectedIssuePrefix = `${PUBLIC_RELEASE_REPOSITORY}/issues/`;
+  if (
+    typeof bounty.issueUrl !== "string" ||
+    !bounty.issueUrl.startsWith(expectedIssuePrefix) ||
+    !/^[1-9]\d*$/.test(bounty.issueUrl.slice(expectedIssuePrefix.length))
+  ) {
+    fail(`Aktives Bounty ohne kanonisches öffentliches Issue: ${bounty.id}`);
+  }
+  if (
+    typeof bounty.reviewer !== "string" ||
+    !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(
+      bounty.reviewer
+    ) ||
+    bounty.reviewer.includes("--")
+  ) {
+    fail(`Aktives Bounty ohne gültigen Reviewer: ${bounty.id}`);
+  }
+  if (
+    bounty.deadline !== "open" &&
+    !isIsoCalendarDate(bounty.deadline)
+  ) {
+    fail(`Aktives Bounty ohne gültige Frist: ${bounty.id}`);
+  }
+  if (!isIsoCalendarDate(bounty.activatedAt)) {
+    fail(`Aktives Bounty ohne Aktivierungsdatum: ${bounty.id}`);
+  }
+  if (bounty.deadline !== "open" && bounty.deadline < bounty.activatedAt) {
+    fail(`Aktives Bounty endet vor seinem Aktivierungsdatum: ${bounty.id}`);
+  }
+  if (bounty.token !== "testnet REIST") {
+    fail(`Aktives Bounty verwendet nicht testnet REIST: ${bounty.id}`);
+  }
+  let treasuryAddress;
+  try {
+    treasuryAddress = getAddress(bounty.treasuryAddress);
+  } catch {
+    fail(`Aktives Bounty ohne gültige Treasury-Adresse: ${bounty.id}`);
+  }
+  if (
+    treasuryAddress === ZeroAddress ||
+    treasuryAddress !== researchTreasuryAddress
+  ) {
+    fail(`Aktives Bounty verwendet nicht die öffentliche Research-Treasury: ${bounty.id}`);
+  }
+}
+
 function collectFiles(directory) {
   const files = [];
   for (const entry of readdirSync(directory)) {
@@ -267,10 +322,25 @@ if (
 ) {
   fail("Öffentliches Testnet-Rollenregister besitzt einen falschen Status.");
 }
-const publicTestnetAddresses = Object.values(testnetRoles.roles || {});
-if (publicTestnetAddresses.length !== 4) {
-  fail("Öffentliches Testnet-Rollenregister muss vier Adressen enthalten.");
+const requiredTestnetRoleNames = [
+  "deployer",
+  "founderBeneficiary",
+  "researchRewardsTreasury",
+  "ecosystemTreasury",
+];
+const publicTestnetRoles = testnetRoles.roles;
+if (
+  !publicTestnetRoles ||
+  typeof publicTestnetRoles !== "object" ||
+  Array.isArray(publicTestnetRoles) ||
+  Object.keys(publicTestnetRoles).sort().join("\n") !==
+    [...requiredTestnetRoleNames].sort().join("\n")
+) {
+  fail("Öffentliches Testnet-Rollenregister besitzt nicht die vier Pflichtrollen.");
 }
+const publicTestnetAddresses = requiredTestnetRoleNames.map(
+  (roleName) => publicTestnetRoles[roleName]
+);
 const normalizedTestnetAddresses = publicTestnetAddresses.map((address) => {
   try {
     const normalized = getAddress(address);
@@ -283,6 +353,9 @@ const normalizedTestnetAddresses = publicTestnetAddresses.map((address) => {
 if (new Set(normalizedTestnetAddresses).size !== 4) {
   fail("Öffentliche Testnet-Rollenadressen müssen paarweise verschieden sein.");
 }
+const researchTreasuryAddress = getAddress(
+  publicTestnetRoles.researchRewardsTreasury
+);
 const expectedPaperHash =
   "369B9FB75C1B6D4C2CBBA91FF63DB4420900AB30B6EEC137BFD72290AE7D45C4";
 if (
@@ -338,6 +411,46 @@ if (project.status.mainnetDeployment !== false) {
 }
 
 const bountyData = readJson("data/bounties.json");
+if (
+  bountyData.schemaVersion !== 1 ||
+  bountyData.network !== "Base Sepolia" ||
+  !Array.isArray(bountyData.bounties)
+) {
+  fail("Bounty-Register besitzt ein ungültiges Schema oder Netzwerk.");
+}
+
+const activeBountyFixture = {
+  id: "REIST-VALIDATION-FIXTURE",
+  status: "active",
+  reward: "1",
+  token: "testnet REIST",
+  issueUrl: `${PUBLIC_RELEASE_REPOSITORY}/issues/1`,
+  reviewer: "reist-reviewer",
+  deadline: "open",
+  activatedAt: "2026-08-02",
+  treasuryAddress: researchTreasuryAddress,
+};
+validateActiveBounty(activeBountyFixture, researchTreasuryAddress);
+for (const [description, changes] of [
+  ["Issue-Nummer null", { issueUrl: `${PUBLIC_RELEASE_REPOSITORY}/issues/0` }],
+  ["Reviewer mit Doppelbindestrich", { reviewer: "reist--reviewer" }],
+  ["unmögliches Datum", { activatedAt: "2026-99-99" }],
+  ["Frist vor Aktivierung", { deadline: "2026-08-01" }],
+  ["falsche Tokenbezeichnung", { token: "REIST" }],
+  ["falsche Treasury", { treasuryAddress: ZeroAddress }],
+]) {
+  let rejected = false;
+  try {
+    validateActiveBounty(
+      { ...activeBountyFixture, ...changes },
+      researchTreasuryAddress
+    );
+  } catch {
+    rejected = true;
+  }
+  if (!rejected) fail(`Aktive-Bounty-Prüfung akzeptiert ${description}.`);
+}
+
 const bountyIds = new Set();
 let activeBountyCount = 0;
 for (const bounty of bountyData.bounties) {
@@ -347,10 +460,10 @@ for (const bounty of bountyData.bounties) {
     fail(`Ungültiger Bounty-Status: ${bounty.id}`);
   }
   if (BigInt(bounty.reward) <= 0n) fail(`Ungültige Bounty-Prämie: ${bounty.id}`);
-  if (bounty.status === "active" && !bounty.issueUrl) {
-    fail(`Aktives Bounty ohne öffentliches Issue: ${bounty.id}`);
+  if (bounty.status === "active") {
+    validateActiveBounty(bounty, researchTreasuryAddress);
+    activeBountyCount += 1;
   }
-  if (bounty.status === "active") activeBountyCount += 1;
 }
 if (project.status.activeBounties !== activeBountyCount) {
   fail("Projektstatus und Bounty-Datei melden verschiedene aktive Bounties.");
