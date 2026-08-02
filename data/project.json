@@ -22,6 +22,17 @@
       "status": "historical-noncanonical-for-token-pilot"
     },
     "benchmarkRepository": "https://github.com/rudolfstepan/reist-crypto-bench",
+    "fpgaImplementation": {
+      "repository": "https://github.com/rudolfstepan/6502-sbc-fpga",
+      "sourceCommit": "42c11dc941c23ff4b3f84fd606791d285b4311e9",
+      "sourceSnapshot": "https://github.com/rudolfstepan/6502-sbc-fpga/tree/42c11dc941c23ff4b3f84fd606791d285b4311e9",
+      "target": "Tang Primer 20K / Gowin GW2A-18",
+      "publicReistSourceFiles": true,
+      "localGhdlTestsPassing": true,
+      "verifiedAt": "2026-08-02",
+      "independentHardwareReproduction": false,
+      "explicitRepositoryLicense": false
+    },
     "tokenSourceRepository": "https://github.com/rudolfstepan/ReistToken-release",
     "liveDemo": "https://intracom.at/demo/reist/"
   },
@@ -73,6 +84,8 @@
     "testnetDeployment": true,
     "mainnetDeployment": false,
     "sourceVerified": true,
+    "publicReistFpgaSources": true,
+    "independentFpgaReproduction": false,
     "technicalTreasurySmoke": true,
     "fullTestnetSmoke": false,
     "externalAudit": false,

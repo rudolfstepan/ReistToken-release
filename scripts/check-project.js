@@ -12,6 +12,9 @@ import {
 import {
   CANONICAL_PAPER_DOI,
   CANONICAL_PAPER_URL,
+  FPGA_SOURCE_COMMIT,
+  FPGA_SOURCE_REPOSITORY,
+  FPGA_SOURCE_SNAPSHOT_URL,
   PUBLIC_RELEASE_REPOSITORY,
 } from "./lib/project-identity.js";
 
@@ -411,6 +414,20 @@ if (
 if (project.framework?.tokenSourceRepository !== PUBLIC_RELEASE_REPOSITORY) {
   fail("Projekt-JSON verweist nicht auf das kanonische öffentliche Release-Repository.");
 }
+const fpgaImplementation = project.framework?.fpgaImplementation;
+if (
+  fpgaImplementation?.repository !== FPGA_SOURCE_REPOSITORY ||
+  fpgaImplementation?.sourceCommit !== FPGA_SOURCE_COMMIT ||
+  fpgaImplementation?.sourceSnapshot !== FPGA_SOURCE_SNAPSHOT_URL ||
+  fpgaImplementation?.target !== "Tang Primer 20K / Gowin GW2A-18" ||
+  fpgaImplementation?.publicReistSourceFiles !== true ||
+  fpgaImplementation?.localGhdlTestsPassing !== true ||
+  fpgaImplementation?.verifiedAt !== "2026-08-02" ||
+  fpgaImplementation?.independentHardwareReproduction !== false ||
+  fpgaImplementation?.explicitRepositoryLicense !== false
+) {
+  fail("Projekt-JSON bildet den geprüften FPGA-Quellstatus nicht korrekt ab.");
+}
 if (
   projectPackage.repository?.url !== `${PUBLIC_RELEASE_REPOSITORY}.git` ||
   projectPackage.bugs?.url !== `${PUBLIC_RELEASE_REPOSITORY}/issues`
@@ -439,6 +456,8 @@ if (totalPercentage !== 100) {
 }
 if (
   project.status.mainnetDeployment !== false ||
+  project.status.publicReistFpgaSources !== true ||
+  project.status.independentFpgaReproduction !== false ||
   project.status.technicalTreasurySmoke !== true ||
   project.status.fullTestnetSmoke !== false ||
   project.status.externalAudit !== false ||
@@ -681,11 +700,15 @@ const germanRequiredSiteContent = [
   "kein Investment",
   "kein kryptografisches Primitiv",
   "funktioniert ohne Token",
+  "öffentlich einsehbare REIST-FPGA-RTL",
+  "explizite FPGA-Lizenzierung und unabhängige Hardware-Reproduktion",
 ];
 const englishRequiredSiteContent = [
   "no investment offering",
   "cryptographic primitive",
   "works without a token",
+  "publicly accessible REIST FPGA RTL",
+  "explicit FPGA licensing and independent hardware reproduction",
 ];
 if (project.status.testnetDeployment) {
   germanRequiredSiteContent.push("deployed", "Quellcode verifiziert");
@@ -704,6 +727,19 @@ const englishPage = validateSitePage(
   "en",
   englishRequiredSiteContent
 );
+const germanSiteSource = readFileSync(resolve("site/index.html"), "utf8");
+const englishSiteSource = readFileSync(resolve("site/en/index.html"), "utf8");
+for (const [source, label] of [
+  [germanSiteSource, "Deutsche Website"],
+  [englishSiteSource, "Englische Website"],
+]) {
+  if (
+    !source.includes(`href="${FPGA_SOURCE_REPOSITORY}"`) ||
+    !source.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`)
+  ) {
+    fail(`${label} verlinkt FPGA-Repository oder geprüften Quellstand nicht.`);
+  }
+}
 if (JSON.stringify(germanPage.ids) !== JSON.stringify(englishPage.ids)) {
   fail("Deutsche und englische Website enthalten unterschiedliche HTML-IDs.");
 }

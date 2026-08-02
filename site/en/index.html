@@ -204,6 +204,13 @@
             </table>
           </div>
 
+          <p class="evidence-provenance">
+            <strong>FPGA sources:</strong> The <a href="https://github.com/rudolfstepan/6502-sbc-fpga/tree/42c11dc941c23ff4b3f84fd606791d285b4311e9" rel="noreferrer">VHDL implementation, GHDL testbenches, and Tang Primer 20K build files</a>
+            are publicly accessible. The local GHDL tests pass; the documented
+            synthesis and hardware measurements have not been independently
+            reproduced. An explicit root license is currently absent.
+          </p>
+
           <div class="negative-results">
             <h3>Negative and neutral controls</h3>
             <ul>
@@ -341,6 +348,7 @@
               <li>verified source code for both contracts</li>
               <li>local tests and deployment invariants</li>
               <li>public deployment manifest and reproducible source snapshot</li>
+              <li>publicly accessible REIST FPGA RTL, testbench, and board-build sources in the <a href="https://github.com/rudolfstepan/6502-sbc-fpga" rel="noreferrer">FPGA repository</a></li>
               <li>confirmed technical treasury transfer with a <a href="../operations/base-sepolia-smoke-transfer.json">public operations record</a></li>
               <li>private channel for sensitive security reports</li>
               <li>prepared bounty and contribution-register formats</li>
@@ -349,7 +357,7 @@
           <article class="transparency-card transparency-card-pending">
             <h3>Still outstanding</h3>
             <ul>
-              <li>complete public FPGA sources</li>
+              <li>explicit FPGA licensing and independent hardware reproduction</li>
               <li>independently staffed treasury Safes and signers</li>
               <li>external contract review</li>
               <li>remaining full testnet smoke checks: allowance, vesting, bounty flow, and website validation</li>
@@ -392,6 +400,7 @@
           <div class="source-links">
             <a href="https://doi.org/10.5281/zenodo.21206471" rel="noreferrer"><span>Canonical paper</span><small>DOI · CC BY 4.0 · Zenodo ↗</small></a>
             <a href="https://github.com/rudolfstepan/reist-crypto-bench" rel="noreferrer"><span>Benchmark code</span><small>GitHub ↗</small></a>
+            <a href="https://github.com/rudolfstepan/6502-sbc-fpga" rel="noreferrer"><span>FPGA implementation</span><small>VHDL · GHDL tests · Gowin build ↗</small></a>
             <a href="https://github.com/rudolfstepan/ReistToken-release" rel="noreferrer"><span>Token release source</span><small>History-free public snapshot · GitHub ↗</small></a>
             <a href="../contracts/REISTToken.sol"><span>ERC-20 contract source</span><small>Local release build · Solidity ↗</small></a>
             <a href="https://intracom.at/demo/reist/" rel="noreferrer"><span>Live demo</span><small>REIST SIMD ↗</small></a>

@@ -52,6 +52,13 @@ dokumentierten Systeme, Compiler, Flags, Workloads und Baselines.
 | Isolierte 32-Bit-REIST-Korrektureinheit | 161,8 MHz, 101 Logikzellen | Gowin GW2A-18, konkrete Synthese |
 | Vergleichendes Divisions-IP | 4 Takte in der Kette, 8,1 MHz, 1.276 Logikzellen | vermessene 32-Bit-IP-Konfiguration |
 
+Die zugehörigen [öffentlich einsehbaren VHDL-Quellen, GHDL-Testbenches und
+Gowin-Builddateien](https://github.com/rudolfstepan/6502-sbc-fpga/tree/42c11dc941c23ff4b3f84fd606791d285b4311e9)
+sind am geprüften Commit `42c11dc941c23ff4b3f84fd606791d285b4311e9`
+reproduzierbar referenziert. Die beiden REIST-GHDL-Testbenches wurden lokal
+erfolgreich ausgeführt. Das ist keine unabhängige Reproduktion der berichteten
+Synthese- und Hardwaremesswerte.
+
 ## Ebenso wichtige Negativergebnisse
 
 - Ohne persistenten modularen Zustand besteht kein struktureller Vorteil.
@@ -69,6 +76,8 @@ dokumentierten Systeme, Compiler, Flags, Workloads und Baselines.
 
 - Benchmark-Repository:
   [rudolfstepan/reist-crypto-bench](https://github.com/rudolfstepan/reist-crypto-bench)
+- FPGA-RTL, Testbenches und Board-Build:
+  [rudolfstepan/6502-sbc-fpga](https://github.com/rudolfstepan/6502-sbc-fpga)
 - Kanonische Paper-Version des Token-Piloten:
   [DOI 10.5281/zenodo.21206471](https://doi.org/10.5281/zenodo.21206471),
   veröffentlicht am 5. Juli 2026 unter CC BY 4.0
@@ -86,6 +95,12 @@ Für Token-Manifest, Website und Deployment wird ausschließlich DOI
 frühere Version 2.0 historisch referenziert. Zenodo beschreibt den kanonischen
 Datensatz als neue Version dieses Vorgängers; beide Kennungen bezeichnen nicht
 dieselbe Version.
+
+Das FPGA-Repository besitzt derzeit keine explizite Root-Lizenz; öffentlich
+einsehbare Quellen werden deshalb nicht als gesondert Open Source lizenziert
+bezeichnet. Die Gowin-Divider-Abhängigkeit enthält außerdem geschützten
+Vendor-Code. Eine lizenzierte und unabhängig reproduzierte FPGA-Veröffentlichung
+bleibt ein separates Gate.
 
 ## Zulässige Kurzbeschreibung
 

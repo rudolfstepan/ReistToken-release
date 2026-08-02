@@ -16,6 +16,9 @@ Stand: 2. August 2026.
 - gebundener technischer Treasury-Test mit bestätigtem Test-ETH-Funding,
   `1 REIST`-Transfer und
   [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-smoke-transfer.json),
+- öffentlich einsehbare REIST-VHDL-Quellen, GHDL-Testbenches und
+  Tang-Primer-20K-Builddateien im
+  [FPGA-Repository](https://github.com/rudolfstepan/6502-sbc-fpga),
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
@@ -24,6 +27,8 @@ Stand: 2. August 2026.
 - kein Verkauf und keine Liquidität,
 - kein aktives Bounty und keine ausgezahlte Prämie,
 - kein externes Smart-Contract-Audit,
+- keine unabhängige Hardware-Reproduktion und keine explizite Root-Lizenz des
+  FPGA-Repositories,
 - keine DAO, keine unabhängigen Treasury-Signer und keine dezentrale Kontrolle,
 - noch keine rechtliche Freigabe für ein öffentliches Angebot.
 

@@ -1,5 +1,10 @@
 import { spawn } from "node:child_process";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
+import {
+  FPGA_SOURCE_COMMIT,
+  FPGA_SOURCE_REPOSITORY,
+  FPGA_SOURCE_SNAPSHOT_URL,
+} from "./lib/project-identity.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
 
 const port = 4174;
@@ -92,6 +97,31 @@ try {
     projectData.status.technicalTreasurySmoke === true &&
       projectData.status.fullTestnetSmoke === false,
     "Technischer und vollständiger Smoke-Status sind nicht sauber getrennt."
+  );
+  assert(
+    projectData.status.publicReistFpgaSources === true &&
+      projectData.status.independentFpgaReproduction === false &&
+      projectData.framework.fpgaImplementation?.repository ===
+        FPGA_SOURCE_REPOSITORY &&
+      projectData.framework.fpgaImplementation?.sourceCommit ===
+        FPGA_SOURCE_COMMIT &&
+      projectData.framework.fpgaImplementation?.sourceSnapshot ===
+        FPGA_SOURCE_SNAPSHOT_URL &&
+      projectData.framework.fpgaImplementation?.localGhdlTestsPassing === true &&
+      projectData.framework.fpgaImplementation?.independentHardwareReproduction ===
+        false &&
+      projectData.framework.fpgaImplementation?.explicitRepositoryLicense ===
+        false,
+    "FPGA-Quellenstatus und offene Reproduktionsgates sind inkonsistent."
+  );
+  assert(
+    html.includes(`href="${FPGA_SOURCE_REPOSITORY}"`) &&
+      html.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`) &&
+      html.includes("explizite FPGA-Lizenzierung") &&
+      englishHtml.includes(`href="${FPGA_SOURCE_REPOSITORY}"`) &&
+      englishHtml.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`) &&
+      englishHtml.includes("explicit FPGA licensing"),
+    "DE/EN-Website dokumentiert FPGA-Quellen oder offene Gates nicht."
   );
   if (projectData.status.testnetDeployment) {
     assert(

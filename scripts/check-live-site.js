@@ -2,6 +2,9 @@ import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import {
   CANONICAL_PAPER_DOI,
   CANONICAL_PAPER_URL,
+  FPGA_SOURCE_COMMIT,
+  FPGA_SOURCE_REPOSITORY,
+  FPGA_SOURCE_SNAPSHOT_URL,
   PUBLIC_RELEASE_REPOSITORY,
 } from "./lib/project-identity.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
@@ -194,9 +197,31 @@ assert(
   liveProject.framework?.publicPaper?.doi === CANONICAL_PAPER_DOI &&
     liveProject.framework?.publicPaper?.url === CANONICAL_PAPER_URL &&
     liveProject.framework?.tokenSourceRepository === PUBLIC_RELEASE_REPOSITORY &&
+    liveProject.framework?.fpgaImplementation?.repository ===
+      FPGA_SOURCE_REPOSITORY &&
+    liveProject.framework?.fpgaImplementation?.sourceCommit ===
+      FPGA_SOURCE_COMMIT &&
+    liveProject.framework?.fpgaImplementation?.sourceSnapshot ===
+      FPGA_SOURCE_SNAPSHOT_URL &&
+    liveProject.framework?.fpgaImplementation?.localGhdlTestsPassing === true &&
+    liveProject.framework?.fpgaImplementation?.independentHardwareReproduction ===
+      false &&
+    liveProject.framework?.fpgaImplementation?.explicitRepositoryLicense ===
+      false &&
+    liveProject.status?.publicReistFpgaSources === true &&
+    liveProject.status?.independentFpgaReproduction === false &&
     liveProject.status?.technicalTreasurySmoke === true &&
     liveProject.status?.fullTestnetSmoke === false,
-  "Live-Projektmetadaten enthalten nicht die kanonische Identität und den korrekten Smoke-Status."
+  "Live-Projektmetadaten enthalten nicht die kanonische Identität sowie den korrekten FPGA- und Smoke-Status."
+);
+assert(
+  home.body.includes(`href="${FPGA_SOURCE_REPOSITORY}"`) &&
+    home.body.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`) &&
+    home.body.includes("explizite FPGA-Lizenzierung") &&
+    englishHome.body.includes(`href="${FPGA_SOURCE_REPOSITORY}"`) &&
+    englishHome.body.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`) &&
+    englishHome.body.includes("explicit FPGA licensing"),
+  "Live-Startseiten dokumentieren FPGA-Quellen oder offene Gates nicht korrekt."
 );
 assert(
   home.body.includes('href="operations/base-sepolia-smoke-transfer.json"') &&

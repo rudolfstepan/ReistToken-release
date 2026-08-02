@@ -26,7 +26,9 @@
 - [ ] fehlerhaften BibTeX-/DOI-Verweis im öffentlichen Benchmark-README korrigiert
 - [ ] widersprüchliche README-Aussage zur reinen Restberechnung bereinigt
 - [ ] Leistungsangaben mit Rohdaten, Hardware und Compilerfassung verknüpft
-- [x] Paper-Lizenz CC BY 4.0 und Code-Lizenz MIT eindeutig ausgewiesen
+- [x] REIST-FPGA-RTL, Testbenches und Tang-Primer-20K-Buildquellen öffentlich verlinkt
+- [ ] FPGA-Lizenzierung, CI-Gate und unabhängige Hardware-Reproduktion abgeschlossen
+- [x] Paper-Lizenz CC BY 4.0 und Token-Code-Lizenz MIT eindeutig ausgewiesen
 
 ## Vor Mainnet
 

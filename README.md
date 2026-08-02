@@ -12,6 +12,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | Smart Contracts | auf Base Sepolia deployed; Quellcode verifiziert |
 | Projektwebsite | veröffentlicht unter `reist-token.intracom.at` |
 | Öffentlicher Quellcode | [`ReistToken-release`](https://github.com/rudolfstepan/ReistToken-release) |
+| REIST-FPGA-Implementierung | [VHDL, Testbenches und Gowin-Buildquellen öffentlich einsehbar](https://github.com/rudolfstepan/6502-sbc-fpga); unabhängige Hardware-Reproduktion offen |
 | Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
 | Technischer Treasury-Test | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-smoke-transfer.json) |
 | Base Mainnet | gesperrt / nicht konfiguriert |
@@ -146,6 +147,8 @@ Die vollständige Anleitung steht in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
   [`10.5281/zenodo.17897540`](https://doi.org/10.5281/zenodo.17897540)
 - Benchmark-Suite:
   [`rudolfstepan/reist-crypto-bench`](https://github.com/rudolfstepan/reist-crypto-bench)
+- FPGA-Implementierung und GHDL-Testbenches:
+  [`rudolfstepan/6502-sbc-fpga`](https://github.com/rudolfstepan/6502-sbc-fpga)
 - Projektseite:
   [`intracom.at/papers/reist-division.html`](https://intracom.at/papers/reist-division.html)
 - Live-Demo:
