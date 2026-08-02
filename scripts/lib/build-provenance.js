@@ -24,6 +24,10 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
+function normalizeBytecode(value) {
+  return String(value || "").replace(/^0x/i, "").toLowerCase();
+}
+
 function canonicalJson(value) {
   if (Array.isArray(value)) return value.map(canonicalJson);
   if (value !== null && typeof value === "object") {
@@ -57,6 +61,12 @@ export function loadCurrentReistBuild() {
     `${tokenArtifact.buildInfoId}.json`
   );
   const buildInfo = readJson(buildInfoPath);
+  const buildOutputPath = resolve(
+    "artifacts",
+    "build-info",
+    `${tokenArtifact.buildInfoId}.output.json`
+  );
+  const buildOutput = readJson(buildOutputPath);
   const tokenSourceKey = tokenArtifact.inputSourceName;
   const vestingSourceKey = vestingArtifact.inputSourceName;
 
@@ -85,11 +95,40 @@ export function loadCurrentReistBuild() {
     fail("Solidity-Build entspricht nicht den freigegebenen Compiler-Einstellungen.");
   }
 
+  if (buildOutput.id !== tokenArtifact.buildInfoId || !buildOutput.output?.contracts) {
+    fail("Solidity-Build-Output gehoert nicht zum ausgewaehlten Build.");
+  }
+  for (const [artifact, sourceKey, label] of [
+    [tokenArtifact, tokenSourceKey, "REISTToken"],
+    [vestingArtifact, vestingSourceKey, "REISTFounderVesting"],
+  ]) {
+    const compiled = buildOutput.output.contracts?.[sourceKey]?.[artifact.contractName];
+    if (!compiled?.evm) {
+      fail(`${label}-Output fehlt im gebundenen Solidity-Build.`);
+    }
+    if (
+      canonicalJsonSha256(artifact.abi) !== canonicalJsonSha256(compiled.abi) ||
+      normalizeBytecode(artifact.bytecode) !==
+        normalizeBytecode(compiled.evm.bytecode?.object) ||
+      normalizeBytecode(artifact.deployedBytecode) !==
+        normalizeBytecode(compiled.evm.deployedBytecode?.object) ||
+      canonicalJsonSha256(artifact.linkReferences || {}) !==
+        canonicalJsonSha256(compiled.evm.bytecode?.linkReferences || {}) ||
+      canonicalJsonSha256(artifact.deployedLinkReferences || {}) !==
+        canonicalJsonSha256(compiled.evm.deployedBytecode?.linkReferences || {}) ||
+      canonicalJsonSha256(artifact.immutableReferences || {}) !==
+        canonicalJsonSha256(compiled.evm.deployedBytecode?.immutableReferences || {})
+    ) {
+      fail(`${label}-Artefakt stimmt nicht mit dem Solidity-Build-Output ueberein.`);
+    }
+  }
+
   return {
     buildInfoId: tokenArtifact.buildInfoId,
     compilerLongVersion: buildInfo.solcLongVersion,
     input: buildInfo.input,
     inputSha256: canonicalJsonSha256(buildInfo.input),
+    outputSha256: canonicalJsonSha256(buildOutput.output),
     sourceKeys: {
       token: tokenSourceKey,
       founderVesting: vestingSourceKey,

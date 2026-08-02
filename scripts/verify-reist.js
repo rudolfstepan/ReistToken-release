@@ -160,6 +160,11 @@ assertEqual(
   "Lokaler Build stimmt nicht mit dem Deployment-Bundle überein."
 );
 assertEqual(
+  currentBuild.outputSha256,
+  manifest.source.buildOutputSha256,
+  "Lokaler Compiler-Output stimmt nicht mit dem Deployment-Manifest überein."
+);
+assertEqual(
   currentBuild.sourceKeys.token,
   tokenSourceKey,
   "Lokaler Token-Source-Key weicht vom Manifest ab."

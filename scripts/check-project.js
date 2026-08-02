@@ -786,6 +786,9 @@ if (existsSync(manifestPath)) {
   if (!/^[a-fA-F0-9]{40}$/.test(manifest.source?.sourceCommit || "")) {
     fail("Deployment-Manifest ist nicht an einen Git-Commit gebunden.");
   }
+  if (!/^[A-F0-9]{64}$/.test(manifest.source?.buildOutputSha256 || "")) {
+    fail("Deployment-Manifest enthaelt keinen gebundenen Compiler-Output-Hash.");
+  }
   if (!manifest.source?.repositoryRemote) {
     fail("Deployment-Manifest enthält keinen Repository-Remote.");
   }

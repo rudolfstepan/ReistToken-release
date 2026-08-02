@@ -34,6 +34,8 @@ const PROJECT_DATA_PATH = resolve("data", "project.json");
 const TESTNET_ROLES_PATH = resolve("data", "testnet-roles.json");
 const FUNDED_TESTNET_STATUS =
   "wallets-created-recovery-checked-funded-not-deployed";
+const RECEIPT_CONFIRMATIONS = 2;
+const BLOCK_LOOKUP_ATTEMPTS = 8;
 
 function requiredEnvironment(name) {
   const value = process.env[name]?.trim();
@@ -101,6 +103,43 @@ function assertDistinct(addresses) {
       "Deployment-, Founder- und Treasury-Adressen müssen paarweise verschieden sein."
     );
   }
+}
+
+async function confirmedDeploymentBlock(provider, confirmedReceipt) {
+  const expectedHash = String(confirmedReceipt.blockHash || "").toLowerCase();
+  if (!/^0x[a-f0-9]{64}$/.test(expectedHash)) {
+    throw new Error("Deployment-Receipt enthaelt keinen gueltigen Blockhash.");
+  }
+
+  let delay = 500;
+  let lastError;
+  for (let attempt = 1; attempt <= BLOCK_LOOKUP_ATTEMPTS; attempt += 1) {
+    try {
+      const block = await provider.getBlock(confirmedReceipt.blockHash);
+      if (block) {
+        if (
+          block.number !== confirmedReceipt.blockNumber ||
+          String(block.hash || "").toLowerCase() !== expectedHash
+        ) {
+          throw new Error(
+            "Deployment-Block widerspricht dem bestaetigten Receipt."
+          );
+        }
+        return block;
+      }
+      lastError = new Error("Deployment-Block wurde leer beantwortet.");
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < BLOCK_LOOKUP_ATTEMPTS) {
+      await new Promise((resolvePromise) => setTimeout(resolvePromise, delay));
+      delay = Math.min(delay * 2, 4_000);
+    }
+  }
+  throw new Error(
+    `Deployment-Block ist nach ${BLOCK_LOOKUP_ATTEMPTS} Versuchen nicht abrufbar.`,
+    { cause: lastError }
+  );
 }
 
 function gitOutput(arguments_, description) {
@@ -266,14 +305,24 @@ try {
   tokenAddress = await token.getAddress();
   console.log(`Deployment-Transaktion gesendet: ${deploymentTransaction.hash}`);
 
-  receipt = await deploymentTransaction.wait();
+  receipt = await deploymentTransaction.wait(RECEIPT_CONFIRMATIONS);
   if (!receipt || receipt.status !== 1) {
     throw new Error("Deployment-Transaktion wurde nicht erfolgreich bestätigt.");
   }
+  if (
+    receipt.hash.toLowerCase() !== deploymentTransaction.hash.toLowerCase() ||
+    ethers.getAddress(receipt.from) !== deployerAddress ||
+    receipt.to !== null ||
+    !receipt.contractAddress ||
+    ethers.getAddress(receipt.contractAddress) !== tokenAddress
+  ) {
+    throw new Error(
+      "Bestaetigter Receipt gehoert nicht zum erwarteten Token-Deployment."
+    );
+  }
   deploymentConfirmed = true;
 
-  const block = await ethers.provider.getBlock(receipt.blockNumber);
-  if (!block) throw new Error("Deployment-Block ist nicht abrufbar.");
+  const block = await confirmedDeploymentBlock(ethers.provider, receipt);
 
   founderVestingAddress = await token.founderVesting();
   const vesting = await ethers.getContractAt(
@@ -324,6 +373,7 @@ try {
     deployer: deployerAddress,
     transactionHash: receipt.hash,
     blockNumber: receipt.blockNumber,
+    blockHash: receipt.blockHash,
     contracts: {
       token: tokenAddress,
       founderVesting: founderVestingAddress,
@@ -363,6 +413,7 @@ try {
       buildInfoId: build.buildInfoId,
       standardJsonInput: "base-sepolia-standard-input.json",
       standardJsonInputSha256: build.inputSha256,
+      buildOutputSha256: build.outputSha256,
       sourceKeys: build.sourceKeys,
       contractNames: build.contractNames,
       solidity: build.compilerLongVersion,
