@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "planId": "reist-base-sepolia-allowance-roundtrip-v1",
+  "status": "prepared-not-executed",
+  "preparedAt": "2026-08-02",
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "sourceDeployment": {
+    "manifest": "deployments/base-sepolia.json",
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+    "sourceVerified": true
+  },
+  "priorOperation": {
+    "manifest": "operations/base-sepolia-smoke-transfer.json",
+    "operationId": "reist-base-sepolia-treasury-smoke-v1"
+  },
+  "roles": {
+    "owner": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+    "spender": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC"
+  },
+  "baseline": {
+    "ownerTokenBaseUnits": "699999000000000000000000",
+    "spenderTokenBaseUnits": "200001000000000000000000",
+    "allowanceBaseUnits": "0",
+    "nextConfirmedNonce": 1,
+    "nextPendingNonce": 1
+  },
+  "transactions": [
+    {
+      "sequence": 1,
+      "action": "approve-exactly-one-testnet-reist",
+      "type": 2,
+      "chainId": 84532,
+      "from": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+      "to": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+      "nonce": 1,
+      "valueWei": "0",
+      "spender": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC",
+      "allowanceBaseUnits": "1000000000000000000",
+      "calldata": "0x095ea7b3000000000000000000000000e079e0aaa76a84dbe117e9b0316eb1b416e82dbc0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+      "gasLimit": "70000",
+      "accessList": []
+    },
+    {
+      "sequence": 2,
+      "action": "revoke-allowance-to-zero",
+      "type": 2,
+      "chainId": 84532,
+      "from": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+      "to": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+      "nonce": 2,
+      "valueWei": "0",
+      "spender": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC",
+      "allowanceBaseUnits": "0",
+      "calldata": "0x095ea7b3000000000000000000000000e079e0aaa76a84dbe117e9b0316eb1b416e82dbc0000000000000000000000000000000000000000000000000000000000000000",
+      "gasLimit": "60000",
+      "accessList": []
+    }
+  ],
+  "preBroadcastFeeThresholdsWei": {
+    "setAllowance": "1000000000000",
+    "clearAllowance": "1000000000000",
+    "total": "2000000000000"
+  },
+  "requiredOutcome": {
+    "finalAllowanceBaseUnits": "0",
+    "tokenTransfers": 0,
+    "ownerTokenBalanceChange": "0",
+    "spenderTokenBalanceChange": "0",
+    "evidencePath": "operations/base-sepolia-allowance-roundtrip.json"
+  },
+  "executionState": {
+    "signaturesCreated": 0,
+    "broadcastsSent": 0,
+    "transactionHashes": [],
+    "receipts": []
+  },
+  "notice": "Prepared Base Sepolia allowance/revocation test only. No transaction has been signed or broadcast; testnet REIST has no promised economic value."
+}

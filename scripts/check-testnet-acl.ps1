@@ -63,7 +63,8 @@ $expectedWalletFiles = @(
     "research-treasury.keystore.json"
 )
 $optionalWalletFiles = @(
-    ".base-sepolia-smoke-transfer.journal.json"
+    ".base-sepolia-smoke-transfer.journal.json",
+    ".base-sepolia-allowance-roundtrip.journal.json"
 )
 $walletFiles = @(
     Get-ChildItem -LiteralPath $targetWalletDirectory -File -Force |
@@ -107,12 +108,12 @@ if ($checksEnvironmentFile) {
 }
 if ($usesConfiguredWalletDirectory) {
     $keystoreEntry = Get-Content -LiteralPath $environmentPath -Encoding UTF8 | Where-Object {
-        $_ -match "^\s*REIST_KEYSTORE_DIRECTORY\s*="
+        $_ -match "^\s*(?:export\s+)?REIST_KEYSTORE_DIRECTORY\s*="
     } | Select-Object -First 1
     if (-not $keystoreEntry) {
         throw "REIST_KEYSTORE_DIRECTORY fehlt in .env."
     }
-    $configuredDirectory = ($keystoreEntry -replace "^\s*REIST_KEYSTORE_DIRECTORY\s*=\s*", "").Trim().Trim('"').Trim("'")
+    $configuredDirectory = ($keystoreEntry -replace "^\s*(?:export\s+)?REIST_KEYSTORE_DIRECTORY\s*=\s*", "").Trim().Trim('"').Trim("'")
     if ([IO.Path]::GetFullPath($configuredDirectory) -ne $configuredWalletDirectory) {
         throw "Konfiguriertes Keystore-Verzeichnis weicht vom geschuetzten Standardpfad ab."
     }

@@ -1,4 +1,5 @@
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
+import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
 import {
   CANONICAL_PAPER_DOI,
   CANONICAL_PAPER_URL,
@@ -211,6 +212,8 @@ assert(
     liveProject.status?.publicReistFpgaSources === true &&
     liveProject.status?.independentFpgaReproduction === false &&
     liveProject.status?.technicalTreasurySmoke === true &&
+    liveProject.status?.allowanceTestPrepared === true &&
+    liveProject.status?.allowanceTestCompleted === false &&
     liveProject.status?.fullTestnetSmoke === false,
   "Live-Projektmetadaten enthalten nicht die kanonische Identität sowie den korrekten FPGA- und Smoke-Status."
 );
@@ -258,6 +261,33 @@ assert(
       "0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8" &&
     liveSmokeOperation.economicValue === "none-promised-testnet-only",
   "Live-Treasury-Operationsnachweis besitzt nicht den bestätigten Stand."
+);
+
+const allowancePlanCheck = await request(
+  "/plans/base-sepolia-allowance-smoke.json"
+);
+assertStatus(allowancePlanCheck, 200, "Vorbereiteter Allowance-Plan");
+assert(
+  allowancePlanCheck.response.headers
+    .get("content-type")
+    ?.startsWith("application/json"),
+  "Vorbereiteter Allowance-Plan besitzt nicht application/json."
+);
+let liveAllowancePlan;
+try {
+  liveAllowancePlan = JSON.parse(allowancePlanCheck.body);
+} catch {
+  fail("Vorbereiteter Allowance-Plan ist kein gültiges JSON.");
+}
+validatePreparedAllowancePlan(liveAllowancePlan);
+assert(
+  home.body.includes('href="plans/base-sepolia-allowance-smoke.json"') &&
+    home.body.includes("vorbereitet, nicht ausgeführt") &&
+    englishHome.body.includes(
+      'href="../plans/base-sepolia-allowance-smoke.json"'
+    ) &&
+    englishHome.body.includes("prepared, not executed"),
+  "Live-Startseiten trennen vorbereiteten Allowance-Plan nicht von einer Ausführung."
 );
 
 for (const document of publicDocumentBuilds) {

@@ -15,6 +15,8 @@
 - [x] Deployment-Transaktion und Manifest veröffentlicht
 - [x] Quellcode von Token und Vesting im Explorer verifiziert
 - [x] gebundener technischer Treasury-Transfer mit öffentlichem Operationsnachweis
+- [x] fail-closed Allowance-/Widerrufsplan mit Read-only-Precheck vorbereitet
+- [ ] Allowance `1 REIST` on-chain gesetzt und unmittelbar auf `0` widerrufen
 - [ ] erstes Pilot-Bounty als öffentliches Issue aktiviert
 
 ## Wissenschaftliche Konsistenz

@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import {
   FPGA_SOURCE_COMMIT,
@@ -95,6 +96,8 @@ try {
   assert(projectData.token.symbol === "REIST", "Falsches Token-Symbol im Build.");
   assert(
     projectData.status.technicalTreasurySmoke === true &&
+      projectData.status.allowanceTestPrepared === true &&
+      projectData.status.allowanceTestCompleted === false &&
       projectData.status.fullTestnetSmoke === false,
     "Technischer und vollständiger Smoke-Status sind nicht sauber getrennt."
   );
@@ -184,6 +187,23 @@ try {
         'href="../operations/base-sepolia-smoke-transfer.json"'
       ),
     "DE/EN-Website verlinkt den Treasury-Operationsnachweis nicht."
+  );
+
+  const allowancePlanResponse = await fetch(
+    `${origin}/plans/base-sepolia-allowance-smoke.json`
+  );
+  assert(allowancePlanResponse.ok, "Allowance-Plan ist nicht erreichbar.");
+  assert(
+    allowancePlanResponse.headers.get("content-type")?.startsWith("application/json"),
+    "Allowance-Plan wird nicht als JSON ausgeliefert."
+  );
+  validatePreparedAllowancePlan(await allowancePlanResponse.json());
+  assert(
+    html.includes('href="plans/base-sepolia-allowance-smoke.json"') &&
+      html.includes("vorbereitet, nicht ausgeführt") &&
+      englishHtml.includes('href="../plans/base-sepolia-allowance-smoke.json"') &&
+      englishHtml.includes("prepared, not executed"),
+    "DE/EN-Website trennt vorbereiteten Allowance-Plan nicht von einer Ausführung."
   );
 
   const contributions = await fetch(`${origin}/data/contributions.json`);

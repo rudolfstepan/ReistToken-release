@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { getAddress, ZeroAddress } from "ethers";
 import { canonicalJsonSha256 } from "./lib/build-provenance.js";
+import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
 import {
@@ -145,6 +146,9 @@ const requiredFiles = [
   "scripts/configure-etherscan-api-key.ps1",
   "scripts/deploy-testnet.js",
   "scripts/deploy-testnet.ps1",
+  "scripts/check-base-sepolia-allowance-smoke.js",
+  "scripts/execute-base-sepolia-allowance-smoke.js",
+  "scripts/execute-base-sepolia-allowance-smoke.ps1",
   "scripts/execute-base-sepolia-smoke.js",
   "scripts/execute-base-sepolia-smoke.ps1",
   "scripts/estimate-testnet-deployment.js",
@@ -152,6 +156,7 @@ const requiredFiles = [
   "scripts/setup-testnet-wallets.js",
   "scripts/setup-testnet-wallets.ps1",
   "scripts/lib/build-provenance.js",
+  "scripts/lib/base-sepolia-allowance-plan.js",
   "scripts/lib/base-sepolia-smoke-plan.js",
   "scripts/lib/password-transport.js",
   "scripts/lib/project-identity.js",
@@ -159,10 +164,14 @@ const requiredFiles = [
   "scripts/lib/render-markdown.js",
   "scripts/lib/site-publication.js",
   "scripts/tests/base-sepolia-smoke-plan.test.js",
+  "scripts/tests/base-sepolia-allowance-plan.test.js",
   "scripts/smoke-site.js",
+  "plans/README.md",
+  "plans/base-sepolia-allowance-smoke.json",
   "operations/README.md",
   "operations/base-sepolia-smoke-transfer.json",
   "docs/SCIENTIFIC_BASIS.md",
+  "docs/PROJECT_STATUS.md",
   "docs/TOKENOMICS.md",
   "docs/BOUNTIES.md",
   "docs/LEGAL_NOTICE.md",
@@ -330,6 +339,29 @@ for (const file of collectFiles(root)) {
 const project = readJson("data/project.json");
 const testnetRoles = readJson("data/testnet-roles.json");
 const projectPackage = readJson("package.json");
+const preparedAllowancePlan = readJson(
+  "plans/base-sepolia-allowance-smoke.json"
+);
+validatePreparedAllowancePlan(preparedAllowancePlan);
+if (existsSync(resolve("operations/base-sepolia-allowance-roundtrip.json"))) {
+  fail("Allowance-Plan ist als offen markiert, besitzt aber bereits einen Operationsnachweis.");
+}
+const allowancePrecheckSource = readFileSync(
+  resolve("scripts/check-base-sepolia-allowance-smoke.js"),
+  "utf8"
+);
+for (const forbidden of [
+  "Wallet",
+  "signTransaction",
+  "broadcastTransaction",
+  "sendTransaction",
+  "readPasswordFromStandardInput",
+  "eth_sendRawTransaction",
+]) {
+  if (allowancePrecheckSource.includes(forbidden)) {
+    fail(`Read-only-Allowance-Precheck enthält verbotene Sendefähigkeit: ${forbidden}.`);
+  }
+}
 const fundedTestnetStatus =
   "wallets-created-recovery-checked-funded-not-deployed";
 const deployedTestnetStatus = "base-sepolia-pilot-deployed-no-economic-value";
@@ -459,6 +491,8 @@ if (
   project.status.publicReistFpgaSources !== true ||
   project.status.independentFpgaReproduction !== false ||
   project.status.technicalTreasurySmoke !== true ||
+  project.status.allowanceTestPrepared !== true ||
+  project.status.allowanceTestCompleted !== false ||
   project.status.fullTestnetSmoke !== false ||
   project.status.externalAudit !== false ||
   project.status.activeBounties !== 0 ||
@@ -702,6 +736,8 @@ const germanRequiredSiteContent = [
   "funktioniert ohne Token",
   "öffentlich einsehbare REIST-FPGA-RTL",
   "explizite FPGA-Lizenzierung und unabhängige Hardware-Reproduktion",
+  "Allowance- und Widerrufsplan",
+  "vorbereitet, nicht ausgeführt",
 ];
 const englishRequiredSiteContent = [
   "no investment offering",
@@ -709,6 +745,8 @@ const englishRequiredSiteContent = [
   "works without a token",
   "publicly accessible REIST FPGA RTL",
   "explicit FPGA licensing and independent hardware reproduction",
+  "allowance and revocation plan",
+  "prepared, not executed",
 ];
 if (project.status.testnetDeployment) {
   germanRequiredSiteContent.push("deployed", "Quellcode verifiziert");

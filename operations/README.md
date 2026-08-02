@@ -10,6 +10,10 @@ und macht aus dem Base-Sepolia-Piloten kein wirtschaftlich nutzbares Token.
 Unvollständige oder nicht kanonisch bestätigte Vorgänge werden hier nicht als
 abgeschlossen veröffentlicht.
 
+Noch nicht ausgeführte Entwürfe stehen getrennt unter [`plans/`](../plans/).
+Insbesondere ist der dortige Allowance-Roundtrip kein Operationsnachweis und
+enthält weder Signaturen noch Transaktionshashes.
+
 ## Abgeschlossene Nachweise
 
 - [Gebundener Base-Sepolia-Treasury-Funktionstest vom 2. August 2026](base-sepolia-smoke-transfer.json):

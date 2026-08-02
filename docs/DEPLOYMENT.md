@@ -265,6 +265,42 @@ und den Transfer von exakt `1 REIST`
 an kanonische Receipts und die geprüften Endstände. Die übrigen Punkte der
 vollständigen Smoke-Test-Checkliste bleiben offen.
 
+### Vorbereiteter Allowance-Roundtrip
+
+Der nächste technische Schritt ist getrennt und noch nicht ausgeführt. Der
+[öffentliche Plan](../plans/base-sepolia-allowance-smoke.json) bindet exakt
+zwei Base-Sepolia-Transaktionen der Research Treasury: zuerst
+`approve(Ecosystem Treasury, 1 REIST)`, unmittelbar danach
+`approve(Ecosystem Treasury, 0)`. Es findet kein Token-Transfer statt.
+
+Der ausschließlich lesende Precheck benötigt kein Keystore-Passwort:
+
+```powershell
+npm run check:base-sepolia-allowance
+```
+
+Er bindet die Baseline an einen konkreten kanonischen Block, prüft Nonce `1`,
+Allowance `0`, die Bestände `699.999 / 200.001 REIST`, Runtime-Codehash,
+Simulation, feste Gaslimits und eine konservative Pre-Broadcast-Freigabegrenze
+von `0,000002` Test-ETH. Der
+Precheck besitzt keinen Wallet- oder Broadcast-Code.
+
+Eine spätere, ausdrücklich neu freizugebende Ausführung erfolgt nur aus einem
+sauberen, veröffentlichten Release-Commit:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/execute-base-sepolia-allowance-smoke.ps1
+```
+
+Der Wrapper prüft zuerst ACL und Read-only-Precheck, bleibt im aktuellen
+Terminal und fragt erst danach Bestätigung und Research-Treasury-Passwort ab.
+Beide Transaktionen werden vor dem ersten Broadcast gebunden und unmittelbar
+hintereinander gesendet. Ein geheimnisfreies Recovery-Journal liegt nur im
+geschützten Keystore-Verzeichnis. Ein öffentlicher Operationsnachweis entsteht
+erst nach zwei kanonischen Receipts, exakt zwei passenden `Approval`-Events,
+null REIST-`Transfer`-Events im gesamten gebundenen Blockbereich,
+unveränderten Tokenbeständen und finaler Allowance `0`.
+
 ## Mainnet-Gate
 
 Ein Mainnet-Deployment verlangt die vollständige

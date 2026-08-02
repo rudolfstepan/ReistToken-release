@@ -8,7 +8,7 @@ Stand: 2. August 2026.
   codierter Genesis-Verteilung,
 - beim Deployment erzeugter `REISTFounderVesting`,
 - über Etherscan V2 verifizierter Quellcode beider Verträge,
-- 14 lokale Hardhat-Tests und dokumentierte Deployment-Invarianten,
+- 15 lokale Hardhat-Tests und dokumentierte Deployment-Invarianten,
 - öffentliches Release-Repository, dessen erster Commit als historienfreier
   Snapshot den reproduzierbaren Deployment-Quellstand festhält,
 - privater GitHub-Kanal für sensible Sicherheitsmeldungen,
@@ -19,6 +19,9 @@ Stand: 2. August 2026.
 - öffentlich einsehbare REIST-VHDL-Quellen, GHDL-Testbenches und
   Tang-Primer-20K-Builddateien im
   [FPGA-Repository](https://github.com/rudolfstepan/6502-sbc-fpga),
+- ein öffentlich prüfbarer, exakt gebundener
+  [Allowance- und Widerrufsplan](../plans/base-sepolia-allowance-smoke.json),
+  der ausdrücklich noch nicht signiert oder ausgeführt wurde,
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
@@ -37,9 +40,11 @@ ist weder ein Verkaufsangebot noch eine Zusage für ein späteres
 Mainnet-Deployment.
 
 Der technische Treasury-Transfer ist keine Prämienauszahlung, kein
-akzeptierter Beitrag und noch kein vollständiger Testnet-Smoke-Test. Allowance-,
-Vesting-, Bounty- und Website-Prüfungen dieses vollständigen Gates bleiben
-offen.
+akzeptierter Beitrag und noch kein vollständiger Testnet-Smoke-Test. Die
+On-chain-Ausführung des Allowance-Roundtrips sowie Vesting- und Bounty-Prüfungen
+dieses vollständigen Gates bleiben offen. Der zuletzt veröffentlichte
+Website-Stand bestand den Live-Check; die neue Planverlinkung erfordert nach
+diesem Release einen erneuten Webspace-Abgleich.
 
 ## Deployment-Manifest
 

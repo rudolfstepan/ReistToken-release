@@ -15,6 +15,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | REIST-FPGA-Implementierung | [VHDL, Testbenches und Gowin-Buildquellen öffentlich einsehbar](https://github.com/rudolfstepan/6502-sbc-fpga); unabhängige Hardware-Reproduktion offen |
 | Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
 | Technischer Treasury-Test | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-smoke-transfer.json) |
+| Allowance-Roundtrip | [exakt vorbereitet](plans/base-sepolia-allowance-smoke.json), nicht ausgeführt |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -49,6 +50,10 @@ Mainnet-Asset, kein Verkaufsangebot und kein Nachweis eines externen Audits.
 Der gebundene Treasury-Funktionstest ist getrennt unter
 [`operations/base-sepolia-smoke-transfer.json`](operations/base-sepolia-smoke-transfer.json)
 dokumentiert; er ist weder ein Bounty noch ein akzeptierter Beitrag.
+Der nächste On-chain-Schritt ist als
+[`approve(1 REIST) -> approve(0)`-Plan](plans/base-sepolia-allowance-smoke.json)
+öffentlich gebunden. Der Plan wurde noch nicht signiert oder gesendet und
+überträgt bei einer späteren Ausführung keine Token.
 
 ## Vertrag
 
@@ -127,6 +132,17 @@ einsehbar. Die zusätzlichen Befehle `npm run check:testnet:rpc` und
 Konfiguration. Der Verifier sendet keine Blockchain-Transaktion, fragt aber den
 Explorer ab und aktualisiert bei Erfolg die lokalen Statusdateien.
 
+Der vorbereitete Allowance-Schritt besitzt einen getrennten, ausschließlich
+lesenden Precheck:
+
+```powershell
+npm run check:base-sepolia-allowance
+```
+
+Dieser Befehl entschlüsselt keinen Keystore, signiert nichts und sendet keine
+Transaktion. Der Ausführungsbefehl ist absichtlich separat und verlangt später
+eine neue, exakte lokale Freigabe.
+
 Private Schlüssel gehören niemals in Git, Tickets, Webseiten oder Chats. Für
 die erzeugten Keystores müssen Passwort und Verzeichnis getrennt gesichert
 werden; das Passwort wird nicht gespeichert oder wiederhergestellt. Der
@@ -162,6 +178,7 @@ Version ausgegeben.
 
 ## Dokumentation
 
+- [Aktueller Projektstand](docs/PROJECT_STATUS.md)
 - [Wissenschaftliche Grundlage](docs/SCIENTIFIC_BASIS.md)
 - [Token und Verteilung](docs/TOKENOMICS.md)
 - [Beitrags- und Bounty-Prozess](docs/BOUNTIES.md)

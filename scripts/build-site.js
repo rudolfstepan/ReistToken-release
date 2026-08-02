@@ -48,6 +48,11 @@ copyFileSync(
   smokeOperation,
   resolve(output, "operations", "base-sepolia-smoke-transfer.json")
 );
+mkdirSync(resolve(output, "plans"), { recursive: true });
+copyFileSync(
+  resolve("plans", "base-sepolia-allowance-smoke.json"),
+  resolve(output, "plans", "base-sepolia-allowance-smoke.json")
+);
 
 renderPublicDocuments(output);
 const projectData = JSON.parse(readFileSync(resolve("data", "project.json"), "utf8"));

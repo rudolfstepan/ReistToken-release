@@ -80,13 +80,15 @@
     ]
   },
   "status": {
-    "contractTestsPassing": 14,
+    "contractTestsPassing": 15,
     "testnetDeployment": true,
     "mainnetDeployment": false,
     "sourceVerified": true,
     "publicReistFpgaSources": true,
     "independentFpgaReproduction": false,
     "technicalTreasurySmoke": true,
+    "allowanceTestPrepared": true,
+    "allowanceTestCompleted": false,
     "fullTestnetSmoke": false,
     "externalAudit": false,
     "publicSale": false,

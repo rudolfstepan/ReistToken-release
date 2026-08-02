@@ -151,6 +151,31 @@ describe("REISTToken", function () {
     expect(await token.totalSupply()).to.equal(TOTAL_SUPPLY);
   });
 
+  it("sets and revokes an allowance without moving tokens", async function () {
+    const { token, research, ecosystem, researchAddress, ecosystemAddress } =
+      await networkHelpers.loadFixture(deployFixture);
+    const amount = ethers.parseUnits("1", 18);
+    const researchBefore = await token.balanceOf(researchAddress);
+    const ecosystemBefore = await token.balanceOf(ecosystemAddress);
+
+    await expect(
+      token.connect(research).approve(ecosystemAddress, amount, { gasLimit: 70_000n })
+    )
+      .to.emit(token, "Approval")
+      .withArgs(researchAddress, ecosystemAddress, amount);
+    expect(await token.allowance(researchAddress, ecosystemAddress)).to.equal(amount);
+
+    await expect(
+      token.connect(research).approve(ecosystemAddress, 0n, { gasLimit: 60_000n })
+    )
+      .to.emit(token, "Approval")
+      .withArgs(researchAddress, ecosystemAddress, 0n);
+    expect(await token.allowance(researchAddress, ecosystemAddress)).to.equal(0n);
+    expect(await token.balanceOf(researchAddress)).to.equal(researchBefore);
+    expect(await token.balanceOf(ecosystemAddress)).to.equal(ecosystemBefore);
+    expect(await token.totalSupply()).to.equal(TOTAL_SUPPLY);
+  });
+
   it("exposes no minting, pausing, tax, blacklist, or owner API", async function () {
     const { token } = await networkHelpers.loadFixture(deployFixture);
     const names = new Set(
