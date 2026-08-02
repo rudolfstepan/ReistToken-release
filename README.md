@@ -9,10 +9,10 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 
 | Bereich | Status |
 |---|---|
-| Smart Contracts | lokal implementiert und getestet |
+| Smart Contracts | auf Base Sepolia deployed; Quellcode verifiziert |
 | Projektwebsite | veröffentlicht unter `reist-token.intracom.at` |
 | Öffentlicher Quellcode | [`ReistToken-release`](https://github.com/rudolfstepan/ReistToken-release) |
-| Base Sepolia | Deployment-Wallet finanziert; noch nicht deployed |
+| Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -24,6 +24,24 @@ steht unter CC BY 4.0. Das öffentliche Benchmark-Repository beschreibt REIST
 historisch ausdrücklich als Nicht-Kryptowährung. Dieses Projekt ergänzt davon
 getrennt einen Research-Reward-Piloten; es ändert nicht die Einordnung des
 Frameworks.
+
+## Base-Sepolia-Deployment
+
+Der Testnet-Pilot wurde am 2. August 2026 in Block `44958501` bereitgestellt.
+Token- und Vesting-Quellcode sind über Etherscan V2 verifiziert und auf
+BaseScan einsehbar:
+
+| Nachweis | Wert |
+|---|---|
+| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
+| Deployment-Transaktion | [`0x4d8f54cd…f38f021c`](https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c) |
+| Quellstand | Tag `v0.1.0-predeployment.2`, Commit `e3a732afcc0a6ced913621edcef49f81046979bf` |
+
+Das vollständige, maschinenlesbare Manifest steht unter
+[`deployments/base-sepolia.json`](deployments/base-sepolia.json). Dieses
+Deployment ist ausschließlich ein technischer Testnet-Pilot. Es ist kein
+Mainnet-Asset, kein Verkaufsangebot und kein Nachweis eines externen Audits.
 
 ## Vertrag
 
@@ -83,32 +101,24 @@ HTML-Ausgaben; im Browser ist dafür kein Markdown-Interpreter erforderlich.
 Die technische Anleitung für Build, Webroot-Synchronisierung, nginx und den
 Live-Test steht in [docs/WEBSITE_DEPLOYMENT.md](docs/WEBSITE_DEPLOYMENT.md).
 
-## Base-Sepolia-Pilot
+## Base-Sepolia-Pilot prüfen
 
-Das Deployment ist absichtlich ausschließlich für Base Sepolia (Chain-ID
-84532) freigeschaltet. Es verlangt drei öffentliche Empfängeradressen, die auch
-von der Deployment-Wallet verschieden sind, und erzeugt anschließend ein
-maschinenlesbares Manifest.
+Das Repository unterstützt ausschließlich Base Sepolia (Chain-ID `84532`);
+eine Mainnet-Konfiguration ist nicht enthalten. Ein frischer öffentlicher
+Checkout kann Quellstand, Build, Verträge, Tests und Manifest ohne Walletdaten
+reproduzieren:
 
-1. Zwei separate Testnet-Treasuries erstellen, vorzugsweise Safes. Für einen
-   zentral kontrollierten technischen Piloten kann `npm run
-   setup:testnet-wallets` vier unabhängige, verschlüsselt gesicherte
-   Testnet-Keypairs und die lokale `.env` erzeugen.
-2. `npm run check:testnet-wallets` ausführen und die vier öffentlichen Adressen
-   unabhängig kontrollieren.
-3. Mit `npm run check:testnet-acl` den lokalen Zugriffsschutz prüfen. Eine neue
-   verschlüsselte Kopie auf einem anderen Laufwerk mit `npm run
-   backup:testnet-wallets -- -DestinationDirectory <BACKUP-PFAD>` anlegen und
-   anschließend mit `npm run check:testnet-recovery -- -WalletDirectory
-   <BACKUP-PFAD>` die tatsächliche Sicherung aller vier Wallets prüfen. Das
-   Passwort getrennt aufbewahren.
-4. Erst danach die Deployment-Wallet mit Faucet-ETH versorgen und `npm run
-   check:testnet:rpc` ausführen.
-5. `npm run preflight` ausführen und danach mit `npm run
-   estimate:testnet-deployment` Gas, L1-Datengebühr und verfügbare Reserve
-   nochmals rein lesend prüfen.
-6. Erst nach expliziter Freigabe `npm run deploy:testnet` ausführen.
-7. `npm run verify:testnet` ausführen und Explorer-Ergebnis kontrollieren.
+```powershell
+npm ci
+npm run preflight
+```
+
+Die On-chain-Nachweise sind über die obigen BaseScan-Links öffentlich
+einsehbar. Die zusätzlichen Befehle `npm run check:testnet:rpc` und
+`npm run verify:testnet` gehören zum Maintainer-Workflow: Sie benötigen die in
+`.env.example` dokumentierte lokale RPC- beziehungsweise Etherscan-
+Konfiguration. Der Verifier sendet keine Blockchain-Transaktion, fragt aber den
+Explorer ab und aktualisiert bei Erfolg die lokalen Statusdateien.
 
 Private Schlüssel gehören niemals in Git, Tickets, Webseiten oder Chats. Für
 die erzeugten Keystores müssen Passwort und Verzeichnis getrennt gesichert

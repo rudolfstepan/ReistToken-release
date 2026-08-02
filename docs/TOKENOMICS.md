@@ -7,7 +7,7 @@
 | Name | REIST Research Token |
 | Symbol | REIST |
 | Standard | ERC-20 |
-| Zielnetz für Pilot | Base Sepolia, Chain-ID 84532 |
+| Pilotnetz | Base Sepolia, Chain-ID 84532; deployed und quellcodeverifiziert |
 | Dezimalstellen | 18 |
 | Gesamtmenge | 1.000.000 REIST |
 | Späteres Minting | technisch nicht vorhanden |
@@ -17,6 +17,11 @@
 
 Name und Symbol sind auf Blockchains nicht eindeutig. Nur die Kombination aus
 Netzwerk und veröffentlichter Vertragsadresse identifiziert den Token.
+
+| Vertrag | Offizielle Base-Sepolia-Adresse |
+|---|---|
+| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 
 ## Genesis-Verteilung
 
@@ -29,11 +34,11 @@ keine der drei Empfängerrollen übernehmen und erhält null Token.
 | Ecosystem Treasury | 20 % | 200.000 | dokumentierter Projektbetrieb, Infrastruktur und Integrationen |
 | Founder Vesting | 10 % | 100.000 | Gründer-/Autorenzuteilung mit Zeitbindung |
 
-Zum Start sind `0 %` für öffentlichen Verkauf und `0 %` für DEX-Liquidität
-vorgesehen. Es gibt keine private Vorverkaufsrunde und keine Preiszusage.
-Dies ist eine dokumentierte Startpolitik, keine Transferbeschränkung des
-Standard-ERC-20: Treasuries und spätere Besitzer können technisch übertragen
-und könnten dadurch auch Sekundärmärkte ermöglichen.
+Beim Deployment wurden `0 %` für öffentlichen Verkauf und `0 %` für
+DEX-Liquidität reserviert. Es gibt keine private Vorverkaufsrunde und keine
+Preiszusage. Dies ist dokumentierte Projektpolitik, keine Transferbeschränkung
+des Standard-ERC-20: Treasuries und spätere Besitzer können technisch
+übertragen und könnten dadurch auch Sekundärmärkte ermöglichen.
 
 ## Founder Vesting
 
@@ -54,8 +59,10 @@ versehentlich dauerhaft unzugänglich werden.
 ## Treasury-Kontrolle
 
 Der Tokenvertrag erzwingt die anfänglichen Empfänger und Mengen, nicht die
-spätere Verwendung der Treasury-Bestände. Für den Testnet-Pilot und zwingend
-vor einem Mainnet sind vorgesehen:
+spätere Verwendung der Treasury-Bestände. Die beiden Testnet-Treasuries sind
+getrennte, derzeit zentral verwaltete Wallets; sie sind keine unabhängig
+besetzten Safe-Multisigs. Für fachliche Auszahlungen und zwingend vor einem
+Mainnet sind vorgesehen:
 
 - zwei voneinander getrennte Safe-Multisigs,
 - veröffentlichte Signeranzahl und Schwelle,

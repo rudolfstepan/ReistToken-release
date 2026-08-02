@@ -1,5 +1,12 @@
 import "dotenv/config";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import {
+  existsSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import {
@@ -45,6 +52,24 @@ function requiredEnvironment(name) {
 function readJson(path, missingMessage) {
   if (!existsSync(path)) fail(missingMessage);
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function writeJsonAtomically(path, value) {
+  const temporaryPath = `${path}.${process.pid}.${randomUUID()}.tmp`;
+  try {
+    writeFileSync(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, {
+      encoding: "utf8",
+      flag: "wx",
+    });
+    renameSync(temporaryPath, path);
+  } catch (error) {
+    try {
+      if (existsSync(temporaryPath)) unlinkSync(temporaryPath);
+    } catch {
+      // Der urspruengliche Schreibfehler ist fuer die Diagnose massgeblich.
+    }
+    throw error;
+  }
 }
 
 function validatedAddress(value, label) {
@@ -108,6 +133,9 @@ const manifest = readJson(
 );
 if (manifest.schemaVersion !== 2 || manifest.chainId !== Number(CHAIN_ID)) {
   fail("Manifest entspricht nicht dem erwarteten Base-Sepolia-Schema v2.");
+}
+if (!/^0x[a-fA-F0-9]{64}$/.test(manifest.blockHash || "")) {
+  fail("Manifest enthaelt keinen gueltigen Deployment-Blockhash.");
 }
 
 const inputFileName = manifest.source?.standardJsonInput;
@@ -313,15 +341,30 @@ const receipt = await provider.getTransactionReceipt(manifest.transactionHash);
 if (
   !receipt ||
   receipt.status !== 1 ||
+  normalizeHex(receipt.hash) !== normalizeHex(manifest.transactionHash) ||
   !receipt.contractAddress ||
   getAddress(receipt.contractAddress) !== tokenAddress ||
   getAddress(receipt.from) !== deployerAddress ||
-  receipt.blockNumber !== manifest.blockNumber
+  receipt.to !== null ||
+  receipt.blockNumber !== manifest.blockNumber ||
+  normalizeHex(receipt.blockHash) !== normalizeHex(manifest.blockHash)
 ) {
   fail("Deployment-Transaktion stimmt nicht mit dem Manifest überein.");
 }
 const deploymentBlock = await provider.getBlock(receipt.blockNumber);
 if (!deploymentBlock) fail("Deployment-Block ist nicht abrufbar.");
+assertEqual(
+  normalizeHex(deploymentBlock.hash),
+  normalizeHex(manifest.blockHash),
+  "Deployment-Blockhash stimmt nicht mit dem Manifest ueberein."
+);
+if (
+  !deploymentBlock.transactions.some(
+    (hash) => normalizeHex(hash) === normalizeHex(manifest.transactionHash)
+  )
+) {
+  fail("Deployment-Transaktion fehlt im kanonischen Deployment-Block.");
+}
 assertEqual(
   manifest.deployedAt,
   new Date(Number(deploymentBlock.timestamp) * 1000).toISOString(),
@@ -329,8 +372,8 @@ assertEqual(
 );
 
 const [tokenCode, vestingCode] = await Promise.all([
-  provider.getCode(tokenAddress),
-  provider.getCode(vestingAddress),
+  provider.getCode(tokenAddress, receipt.blockNumber),
+  provider.getCode(vestingAddress, receipt.blockNumber),
 ]);
 if (tokenCode === "0x" || vestingCode === "0x") {
   fail("Runtime-Bytecode eines Deployment-Vertrags fehlt.");
@@ -388,21 +431,21 @@ const [
   vestingCliff,
   vestingEnd,
 ] = await Promise.all([
-  token.name(),
-  token.symbol(),
-  token.decimals(),
-  token.totalSupply(),
-  token.balanceOf(research),
-  token.balanceOf(ecosystem),
-  token.balanceOf(vestingAddress),
-  token.balanceOf(deployerAddress),
-  token.founderVesting(),
-  token.researchRewardsTreasury(),
-  token.ecosystemTreasury(),
-  vesting.owner(),
-  vesting.start(),
-  vesting.cliff(),
-  vesting.end(),
+  token.name({ blockTag: receipt.blockNumber }),
+  token.symbol({ blockTag: receipt.blockNumber }),
+  token.decimals({ blockTag: receipt.blockNumber }),
+  token.totalSupply({ blockTag: receipt.blockNumber }),
+  token.balanceOf(research, { blockTag: receipt.blockNumber }),
+  token.balanceOf(ecosystem, { blockTag: receipt.blockNumber }),
+  token.balanceOf(vestingAddress, { blockTag: receipt.blockNumber }),
+  token.balanceOf(deployerAddress, { blockTag: receipt.blockNumber }),
+  token.founderVesting({ blockTag: receipt.blockNumber }),
+  token.researchRewardsTreasury({ blockTag: receipt.blockNumber }),
+  token.ecosystemTreasury({ blockTag: receipt.blockNumber }),
+  vesting.owner({ blockTag: receipt.blockNumber }),
+  vesting.start({ blockTag: receipt.blockNumber }),
+  vesting.cliff({ blockTag: receipt.blockNumber }),
+  vesting.end({ blockTag: receipt.blockNumber }),
 ]);
 const expectedSupply = parseUnits("1000000", 18);
 const expectedResearch = parseUnits("700000", 18);
@@ -682,11 +725,11 @@ manifest.verification = {
   provider: "Etherscan V2",
   verifiedAt: new Date().toISOString(),
 };
-writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+writeJsonAtomically(MANIFEST_PATH, manifest);
 
 const projectData = readJson(PROJECT_DATA_PATH, "Projektstatus-Datei fehlt.");
 projectData.lastUpdated = new Date().toISOString().slice(0, 10);
 projectData.status.sourceVerified = true;
-writeFileSync(PROJECT_DATA_PATH, `${JSON.stringify(projectData, null, 2)}\n`, "utf8");
+writeJsonAtomically(PROJECT_DATA_PATH, projectData);
 
 console.log("Beide Quellcodes und Runtime-Bytecodes sind verifiziert.");

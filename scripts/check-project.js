@@ -664,20 +664,33 @@ function validateSitePage(pageName, language, requiredStatements) {
   };
 }
 
-const germanPage = validateSitePage("site/index.html", "de", [
+const germanRequiredSiteContent = [
   "kein Investment",
-  "nicht deployed",
-  "noch nicht ausgerollten",
   "kein kryptografisches Primitiv",
   "funktioniert ohne Token",
-]);
-const englishPage = validateSitePage("site/en/index.html", "en", [
+];
+const englishRequiredSiteContent = [
   "no investment offering",
-  "not deployed",
-  "not-yet-deployed",
   "cryptographic primitive",
   "works without a token",
-]);
+];
+if (project.status.testnetDeployment) {
+  germanRequiredSiteContent.push("deployed", "Quellcode verifiziert");
+  englishRequiredSiteContent.push("deployed", "source verified");
+} else {
+  germanRequiredSiteContent.push("nicht deployed", "noch nicht ausgerollten");
+  englishRequiredSiteContent.push("not deployed", "not-yet-deployed");
+}
+const germanPage = validateSitePage(
+  "site/index.html",
+  "de",
+  germanRequiredSiteContent
+);
+const englishPage = validateSitePage(
+  "site/en/index.html",
+  "en",
+  englishRequiredSiteContent
+);
 if (JSON.stringify(germanPage.ids) !== JSON.stringify(englishPage.ids)) {
   fail("Deutsche und englische Website enthalten unterschiedliche HTML-IDs.");
 }
@@ -748,6 +761,9 @@ if (existsSync(manifestPath)) {
   const manifest = readJson(manifestPath);
   if (manifest.schemaVersion !== 2 || manifest.chainId !== 84532) {
     fail("Deployment-Manifest: falsches Schema oder falsche Chain-ID.");
+  }
+  if (!/^0x[a-fA-F0-9]{64}$/.test(manifest.blockHash || "")) {
+    fail("Deployment-Manifest enthaelt keinen gueltigen Deployment-Blockhash.");
   }
   for (const address of Object.values(manifest.contracts)) {
     if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {

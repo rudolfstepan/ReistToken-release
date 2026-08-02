@@ -119,6 +119,12 @@ async function updateDeploymentStatus() {
     const panel = document.querySelector("[data-address-panel]");
     const addressElement = document.querySelector("[data-token-address]");
     const explorerLink = document.querySelector("[data-explorer-link]");
+    const vestingExplorerLink = document.querySelector(
+      "[data-vesting-explorer-link]"
+    );
+    const transactionExplorerLink = document.querySelector(
+      "[data-transaction-explorer-link]"
+    );
     const copyButton = document.querySelector("[data-copy-address]");
 
     if (status) {
@@ -132,6 +138,20 @@ async function updateDeploymentStatus() {
     }
     if (addressElement) addressElement.textContent = address;
     if (explorerLink instanceof HTMLAnchorElement) explorerLink.href = explorerUrl;
+    if (
+      vestingExplorerLink instanceof HTMLAnchorElement &&
+      /^0x[a-fA-F0-9]{40}$/.test(deployment.contracts?.founderVesting || "")
+    ) {
+      vestingExplorerLink.href =
+        `https://sepolia.basescan.org/address/${deployment.contracts.founderVesting}#code`;
+    }
+    if (
+      transactionExplorerLink instanceof HTMLAnchorElement &&
+      /^0x[a-fA-F0-9]{64}$/.test(deployment.transactionHash || "")
+    ) {
+      transactionExplorerLink.href =
+        `https://sepolia.basescan.org/tx/${deployment.transactionHash}`;
+    }
     if (panel instanceof HTMLElement) panel.hidden = false;
 
     copyButton?.addEventListener("click", async () => {

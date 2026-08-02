@@ -88,6 +88,39 @@ try {
   assert(project.ok, "Projekt-JSON ist nicht erreichbar.");
   const projectData = await project.json();
   assert(projectData.token.symbol === "REIST", "Falsches Token-Symbol im Build.");
+  if (projectData.status.testnetDeployment) {
+    assert(
+      projectData.status.sourceVerified === true,
+      "Deployment ist veroeffentlicht, aber die Quellcodeverifikation fehlt."
+    );
+    const deploymentResponse = await fetch(
+      `${origin}/deployments/base-sepolia.json`
+    );
+    assert(
+      deploymentResponse.ok,
+      "Base-Sepolia-Deployment-Manifest ist nicht erreichbar."
+    );
+    const deployment = await deploymentResponse.json();
+    assert(
+      deployment.chainId === 84532 &&
+        deployment.verification?.sourceVerified === true &&
+        /^0x[a-fA-F0-9]{40}$/.test(deployment.contracts?.token || "") &&
+        /^0x[a-fA-F0-9]{40}$/.test(
+          deployment.contracts?.founderVesting || ""
+        ) &&
+        /^0x[a-fA-F0-9]{64}$/.test(deployment.transactionHash || ""),
+      "Deployment-Manifest ist unvollstaendig oder nicht verifiziert."
+    );
+    assert(
+      html.includes("deployed · Quellcode verifiziert") &&
+        englishHtml.includes("deployed · source verified") &&
+        html.includes("data-vesting-explorer-link") &&
+        html.includes("data-transaction-explorer-link") &&
+        englishHtml.includes("data-vesting-explorer-link") &&
+        englishHtml.includes("data-transaction-explorer-link"),
+      "DE/EN-Website zeigt den verifizierten Deployment-Stand nicht vollstaendig."
+    );
+  }
 
   const contributions = await fetch(`${origin}/data/contributions.json`);
   assert(contributions.ok, "Beitragsregister ist nicht erreichbar.");

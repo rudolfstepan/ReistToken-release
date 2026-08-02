@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "network": "Base Sepolia",
   "chainId": 84532,
-  "status": "wallets-created-recovery-checked-funded-not-deployed",
+  "status": "base-sepolia-pilot-deployed-no-economic-value",
   "createdAt": "2026-08-02T12:56:36.840Z",
   "recoveryCheckedAt": "2026-08-02T13:00:42.737Z",
   "backupRecoveryCheckedAt": "2026-08-02T14:05:52.419Z",
@@ -23,5 +23,13 @@
     "researchRewardsTreasury": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
     "ecosystemTreasury": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC"
   },
-  "notice": "These public addresses are for a Base Sepolia pilot only. No token has been deployed and no economic value is promised."
+  "notice": "The REIST Research Token pilot is deployed on Base Sepolia only. It has no promised economic value and is not a mainnet asset.",
+  "deployment": {
+    "manifest": "deployments/base-sepolia.json",
+    "deployedAt": "2026-08-02T15:41:30.000Z",
+    "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+    "blockNumber": 44958501,
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+    "founderVesting": "0x0A062Ff80791a96bda452A72094c98E87e3E67e6"
+  }
 }

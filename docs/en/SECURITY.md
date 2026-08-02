@@ -4,8 +4,9 @@
 
 ## Supported Status
 
-The code is at a stage before the first testnet release. There is currently no
-official mainnet deployment and no external audit.
+The first technical pilot is deployed on Base Sepolia; the source code of the
+token and vesting contracts is verified in the explorer. There is no official
+mainnet deployment and no external audit.
 
 ## Reporting a Security Issue
 
@@ -25,9 +26,10 @@ be reported as normal issues.
   separately.
 - Do not publish on mainnet while High or Critical findings remain unresolved.
 - Publish the correction, tests, and technical description together.
-- Because the token is immutable, a deployed contract cannot be patched. If a
-  defect were found before a mainnet deployment, a new contract and a publicly
-  documented migration decision would be required.
+- Because the token is immutable, the deployed testnet contract cannot be
+  patched. A relevant defect would require a public warning, a new contract,
+  and a documented migration decision. Mainnet would still require a separate
+  review and approval.
 
 ## No Bug-Bounty Promise
 

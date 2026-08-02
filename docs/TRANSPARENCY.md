@@ -4,29 +4,43 @@ Stand: 2. August 2026.
 
 ## Was tatsächlich existiert
 
-- lokaler `REISTToken`-Entwurf mit fixer Menge und fest codierter Genesis-Verteilung,
-- automatisch erzeugter `REISTFounderVesting`,
-- lokale Hardhat-Tests,
-- abgesichertes Base-Sepolia-Deployment-Skript,
-- historienfreies öffentliches Release-Repository mit reproduzierbarem Quellstand,
+- auf Base Sepolia bereitgestellter `REISTToken` mit fixer Menge und fest
+  codierter Genesis-Verteilung,
+- beim Deployment erzeugter `REISTFounderVesting`,
+- über Etherscan V2 verifizierter Quellcode beider Verträge,
+- 14 lokale Hardhat-Tests und dokumentierte Deployment-Invarianten,
+- historienfreies öffentliches Release-Repository mit dem reproduzierbaren
+  Deployment-Quellstand,
 - privater GitHub-Kanal für sensible Sicherheitsmeldungen,
 - maschinenlesbare Bounty-, Beitrags- und Projektdaten,
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
 
-- kein Testnet- oder Mainnet-Vertrag,
-- keine offizielle Vertragsadresse,
+- kein Mainnet-Vertrag,
 - kein Verkauf und keine Liquidität,
 - kein aktives Bounty und keine ausgezahlte Prämie,
 - kein externes Smart-Contract-Audit,
-- keine DAO oder dezentrale Kontrolle,
+- keine DAO, keine unabhängigen Treasury-Signer und keine dezentrale Kontrolle,
 - noch keine rechtliche Freigabe für ein öffentliches Angebot.
+
+Der Base-Sepolia-Pilot besitzt keinen zugesicherten wirtschaftlichen Wert. Er
+ist weder ein Verkaufsangebot noch eine Zusage für ein späteres
+Mainnet-Deployment.
 
 ## Deployment-Manifest
 
-Nach einem Base-Sepolia-Deployment erzeugt das Skript
-`deployments/base-sepolia.json` mit:
+Das Deployment erfolgte am 2. August 2026 um 15:41:30 UTC in Block
+[`44958501`](https://sepolia.basescan.org/block/44958501). Die offizielle
+Deployment-Transaktion lautet
+[`0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c`](https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c).
+
+| Vertrag | Base-Sepolia-Adresse |
+|---|---|
+| REIST Research Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
+
+Das maschinenlesbare Manifest `deployments/base-sepolia.json` dokumentiert:
 
 - Netzwerk und Chain-ID,
 - Token- und Vesting-Adresse,
@@ -40,15 +54,19 @@ Nach einem Base-Sepolia-Deployment erzeugt das Skript
 - zitierter Paper-DOI,
 - Verifikations- und Auditstatus.
 
-Das zugehörige Standard-JSON wird separat neben dem Manifest gespeichert. Der
-Verifier prüft RPC-Chain, Deployment-Receipt, beide Runtime-Codehashes,
-Zuteilungen, Vesting und den tatsächlich von Etherscan abrufbaren Quellcode,
-bevor er `sourceVerified` setzt. Ein Manifest und eine Explorer-Verifikation
-sind trotzdem kein Audit.
+Das zugehörige Standard-JSON ist neben dem Manifest gespeichert. Der
+veröffentlichte Quellstand ist Tag `v0.1.0-predeployment.2`, Commit
+`e3a732afcc0a6ced913621edcef49f81046979bf`. Der Verifier hat RPC-Chain,
+Deployment-Receipt, beide Runtime-Codehashes, Zuteilungen, Vesting und den über
+Etherscan abrufbaren Quellcode geprüft. Der Status `sourceVerified` steht
+deshalb auf `true`. Diese technische Verifikation ersetzt kein unabhängiges
+Sicherheitsaudit.
 
 ## Custody-Realität
 
-Treasury-Safes können Bestände übertragen. On-chain sichtbare Zuteilungen
-garantieren nicht, dass spätere Ausgaben fachlich sinnvoll sind. Das öffentliche
-Register und voneinander unabhängige Signer sind deshalb Teil des Systems, auch
-wenn sie nicht im Tokenvertrag erzwungen werden.
+Die beiden Testnet-Treasuries werden derzeit zentral verwaltet und sind keine
+unabhängig besetzten Safe-Multisigs. Sie können ihre Bestände übertragen;
+on-chain sichtbare Zuteilungen garantieren nicht, dass spätere Ausgaben fachlich
+sinnvoll sind. Öffentliche Belege und voneinander unabhängige Signer bleiben
+daher Voraussetzungen für einen belastbaren Vergabeprozess, werden aber vom
+Tokenvertrag nicht erzwungen.

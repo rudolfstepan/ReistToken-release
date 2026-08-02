@@ -30,7 +30,7 @@
     "symbol": "REIST",
     "decimals": 18,
     "totalSupply": "1000000",
-    "status": "local-tested-not-deployed",
+    "status": "base-sepolia-pilot-deployed-no-economic-value",
     "networkPilot": {
       "name": "Base Sepolia",
       "chainId": 84532,
@@ -70,9 +70,9 @@
   },
   "status": {
     "contractTestsPassing": 14,
-    "testnetDeployment": false,
+    "testnetDeployment": true,
     "mainnetDeployment": false,
-    "sourceVerified": false,
+    "sourceVerified": true,
     "externalAudit": false,
     "publicSale": false,
     "dexLiquidity": false,

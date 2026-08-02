@@ -4,10 +4,10 @@ This repository is technical development documentation and does not constitute
 legal, tax, or investment advice. It contains no public offer, no solicitation
 to purchase, and no promise of future admission to trading.
 
-The current state is published technical project documentation preparing for a
-Base Sepolia pilot; no economic value is assured. There is neither a testnet
-nor a mainnet contract, nor any sale, market price, redemption right, yield,
-or promise of profit.
+The current state is a technical testnet pilot deployed on Base Sepolia; no
+economic value is assured. There is no mainnet contract, sale, DEX liquidity,
+assured market price, redemption right, yield, or promise of profit. The
+existence of a verifiable testnet address does not change this classification.
 
 ## Austria and the European Union
 

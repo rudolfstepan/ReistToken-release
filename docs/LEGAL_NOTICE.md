@@ -4,11 +4,12 @@ Dieses Repository ist technische Entwicklungsdokumentation und keine Rechts-,
 Steuer- oder Anlageberatung. Es enthält kein öffentliches Angebot, keine
 Kaufaufforderung und kein Versprechen einer späteren Handelszulassung.
 
-Der aktuelle Stand ist veröffentlichte technische Projektdokumentation zur
-Vorbereitung eines Base-Sepolia-Piloten; ein wirtschaftlicher Wert wird nicht
-zugesichert. Es gibt weder einen Testnet- noch einen Mainnet-Vertrag, ebenso
-wenig einen Verkauf, Marktpreis, Rücknahmeanspruch, Ertrag oder
-Gewinnversprechen.
+Der aktuelle Stand ist ein auf Base Sepolia bereitgestellter technischer
+Testnet-Pilot; ein wirtschaftlicher Wert wird nicht zugesichert. Es gibt keinen
+Mainnet-Vertrag, keinen Verkauf, keine DEX-Liquidität, keinen zugesicherten
+Marktpreis, keinen Rücknahmeanspruch, keinen Ertrag und kein
+Gewinnversprechen. Die verifizierbare Testnet-Adresse ändert diese Einordnung
+nicht.
 
 ## Österreich und Europäische Union
 

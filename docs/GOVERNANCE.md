@@ -2,10 +2,12 @@
 
 ## Tatsächlicher Zustand
 
-Es existiert derzeit keine DAO und keine dezentrale Governance. Vor dem ersten
-Testnet-Deployment werden die Treasuries durch benannte Verantwortliche oder
-separate Safe-Multisigs kontrolliert. Kontrolle und Signaturschwellen sind im
-Deployment-Manifest offenzulegen.
+Es existiert derzeit keine DAO und keine dezentrale Governance. Für das erste
+Base-Sepolia-Deployment wurden zwei getrennte Testnet-Treasury-Wallets
+verwendet. Sie werden derzeit zentral kontrolliert und sind keine unabhängig
+besetzten Safe-Multisigs. Adressen und Genesis-Zuteilungen sind im
+Deployment-Manifest veröffentlicht. Unabhängige Signer und dokumentierte
+Signaturschwellen bleiben Voraussetzung für eine belastbare Treasury-Struktur.
 
 ## Entscheidungen
 

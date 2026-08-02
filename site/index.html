@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="REIST Division: offene zentrierte Restarithmetik und Dokumentation eines getrennten, noch nicht ausgerollten Research-Token-Piloten für Base Sepolia."
+      content="REIST Division: offene zentrierte Restarithmetik und Dokumentation des getrennten, auf Base Sepolia bereitgestellten Research-Token-Piloten."
     />
     <meta name="theme-color" content="#0b1720" />
     <title>REIST Division — Projektdokumentation</title>
@@ -72,8 +72,10 @@
           <p class="hero-lead">
             REIST beschreibt eine implementierungsorientierte Verwendung
             zentrierter Reste für additionsdominierte modulare Rechenkerne. Ein
-            davon getrennter ERC-20-Pilot ist zur Anerkennung reproduzierbarer
-            Implementierungen und unabhängiger Prüfungen vorgesehen.
+            davon getrennter ERC-20-Pilot wurde auf Base Sepolia bereitgestellt
+            und bildet die technische Grundlage für eine dokumentierte
+            Anerkennung reproduzierbarer Implementierungen und unabhängiger
+            Prüfungen.
           </p>
           <div class="hero-actions">
             <a
@@ -124,7 +126,7 @@
         <h2 id="projektstatus-heading">Projektstatus</h2>
         <dl>
           <div><dt>Vertrag</dt><dd><span data-test-count>14</span> lokale Tests bestanden</dd></div>
-          <div><dt>Base Sepolia</dt><dd data-testnet-status aria-live="polite">nicht deployed</dd></div>
+          <div><dt>Base Sepolia</dt><dd data-testnet-status aria-live="polite">deployed · Quellcode verifiziert</dd></div>
           <div><dt>Mainnet</dt><dd>nicht freigegeben</dd></div>
           <div><dt>Tokenverkauf</dt><dd>nicht vorgesehen</dd></div>
           <div><dt>Externes Audit</dt><dd>noch nicht erfolgt</dd></div>
@@ -229,7 +231,7 @@
       <section id="token" class="content-section section-shell">
         <div class="section-intro">
           <p class="section-label">Token-Spezifikation</p>
-          <h2>Festes ERC‑20-Modell für einen Testnet-Pilot</h2>
+          <h2>Festes ERC‑20-Modell auf Base Sepolia</h2>
           <p>
             Der Token ist als übertragbares Anerkennungsmittel für geprüfte
             Forschungsbeiträge vorgesehen; Auswahl und Review bleiben off-chain.
@@ -265,18 +267,21 @@
             </table>
             <p>
               Founder: 1 Jahr Cliff, 3 Jahre linear. Am Cliff ist ein Drittel
-              freigeschaltet. Geplant zum Start: 0 % Verkauf, 0 % DEX-Liquidität.
-              Das ist Projektpolitik, keine technische Transfersperre.
+              freigeschaltet. Beim Deployment wurden 0 % für Verkauf und 0 %
+              für DEX-Liquidität reserviert. Das ist Projektpolitik, keine
+              technische Transfersperre.
             </p>
           </div>
         </div>
 
-        <div class="address-panel" data-address-panel aria-live="polite" hidden>
-          <span>Offizielle Base-Sepolia-Adresse</span>
-          <code data-token-address></code>
+        <div class="address-panel" data-address-panel aria-live="polite">
+          <span>Offizielle Base-Sepolia-Verträge · Quellcode verifiziert</span>
+          <code data-token-address>0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68</code>
           <div>
             <button type="button" class="text-button" data-copy-address>Adresse kopieren</button>
-            <a data-explorer-link rel="noreferrer">Im Explorer prüfen</a>
+            <a data-explorer-link href="https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code" rel="noreferrer">Token-Vertrag</a>
+            <a data-vesting-explorer-link href="https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code" rel="noreferrer">Vesting-Vertrag</a>
+            <a data-transaction-explorer-link href="https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c" rel="noreferrer">Deployment-Transaktion</a>
           </div>
         </div>
       </section>
@@ -342,11 +347,12 @@
           <article class="transparency-card">
             <h3>Heute vorhanden</h3>
             <ul>
-              <li>lokaler, nicht upgradefähiger Vertragsentwurf</li>
+              <li>nicht upgradefähiger Token auf Base Sepolia</li>
               <li>im Konstruktor fest definierte Genesis-Verteilung</li>
-              <li>automatisch erzeugtes Founder-Vesting</li>
+              <li>beim Deployment erzeugtes Founder-Vesting</li>
+              <li>verifizierter Quellcode beider Verträge</li>
               <li>lokale Tests und Deployment-Invarianten</li>
-              <li>öffentlicher, historienfreier Token-Release-Quellstand</li>
+              <li>öffentliches Deployment-Manifest und reproduzierbarer Quellstand</li>
               <li>privater Kanal für sensible Sicherheitsmeldungen</li>
               <li>vorbereitete Bounty- und Registerformate</li>
             </ul>
@@ -354,10 +360,10 @@
           <article class="transparency-card transparency-card-pending">
             <h3>Noch offen</h3>
             <ul>
-              <li>Base-Sepolia-Deployment und Explorer-Verifizierung</li>
               <li>vollständige öffentliche FPGA-Quellen</li>
-              <li>getrennte Treasury-Safes und Signer</li>
+              <li>unabhängig besetzte Treasury-Safes und Signer</li>
               <li>externes Contract-Review</li>
+              <li>vollständiger Testnet-Smoke-Test mit öffentlichem Bericht</li>
               <li>rechtliche Freigabe für Schritte mit wirtschaftlicher Relevanz</li>
             </ul>
           </article>
@@ -381,8 +387,8 @@
         <div class="next-steps">
           <h3>Nächste Arbeitsschritte</h3>
           <ol>
-            <li>Getrennte Treasury-Safes und Signer festlegen.</li>
-            <li>Verträge auf Base Sepolia bereitstellen und verifizieren.</li>
+            <li>Unabhängige Treasury-Safes und Signer festlegen.</li>
+            <li>Vollständigen Testnet-Smoke-Test dokumentieren.</li>
             <li>Erstes Reproduktions-Bounty als öffentliches Issue anlegen.</li>
             <li>Mainnet erst nach dokumentiertem Nutzen, Audit und Rechtsprüfung bewerten.</li>
           </ol>

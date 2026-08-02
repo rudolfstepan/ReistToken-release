@@ -1,6 +1,6 @@
 # Release-Gates
 
-## Vor Base Sepolia
+## Base-Sepolia-Deployment
 
 - [x] Alle früheren Platzhalter-Artefakte im Projekt ersetzt
 - [x] fixer Bestand und Genesis-Verteilung im Vertrag
@@ -8,10 +8,12 @@
 - [x] lokale Vertrags- und Vesting-Tests
 - [x] keine Mint-, Tax-, Pause-, Blacklist- oder Upgradefunktion
 - [x] Deployment-Invarianten und Manifest
-- [ ] zwei separate Testnet-Treasuries eingerichtet
+- [x] zwei separate Testnet-Treasury-Wallets eingerichtet
 - [x] privater Security-Meldekanal im öffentlichen Release-Repository eingerichtet
 - [x] DOI `10.5281/zenodo.21206471` für den Pilot eindeutig festgelegt
 - [x] öffentliche Repository-URL festgelegt und Release-Commit gepusht
+- [x] Deployment-Transaktion und Manifest veröffentlicht
+- [x] Quellcode von Token und Vesting im Explorer verifiziert
 - [ ] erstes Pilot-Bounty als öffentliches Issue aktiviert
 
 ## Wissenschaftliche Konsistenz
@@ -30,7 +32,7 @@
 - [ ] mindestens ein real abgeschlossenes, reproduzierbares Pilot-Bounty
 - [ ] unabhängige Testnet-Nutzer und Treasury-Signer
 - [ ] vollständiger Testnet-Smoke-Test und veröffentlichter Bericht
-- [ ] Quellcode beider Verträge im Explorer verifiziert
+- [x] Quellcode beider Verträge im Explorer verifiziert
 - [ ] externe Smart-Contract-Prüfung ohne offene High/Critical-Befunde
 - [ ] rechtliche und steuerliche Prüfung für Österreich/EU
 - [ ] MiCAR-Einordnung und gegebenenfalls konformes Whitepaper/Notifikation

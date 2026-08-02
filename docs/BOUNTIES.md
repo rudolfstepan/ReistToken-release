@@ -36,9 +36,9 @@ verlinktes öffentliches Issue, einen benannten Reviewer und eine dokumentierte
 Reservierungsentscheidung aktiv. Aktive Forschungsbountys sind an die
 veröffentlichte Research-Treasury gebunden.
 
-Eine Aktivierung vor dem Token-Deployment öffnet nur die Einreichungsphase. Ein
-Testnet-REIST-Transfer ist erst nach Deployment, dokumentierter Annahme und
-öffentlicher Treasury-Transaktion möglich.
+Das erfolgte Token-Deployment aktiviert kein Bounty und begründet keinen
+Auszahlungsanspruch. Ein Testnet-REIST-Transfer setzt weiterhin eine
+dokumentierte Annahme und eine öffentliche Treasury-Transaktion voraus.
 
 ## Prüfung einer Einreichung
 

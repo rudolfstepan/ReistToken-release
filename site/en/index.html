@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="REIST Division: open documentation of centered remainder arithmetic and a separate, not-yet-deployed research-token pilot for Base Sepolia."
+      content="REIST Division: open documentation of centered remainder arithmetic and the separate research-token pilot deployed on Base Sepolia."
     />
     <meta name="theme-color" content="#0b1720" />
     <title>REIST Division — Project Documentation</title>
@@ -60,7 +60,8 @@
           <p class="hero-lead">
             REIST describes an implementation-oriented use of centered
             remainders for addition-dominated modular compute kernels. A
-            separate ERC-20 pilot is intended to recognize reproducible
+            separate ERC-20 pilot has been deployed on Base Sepolia and provides
+            the technical basis for documented recognition of reproducible
             implementations and independent evaluations.
           </p>
           <div class="hero-actions">
@@ -112,7 +113,7 @@
         <h2 id="projektstatus-heading">Project status</h2>
         <dl>
           <div><dt>Contract</dt><dd><span data-test-count>14</span> local tests passing</dd></div>
-          <div><dt>Base Sepolia</dt><dd data-testnet-status aria-live="polite">not deployed</dd></div>
+          <div><dt>Base Sepolia</dt><dd data-testnet-status aria-live="polite">deployed · source verified</dd></div>
           <div><dt>Mainnet</dt><dd>not approved</dd></div>
           <div><dt>Token sale</dt><dd>not planned</dd></div>
           <div><dt>External audit</dt><dd>not yet performed</dd></div>
@@ -218,7 +219,7 @@
       <section id="token" class="content-section section-shell">
         <div class="section-intro">
           <p class="section-label">Token specification</p>
-          <h2>Fixed ERC-20 model for a testnet pilot</h2>
+          <h2>Fixed ERC-20 model on Base Sepolia</h2>
           <p>
             The token is intended as a transferable means of recognizing
             reviewed research contributions; selection and review remain
@@ -254,19 +255,21 @@
             </table>
             <p>
               Founder allocation: one-year cliff and three-year linear vesting.
-              One third is vested at the cliff. Planned at launch: 0% public
-              sale and 0% DEX liquidity. This is project policy, not a technical
-              transfer restriction.
+              One third is vested at the cliff. The deployment reserved 0% for
+              a public sale and 0% for DEX liquidity. This is project policy,
+              not a technical transfer restriction.
             </p>
           </div>
         </div>
 
-        <div class="address-panel" data-address-panel aria-live="polite" hidden>
-          <span>Official Base Sepolia address</span>
-          <code data-token-address></code>
+        <div class="address-panel" data-address-panel aria-live="polite">
+          <span>Official Base Sepolia contracts · source verified</span>
+          <code data-token-address>0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68</code>
           <div>
             <button type="button" class="text-button" data-copy-address>Copy address</button>
-            <a data-explorer-link rel="noreferrer">View in explorer</a>
+            <a data-explorer-link href="https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code" rel="noreferrer">Token contract</a>
+            <a data-vesting-explorer-link href="https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code" rel="noreferrer">Founder vesting</a>
+            <a data-transaction-explorer-link href="https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c" rel="noreferrer">Deployment transaction</a>
           </div>
         </div>
       </section>
@@ -332,11 +335,12 @@
           <article class="transparency-card">
             <h3>Available today</h3>
             <ul>
-              <li>local, non-upgradeable contract design</li>
+              <li>non-upgradeable token deployed on Base Sepolia</li>
               <li>genesis allocation fixed in the constructor</li>
-              <li>automatically created founder vesting contract</li>
+              <li>founder vesting contract created during deployment</li>
+              <li>verified source code for both contracts</li>
               <li>local tests and deployment invariants</li>
-              <li>public, history-free token release source snapshot</li>
+              <li>public deployment manifest and reproducible source snapshot</li>
               <li>private channel for sensitive security reports</li>
               <li>prepared bounty and contribution-register formats</li>
             </ul>
@@ -344,10 +348,10 @@
           <article class="transparency-card transparency-card-pending">
             <h3>Still outstanding</h3>
             <ul>
-              <li>Base Sepolia deployment and explorer verification</li>
               <li>complete public FPGA sources</li>
-              <li>separate treasury Safes and signers</li>
+              <li>independently staffed treasury Safes and signers</li>
               <li>external contract review</li>
+              <li>complete testnet smoke test with a public report</li>
               <li>legal clearance for economically relevant steps</li>
             </ul>
           </article>
@@ -370,8 +374,8 @@
         <div class="next-steps">
           <h3>Next steps</h3>
           <ol>
-            <li>Designate separate treasury Safes and signers.</li>
-            <li>Deploy and verify the contracts on Base Sepolia.</li>
+            <li>Designate independent treasury Safes and signers.</li>
+            <li>Document a complete testnet smoke test.</li>
             <li>Open the first reproduction bounty as a public issue.</li>
             <li>Consider mainnet only after documented utility, an audit, and legal review.</li>
           </ol>

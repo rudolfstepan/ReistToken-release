@@ -7,7 +7,7 @@
 | Name | REIST Research Token |
 | Symbol | REIST |
 | Standard | ERC-20 |
-| Pilot target network | Base Sepolia, chain ID 84532 |
+| Pilot network | Base Sepolia, chain ID 84532; deployed and source verified |
 | Decimal places | 18 |
 | Total supply | 1,000,000 REIST |
 | Subsequent minting | technically unavailable |
@@ -17,6 +17,11 @@
 
 Names and symbols are not unique on blockchains. Only the combination of the
 network and the published contract address identifies the token.
+
+| Contract | Official Base Sepolia address |
+|---|---|
+| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Founder vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 
 ## Genesis Allocation
 
@@ -30,9 +35,9 @@ receives zero tokens.
 | Ecosystem Treasury | 20% | 200,000 | documented project operations, infrastructure, and integrations |
 | Founder Vesting | 10% | 100,000 | time-bound allocation to the founder/author |
 
-At launch, `0%` is planned for a public sale and `0%` for DEX liquidity. There
-is no private presale round and no price commitment. This is a documented
-initial policy, not a transfer restriction of the standard ERC-20: treasuries
+The deployment reserved `0%` for a public sale and `0%` for DEX liquidity.
+There is no private presale round and no price commitment. This is documented
+project policy, not a transfer restriction of the standard ERC-20: treasuries
 and subsequent holders can technically transfer and could thereby also enable
 secondary markets.
 
@@ -55,8 +60,10 @@ become permanently inaccessible.
 ## Treasury Control
 
 The token contract enforces the initial recipients and amounts, not the later
-use of treasury balances. The following are planned for the testnet pilot and
-are mandatory before any mainnet deployment:
+use of treasury balances. The two testnet treasuries are separate wallets that
+are currently controlled centrally; they are not independently staffed Safe
+multisigs. The following are planned for substantive disbursements and are
+mandatory before any mainnet deployment:
 
 - two separate Safe multisigs,
 - a published signer count and threshold,

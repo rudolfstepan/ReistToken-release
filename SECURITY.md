@@ -4,8 +4,9 @@
 
 ## Unterstützter Stand
 
-Der Code befindet sich vor dem ersten Testnet-Release. Es existiert derzeit
-kein offizielles Mainnet-Deployment und kein externes Audit.
+Der erste technische Pilot ist auf Base Sepolia deployed; der Quellcode von
+Token und Vesting ist im Explorer verifiziert. Es existiert kein offizielles
+Mainnet-Deployment und kein externes Audit.
 
 ## Sicherheitsproblem melden
 
@@ -24,9 +25,10 @@ als normales Issue gemeldet werden.
 - Auswirkung auf Vertrag, Deployment-Skripte und Dokumentation getrennt prüfen.
 - Keine Mainnet-Veröffentlichung bei ungeklärten High- oder Critical-Befunden.
 - Korrektur, Tests und technische Beschreibung gemeinsam veröffentlichen.
-- Da der Token unveränderlich ist, kann ein deployed Vertrag nicht gepatcht
-  werden. Vor einem Mainnet-Deployment wäre bei einem Fehler ein neuer Vertrag
-  und ein öffentlich dokumentierter Migrationsentscheid erforderlich.
+- Da der Token unveränderlich ist, kann der deployed Testnet-Vertrag nicht
+  gepatcht werden. Bei einem relevanten Fehler wären eine öffentliche Warnung,
+  ein neuer Vertrag und ein dokumentierter Migrationsentscheid erforderlich.
+  Für Mainnet wäre unabhängig davon eine neue Prüfung und Freigabe nötig.
 
 ## Kein Bug-Bounty-Versprechen
 

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 2,
+  "status": "testnet-pilot-no-economic-value",
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "deployedAt": "2026-08-02T15:41:30.000Z",
+  "deployer": "0xCfE0Cbb18351C31E00778fEa42b4b260112Aa48e",
+  "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+  "blockNumber": 44958501,
+  "blockHash": "0x84e5975b36774a2e5b66bdbcc9d3b1729e2d2c59c09ef41067d47715c94899c5",
+  "contracts": {
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+    "founderVesting": "0x0A062Ff80791a96bda452A72094c98E87e3E67e6"
+  },
+  "runtimeCodeHashes": {
+    "token": "0xd7b8b0e3c8e55a8221fa15e07c0f8cab75695e20660bb1a84cb645e2b3c63e38",
+    "founderVesting": "0x7cf933dcf909061a5bab1cd98fef3258354852aeb34f6b6407261fabf1de53ec"
+  },
+  "token": {
+    "name": "REIST Research Token",
+    "symbol": "REIST",
+    "decimals": 18,
+    "totalSupply": "1000000",
+    "deployedCodeHash": "0xd7b8b0e3c8e55a8221fa15e07c0f8cab75695e20660bb1a84cb645e2b3c63e38"
+  },
+  "allocations": {
+    "researchRewards": {
+      "amount": "700000",
+      "address": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8"
+    },
+    "ecosystemTreasury": {
+      "amount": "200000",
+      "address": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC"
+    },
+    "founderVesting": {
+      "amount": "100000",
+      "beneficiary": "0xdc9F744C2D9e5962EC8839085ACADB5deFf585Ed",
+      "vestingContract": "0x0A062Ff80791a96bda452A72094c98E87e3E67e6",
+      "start": 1785685290,
+      "cliff": 1817221290,
+      "end": 1880293290
+    }
+  },
+  "source": {
+    "sourceCommit": "e3a732afcc0a6ced913621edcef49f81046979bf",
+    "sourceTag": "v0.1.0-predeployment.2",
+    "repositoryRemote": "https://github.com/rudolfstepan/ReistToken-release",
+    "buildInfoId": "solc-0_8_28-307315cdc7bd5cdee69bb578440f74c92753004c",
+    "standardJsonInput": "base-sepolia-standard-input.json",
+    "standardJsonInputSha256": "0121A9AA31BFEFB105AF1BE3C5D4B638492CF1CFB3F513100072B0C7C54E8C6A",
+    "buildOutputSha256": "3DEF75B6AFFB8B7A73FA1E8716A417EAF6194A4F35931771A30C71E79CE8AB9F",
+    "sourceKeys": {
+      "token": "project/contracts/REISTToken.sol",
+      "founderVesting": "project/contracts/REISTFounderVesting.sol"
+    },
+    "contractNames": {
+      "token": "REISTToken",
+      "founderVesting": "REISTFounderVesting"
+    },
+    "solidity": "0.8.28+commit.7893614a",
+    "openZeppelin": "5.6.1",
+    "hardhat": "3.12.0",
+    "ethers": "6.17.0",
+    "paperDoi": "10.5281/zenodo.21206471"
+  },
+  "verification": {
+    "sourceVerified": true,
+    "externalAudit": false,
+    "provider": "Etherscan V2",
+    "verifiedAt": "2026-08-02T16:16:33.314Z"
+  }
+}
