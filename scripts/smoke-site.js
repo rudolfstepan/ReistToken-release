@@ -1,5 +1,8 @@
 import { spawn } from "node:child_process";
-import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
+import {
+  validateCompletedAllowanceEvidence,
+  validatePreparedAllowancePlan,
+} from "./lib/base-sepolia-allowance-plan.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import {
   FPGA_SOURCE_COMMIT,
@@ -97,7 +100,7 @@ try {
   assert(
     projectData.status.technicalTreasurySmoke === true &&
       projectData.status.allowanceTestPrepared === true &&
-      projectData.status.allowanceTestCompleted === false &&
+      projectData.status.allowanceTestCompleted === true &&
       projectData.status.fullTestnetSmoke === false,
     "Technischer und vollständiger Smoke-Status sind nicht sauber getrennt."
   );
@@ -198,12 +201,33 @@ try {
     "Allowance-Plan wird nicht als JSON ausgeliefert."
   );
   validatePreparedAllowancePlan(await allowancePlanResponse.json());
+
+  const allowanceEvidenceResponse = await fetch(
+    `${origin}/operations/base-sepolia-allowance-roundtrip.json`
+  );
   assert(
-    html.includes('href="plans/base-sepolia-allowance-smoke.json"') &&
-      html.includes("vorbereitet, nicht ausgeführt") &&
-      englishHtml.includes('href="../plans/base-sepolia-allowance-smoke.json"') &&
-      englishHtml.includes("prepared, not executed"),
-    "DE/EN-Website trennt vorbereiteten Allowance-Plan nicht von einer Ausführung."
+    allowanceEvidenceResponse.ok,
+    "Allowance-Operationsnachweis ist nicht erreichbar."
+  );
+  assert(
+    allowanceEvidenceResponse.headers
+      .get("content-type")
+      ?.startsWith("application/json"),
+    "Allowance-Operationsnachweis wird nicht als JSON ausgeliefert."
+  );
+  validateCompletedAllowanceEvidence(await allowanceEvidenceResponse.json());
+  assert(
+    html.includes(
+        'href="operations/base-sepolia-allowance-roundtrip.json"'
+      ) &&
+      html.includes("bestätigter") &&
+      html.includes("unmittelbar auf 0 widerrufen") &&
+      englishHtml.includes(
+        'href="../operations/base-sepolia-allowance-roundtrip.json"'
+      ) &&
+      englishHtml.includes("confirmed") &&
+      englishHtml.includes("immediately cleared to zero"),
+    "DE/EN-Website verlinkt den abgeschlossenen Allowance-Operationsnachweis nicht."
   );
 
   const contributions = await fetch(`${origin}/data/contributions.json`);

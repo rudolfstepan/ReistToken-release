@@ -16,7 +16,8 @@
 - [x] Quellcode von Token und Vesting im Explorer verifiziert
 - [x] gebundener technischer Treasury-Transfer mit öffentlichem Operationsnachweis
 - [x] fail-closed Allowance-/Widerrufsplan mit Read-only-Precheck vorbereitet
-- [ ] Allowance `1 REIST` on-chain gesetzt und unmittelbar auf `0` widerrufen
+- [x] Allowance `1 REIST` on-chain gesetzt, unmittelbar auf `0` widerrufen und
+  mit öffentlichem Operationsnachweis dokumentiert
 - [ ] erstes Pilot-Bounty als öffentliches Issue aktiviert
 
 ## Wissenschaftliche Konsistenz

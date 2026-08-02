@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { Transaction, Wallet, parseEther, parseUnits } from "ethers";
 import {
+  ALLOWANCE_STATUS_COMPLETED,
+  ALLOWANCE_STATUS_PREPARED,
   ALLOWANCE_TOTAL_FEE_CAP,
   ALLOWANCE_VALUE,
   BASELINE_ECOSYSTEM_TOKENS,
@@ -17,7 +19,9 @@ import {
   assertFinalAllowanceRoundtrip,
   assertFreshAllowanceBaseline,
   createAllowanceJournal,
+  createCompletedAllowanceEvidence,
   createPreparedAllowancePlan,
+  validateCompletedAllowanceEvidence,
   validateAllowanceJournal,
   validateAllowancePublicConfiguration,
   validatePreparedAllowancePlan,
@@ -92,8 +96,62 @@ test("allowance preparation is bound to the completed prior smoke", () => {
   const roles = readJson("data/testnet-roles.json");
   const project = readJson("data/project.json");
   const operation = readJson("operations/base-sepolia-smoke-transfer.json");
+  const preparedProject = structuredClone(project);
+  preparedProject.status.allowanceTestCompleted = false;
   assert.doesNotThrow(() =>
-    validateAllowancePublicConfiguration(deployment, roles, project, operation)
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      preparedProject,
+      operation,
+      ALLOWANCE_STATUS_PREPARED
+    )
+  );
+  assert.doesNotThrow(() =>
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      preparedProject,
+      operation
+    )
+  );
+
+  const completedProject = structuredClone(project);
+  completedProject.status.allowanceTestCompleted = true;
+  assert.doesNotThrow(() =>
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      completedProject,
+      operation,
+      ALLOWANCE_STATUS_COMPLETED
+    )
+  );
+  assert.throws(() =>
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      completedProject,
+      operation
+    )
+  );
+  assert.throws(() =>
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      preparedProject,
+      operation,
+      ALLOWANCE_STATUS_COMPLETED
+    )
+  );
+  assert.throws(() =>
+    validateAllowancePublicConfiguration(
+      deployment,
+      roles,
+      preparedProject,
+      operation,
+      "unknown"
+    )
   );
   for (const mutate of [
     (copy) => { copy.project.status.allowanceTestPrepared = false; },
@@ -107,7 +165,7 @@ test("allowance preparation is bound to the completed prior smoke", () => {
     const copy = {
       deployment: structuredClone(deployment),
       roles: structuredClone(roles),
-      project: structuredClone(project),
+      project: structuredClone(preparedProject),
       operation: structuredClone(operation),
     };
     mutate(copy);
@@ -119,6 +177,31 @@ test("allowance preparation is bound to the completed prior smoke", () => {
         copy.operation
       )
     );
+  }
+});
+
+test("completed allowance evidence is bound to the exact canonical result", () => {
+  const stored = readJson("operations/base-sepolia-allowance-roundtrip.json");
+  assert.deepEqual(stored, createCompletedAllowanceEvidence());
+  assert.doesNotThrow(() => validateCompletedAllowanceEvidence(stored));
+
+  for (const mutate of [
+    (copy) => { copy.toolingCommit = "00".repeat(20); },
+    (copy) => { copy.transactions.setAllowance.hash = copy.transactions.clearAllowance.hash; },
+    (copy) => { copy.transactions.clearAllowance.nonce = 3; },
+    (copy) => { copy.transactions.setAllowance.blockHash = `0x${"00".repeat(32)}`; },
+    (copy) => { copy.transactions.clearAllowance.transactionIndex = 16; },
+    (copy) => { copy.transactions.setAllowance.feeUpperBoundWei = "1000000000001"; },
+    (copy) => { copy.validation.approvalEvents[0] = "0"; },
+    (copy) => { copy.validation.receiptTransferEvents = 1; },
+    (copy) => { copy.validation.tokenTransferEventsInBoundBlockRange = 1; },
+    (copy) => { copy.validation.finalAllowanceBaseUnits = ALLOWANCE_VALUE.toString(); },
+    (copy) => { copy.validation.receiptReportedExecutionFeeTotalWei = "425100000001"; },
+    (copy) => { copy.finalBalances.researchTokenBaseUnits = (BASELINE_RESEARCH_TOKENS - 1n).toString(); },
+  ]) {
+    const copy = structuredClone(stored);
+    mutate(copy);
+    assert.throws(() => validateCompletedAllowanceEvidence(copy));
   }
 });
 

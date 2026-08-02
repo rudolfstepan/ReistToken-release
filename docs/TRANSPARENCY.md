@@ -19,9 +19,10 @@ Stand: 2. August 2026.
 - öffentlich einsehbare REIST-VHDL-Quellen, GHDL-Testbenches und
   Tang-Primer-20K-Builddateien im
   [FPGA-Repository](https://github.com/rudolfstepan/6502-sbc-fpga),
-- ein öffentlich prüfbarer, exakt gebundener
-  [Allowance- und Widerrufsplan](../plans/base-sepolia-allowance-smoke.json),
-  der ausdrücklich noch nicht signiert oder ausgeführt wurde,
+- ein nach exakt gebundenem
+  [Allowance- und Widerrufsplan](../plans/base-sepolia-allowance-smoke.json)
+  abgeschlossener Roundtrip mit finaler Allowance `0`, ohne Token-Transfer und
+  mit [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json),
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
@@ -39,12 +40,13 @@ Der Base-Sepolia-Pilot besitzt keinen zugesicherten wirtschaftlichen Wert. Er
 ist weder ein Verkaufsangebot noch eine Zusage für ein späteres
 Mainnet-Deployment.
 
-Der technische Treasury-Transfer ist keine Prämienauszahlung, kein
-akzeptierter Beitrag und noch kein vollständiger Testnet-Smoke-Test. Die
-On-chain-Ausführung des Allowance-Roundtrips sowie Vesting- und Bounty-Prüfungen
-dieses vollständigen Gates bleiben offen. Der zuletzt veröffentlichte
-Website-Stand bestand den Live-Check; die neue Planverlinkung erfordert nach
-diesem Release einen erneuten Webspace-Abgleich.
+Der technische Treasury-Transfer und der Allowance-Roundtrip sind weder
+Prämienauszahlungen noch akzeptierte Beiträge und bilden zusammen noch keinen
+vollständigen Testnet-Smoke-Test. Vesting- und Bounty-Prüfungen sowie der
+konsolidierte Bericht dieses Gates bleiben offen. Der zuletzt bereitgestellte
+Website-Stand bestand den Live-Check; dieser neue Operationsnachweis und die
+zugehörigen Statusangaben benötigen nach dem Release einen erneuten
+Webspace-Abgleich.
 
 ## Deployment-Manifest
 

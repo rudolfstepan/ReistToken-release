@@ -23,6 +23,8 @@ export const SET_ALLOWANCE_FEE_CAP = parseEther("0.000001");
 export const CLEAR_ALLOWANCE_FEE_CAP = parseEther("0.000001");
 export const ALLOWANCE_TOTAL_FEE_CAP = parseEther("0.000002");
 export const REQUIRED_ALLOWANCE_CONFIRMATION_BLOCKS = 2;
+export const ALLOWANCE_STATUS_PREPARED = "prepared";
+export const ALLOWANCE_STATUS_COMPLETED = "completed";
 export const BASELINE_RESEARCH_TOKENS = parseUnits("699999", 18);
 export const BASELINE_ECOSYSTEM_TOKENS = parseUnits("200001", 18);
 export const SET_ALLOWANCE_CALLDATA =
@@ -35,6 +37,19 @@ const PRIOR_OPERATION_ID = "reist-base-sepolia-treasury-smoke-v1";
 const PRIOR_OPERATION_PATH = "operations/base-sepolia-smoke-transfer.json";
 const PRIOR_TOKEN_HASH =
   "0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8";
+const COMPLETED_TOOLING_COMMIT =
+  "dc990ca9dc80304e5220bcca6095e9927ba15adb";
+const SET_ALLOWANCE_HASH =
+  "0x5b355cd4e660fa3659eb33100e1bcc361ac92917a86f958dbdbe136e96b53180";
+const CLEAR_ALLOWANCE_HASH =
+  "0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07";
+const COMPLETION_BLOCK_NUMBER = 44965712;
+const COMPLETION_BLOCK_HASH =
+  "0xa862026609a02a6878076dca56faab3e1fa9ffb12512f4d86e9a11ff7f865b80";
+const BASELINE_BLOCK_HASH =
+  "0xf52f1ba715d73a1620c032d745e5bd9640a051b5e1eba10356c8928809e5c111";
+const TRANSFER_TOPIC =
+  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
 function fail(message) {
   throw new Error(message);
@@ -153,16 +168,29 @@ export function validateAllowancePublicConfiguration(
   deployment,
   roles,
   project,
-  priorOperation
+  priorOperation,
+  expectedAllowanceStatus = ALLOWANCE_STATUS_PREPARED
 ) {
   const config = validatePublicSmokeConfiguration(deployment, roles, project);
   if (
+    expectedAllowanceStatus !== ALLOWANCE_STATUS_PREPARED &&
+    expectedAllowanceStatus !== ALLOWANCE_STATUS_COMPLETED
+  ) {
+    fail("Unbekannter erwarteter Allowance-Projektstatus.");
+  }
+  const expectedCompleted =
+    expectedAllowanceStatus === ALLOWANCE_STATUS_COMPLETED;
+  if (
     project?.status?.technicalTreasurySmoke !== true ||
     project?.status?.allowanceTestPrepared !== true ||
-    project?.status?.allowanceTestCompleted !== false ||
+    project?.status?.allowanceTestCompleted !== expectedCompleted ||
     project?.status?.fullTestnetSmoke !== false
   ) {
-    fail("Projektstatus erlaubt nur den vorbereiteten, noch offenen Allowance-Test.");
+    fail(
+      expectedCompleted
+        ? "Projektstatus belegt keinen abgeschlossenen Allowance-Test."
+        : "Projektstatus erlaubt nur den vorbereiteten, noch offenen Allowance-Test."
+    );
   }
   if (
     priorOperation?.schemaVersion !== 1 ||
@@ -180,6 +208,124 @@ export function validateAllowancePublicConfiguration(
     fail("Vorheriger Treasury-Smoke belegt die Allowance-Baseline nicht.");
   }
   return config;
+}
+
+export function createCompletedAllowanceEvidence() {
+  return {
+    schemaVersion: 1,
+    operationId: ALLOWANCE_OPERATION_ID,
+    status: "completed",
+    network: "Base Sepolia",
+    chainId: Number(BASE_SEPOLIA_CHAIN_ID),
+    toolingCommit: COMPLETED_TOOLING_COMMIT,
+    completedAt: "2026-08-02T19:41:52.000Z",
+    purpose:
+      "Technical ERC-20 allowance and revocation smoke test; no token transfer, bounty, contribution, sale, or mainnet operation.",
+    plan: PREPARED_PLAN_PATH,
+    priorOperation: PRIOR_OPERATION_PATH,
+    addresses: {
+      owner: FIXED_SMOKE_ADDRESSES.research,
+      spender: FIXED_SMOKE_ADDRESSES.ecosystem,
+      token: FIXED_SMOKE_ADDRESSES.token,
+    },
+    amount: {
+      temporaryAllowanceBaseUnits: ALLOWANCE_VALUE.toString(),
+      finalAllowanceBaseUnits: "0",
+    },
+    preBroadcastFeeThresholdsWei: {
+      setAllowance: SET_ALLOWANCE_FEE_CAP.toString(),
+      clearAllowance: CLEAR_ALLOWANCE_FEE_CAP.toString(),
+      total: ALLOWANCE_TOTAL_FEE_CAP.toString(),
+    },
+    transactions: {
+      setAllowance: {
+        hash: SET_ALLOWANCE_HASH,
+        nonce: SET_ALLOWANCE_NONCE,
+        blockNumber: COMPLETION_BLOCK_NUMBER,
+        blockHash: COMPLETION_BLOCK_HASH,
+        transactionIndex: 16,
+        feeUpperBoundWei: "812408235416",
+        receiptReportedExecutionFeeWei: "278466000000",
+      },
+      clearAllowance: {
+        hash: CLEAR_ALLOWANCE_HASH,
+        nonce: CLEAR_ALLOWANCE_NONCE,
+        blockNumber: COMPLETION_BLOCK_NUMBER,
+        blockHash: COMPLETION_BLOCK_HASH,
+        transactionIndex: 17,
+        feeUpperBoundWei: "702209220496",
+        receiptReportedExecutionFeeWei: "146634000000",
+      },
+    },
+    validation: {
+      confirmationsAfterEach: REQUIRED_ALLOWANCE_CONFIRMATION_BLOCKS,
+      canonicalReceipts: true,
+      approvalEvents: [ALLOWANCE_VALUE.toString(), "0"],
+      receiptTransferEvents: 0,
+      tokenTransferEventsInBoundBlockRange: 0,
+      transferLogRange: {
+        token: FIXED_SMOKE_ADDRESSES.token,
+        topic: TRANSFER_TOPIC,
+        fromBlock: COMPLETION_BLOCK_NUMBER - 1,
+        toBlock: COMPLETION_BLOCK_NUMBER,
+        baselineBlockHash: BASELINE_BLOCK_HASH,
+        completionBlockHash: COMPLETION_BLOCK_HASH,
+      },
+      finalAllowanceBaseUnits: "0",
+      unchangedTokenBalances: true,
+      unchangedTotalSupply: true,
+      preBroadcastFeePolicySatisfied: true,
+      actualTotalNetworkFeeWei: null,
+      actualTotalNetworkFeeStatus:
+        "not-derived-from-account-balance-delta-or-receipt-execution-fee",
+      receiptReportedExecutionFeeTotalWei: "425100000000",
+      netResearchEthBalanceChangeWei: "-436995691514",
+    },
+    finalBalances: {
+      researchEthWei: "4350160492128",
+      researchTokenBaseUnits: BASELINE_RESEARCH_TOKENS.toString(),
+      ecosystemTokenBaseUnits: BASELINE_ECOSYSTEM_TOKENS.toString(),
+    },
+    economicValue: "none-promised-testnet-only",
+  };
+}
+
+export function validateCompletedAllowanceEvidence(evidence) {
+  const expected = createCompletedAllowanceEvidence();
+  if (JSON.stringify(evidence) !== JSON.stringify(expected)) {
+    fail("Öffentlicher Allowance-Operationsnachweis weicht vom gebundenen Ergebnis ab.");
+  }
+
+  const setFeeUpperBound = requiredDecimal(
+    evidence.transactions.setAllowance.feeUpperBoundWei,
+    "Allowance-Setzen feeUpperBoundWei"
+  );
+  const clearFeeUpperBound = requiredDecimal(
+    evidence.transactions.clearAllowance.feeUpperBoundWei,
+    "Allowance-Widerruf feeUpperBoundWei"
+  );
+  assertAllowanceFeeCaps(setFeeUpperBound, clearFeeUpperBound);
+
+  const setExecutionFee = requiredDecimal(
+    evidence.transactions.setAllowance.receiptReportedExecutionFeeWei,
+    "Allowance-Setzen receiptReportedExecutionFeeWei"
+  );
+  const clearExecutionFee = requiredDecimal(
+    evidence.transactions.clearAllowance.receiptReportedExecutionFeeWei,
+    "Allowance-Widerruf receiptReportedExecutionFeeWei"
+  );
+  if (
+    setExecutionFee + clearExecutionFee !==
+      requiredDecimal(
+        evidence.validation.receiptReportedExecutionFeeTotalWei,
+        "receiptReportedExecutionFeeTotalWei"
+      ) ||
+    setExecutionFee > setFeeUpperBound ||
+    clearExecutionFee > clearFeeUpperBound
+  ) {
+    fail("Allowance-Operationsnachweis enthält inkonsistente Gebührenwerte.");
+  }
+  return expected;
 }
 
 export function assertFreshAllowanceBaseline(values) {

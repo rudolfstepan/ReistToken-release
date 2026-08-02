@@ -265,41 +265,26 @@ und den Transfer von exakt `1 REIST`
 an kanonische Receipts und die geprüften Endstände. Die übrigen Punkte der
 vollständigen Smoke-Test-Checkliste bleiben offen.
 
-### Vorbereiteter Allowance-Roundtrip
+### Abgeschlossener Allowance-Roundtrip
 
-Der nächste technische Schritt ist getrennt und noch nicht ausgeführt. Der
-[öffentliche Plan](../plans/base-sepolia-allowance-smoke.json) bindet exakt
+Der [öffentliche Plan](../plans/base-sepolia-allowance-smoke.json) bindet exakt
 zwei Base-Sepolia-Transaktionen der Research Treasury: zuerst
 `approve(Ecosystem Treasury, 1 REIST)`, unmittelbar danach
-`approve(Ecosystem Treasury, 0)`. Es findet kein Token-Transfer statt.
+`approve(Ecosystem Treasury, 0)`.
 
-Der ausschließlich lesende Precheck benötigt kein Keystore-Passwort:
+Der Roundtrip wurde am 2. August 2026 in Block `44965712` abgeschlossen. Die
+Transaktion zum Setzen der Allowance lautet
+[`0x5b355cd4…b53180`](https://sepolia.basescan.org/tx/0x5b355cd4e660fa3659eb33100e1bcc361ac92917a86f958dbdbe136e96b53180),
+der unmittelbare Widerruf
+[`0xdfc94680…747e07`](https://sepolia.basescan.org/tx/0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07).
+Der [Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json)
+bindet beide kanonischen Receipts, die `Approval`-Events für `1 REIST` und
+`0`, unveränderte Tokenbestände und eine finale Allowance von `0`. Im
+gebundenen Blockbereich wurde kein REIST-`Transfer`-Event erzeugt.
 
-```powershell
-npm run check:base-sepolia-allowance
-```
-
-Er bindet die Baseline an einen konkreten kanonischen Block, prüft Nonce `1`,
-Allowance `0`, die Bestände `699.999 / 200.001 REIST`, Runtime-Codehash,
-Simulation, feste Gaslimits und eine konservative Pre-Broadcast-Freigabegrenze
-von `0,000002` Test-ETH. Der
-Precheck besitzt keinen Wallet- oder Broadcast-Code.
-
-Eine spätere, ausdrücklich neu freizugebende Ausführung erfolgt nur aus einem
-sauberen, veröffentlichten Release-Commit:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/execute-base-sepolia-allowance-smoke.ps1
-```
-
-Der Wrapper prüft zuerst ACL und Read-only-Precheck, bleibt im aktuellen
-Terminal und fragt erst danach Bestätigung und Research-Treasury-Passwort ab.
-Beide Transaktionen werden vor dem ersten Broadcast gebunden und unmittelbar
-hintereinander gesendet. Ein geheimnisfreies Recovery-Journal liegt nur im
-geschützten Keystore-Verzeichnis. Ein öffentlicher Operationsnachweis entsteht
-erst nach zwei kanonischen Receipts, exakt zwei passenden `Approval`-Events,
-null REIST-`Transfer`-Events im gesamten gebundenen Blockbereich,
-unveränderten Tokenbeständen und finaler Allowance `0`.
+Der einmalig gebundene Ausführungsbefehl darf nicht erneut gestartet werden.
+Der Allowance-Roundtrip schließt nur diesen Teil der Smoke-Test-Checkliste ab;
+Vesting-, Bounty- und weitere Freigabeprüfungen bleiben offen.
 
 ## Mainnet-Gate
 

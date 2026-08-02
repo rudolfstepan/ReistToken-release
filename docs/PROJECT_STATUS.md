@@ -17,42 +17,45 @@ Stand: 2. August 2026.
 - bestätigter Treasury-Funktionstest mit `0,000005` Test-ETH und anschließend
   `1 REIST`; Nachweis unter
   [`operations/base-sepolia-smoke-transfer.json`](../operations/base-sepolia-smoke-transfer.json),
+- bestätigter Allowance-Roundtrip mit temporär `1 REIST`, unmittelbarem
+  Widerruf auf `0` und
+  [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json),
 - öffentlich einsehbare REIST-FPGA-Quellen am geprüften Commit
   `42c11dc941c23ff4b3f84fd606791d285b4311e9`,
 - deutsche und englische statische Website mit automatischer Sprachwahl.
 
-## Allowance-Test: vorbereitet, nicht ausgeführt
+## Allowance-Test: abgeschlossen
 
-Der nächste technische Test ist unter
+Der unter
 [`plans/base-sepolia-allowance-smoke.json`](../plans/base-sepolia-allowance-smoke.json)
-exakt gebunden:
+exakt gebundene Test wurde am 2. August 2026 abgeschlossen:
 
 1. Research Treasury setzt für die Ecosystem Treasury eine Allowance von
-   exakt `1 Testnet-REIST` mit Nonce `1`.
-2. Research Treasury widerruft sie unmittelbar mit Nonce `2` auf `0`.
+   exakt `1 Testnet-REIST` mit Nonce `1`:
+   [`0x5b355cd4…b53180`](https://sepolia.basescan.org/tx/0x5b355cd4e660fa3659eb33100e1bcc361ac92917a86f958dbdbe136e96b53180).
+2. Research Treasury widerruft sie unmittelbar mit Nonce `2` auf `0`:
+   [`0xdfc94680…747e07`](https://sepolia.basescan.org/tx/0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07).
 
-Es werden keine Token übertragen. Der vorbereitete Plan enthält null
-Signaturen, null Broadcasts, keine Transaktionshashes und keine Receipts.
+Beide Transaktionen wurden in Block `44965712` aufgenommen. Der
+[Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json)
+dokumentiert kanonische Receipts mit jeweils zwei nachgelagerten
+Bestätigungen, die erwarteten `Approval`-Events für `1 REIST` und `0` sowie
+folgende Endprüfungen:
 
-Der ausschließlich lesende On-chain-Precheck war am 2. August 2026 in Block
-`44964850` erfolgreich:
+- finale Allowance: `0`,
+- Research-Bestand unverändert: `699.999 REIST`,
+- Ecosystem-Bestand unverändert: `200.001 REIST`,
+- Gesamtmenge unverändert,
+- keine REIST-`Transfer`-Events im gebundenen Blockbereich
+  `44965711` bis `44965712`.
 
-- Research-Bestand: `699.999 REIST`,
-- Ecosystem-Bestand: `200.001 REIST`,
-- Allowance: `0`,
-- Research-Nonce: `1`,
-- Research-Test-ETH: `0,000004787156183642`,
-- konservative Pre-Broadcast-Freigabegrenze: `0,000002 Test-ETH`,
-- gebundene Gaslimits: `70.000 / 60.000`.
-
-Der Precheck öffnete keinen Keystore, erzeugte keine Signatur und sendete
-keine Transaktion. Die lokale Prüfung umfasst 15 Contract-Tests sowie 13
-Tests für Deployment-Recovery und gebundene Operationspläne.
+Der Vorgang war ein technischer ERC-20-Test. Er war weder Token-Transfer noch
+Bounty, Beitrag, Verkauf oder Mainnet-Operation. Die lokale Prüfung umfasst
+15 Contract-Tests sowie 14 Tests für Deployment-Recovery und gebundene
+Operationspläne.
 
 ## Noch offen
 
-- Allowance-Roundtrip nach einer neuen, ausdrücklichen Freigabe ausführen und
-  den kanonischen Operationsnachweis veröffentlichen,
 - Vesting-Read-only-Nachweis in den vollständigen Testnet-Bericht aufnehmen,
 - erstes echtes öffentliches Pilot-Bounty aktivieren und unabhängig
   abschließen,

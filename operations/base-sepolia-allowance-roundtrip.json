@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "operationId": "reist-base-sepolia-allowance-roundtrip-v1",
+  "status": "completed",
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "toolingCommit": "dc990ca9dc80304e5220bcca6095e9927ba15adb",
+  "completedAt": "2026-08-02T19:41:52.000Z",
+  "purpose": "Technical ERC-20 allowance and revocation smoke test; no token transfer, bounty, contribution, sale, or mainnet operation.",
+  "plan": "plans/base-sepolia-allowance-smoke.json",
+  "priorOperation": "operations/base-sepolia-smoke-transfer.json",
+  "addresses": {
+    "owner": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+    "spender": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC",
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+  },
+  "amount": {
+    "temporaryAllowanceBaseUnits": "1000000000000000000",
+    "finalAllowanceBaseUnits": "0"
+  },
+  "preBroadcastFeeThresholdsWei": {
+    "setAllowance": "1000000000000",
+    "clearAllowance": "1000000000000",
+    "total": "2000000000000"
+  },
+  "transactions": {
+    "setAllowance": {
+      "hash": "0x5b355cd4e660fa3659eb33100e1bcc361ac92917a86f958dbdbe136e96b53180",
+      "nonce": 1,
+      "blockNumber": 44965712,
+      "blockHash": "0xa862026609a02a6878076dca56faab3e1fa9ffb12512f4d86e9a11ff7f865b80",
+      "transactionIndex": 16,
+      "feeUpperBoundWei": "812408235416",
+      "receiptReportedExecutionFeeWei": "278466000000"
+    },
+    "clearAllowance": {
+      "hash": "0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07",
+      "nonce": 2,
+      "blockNumber": 44965712,
+      "blockHash": "0xa862026609a02a6878076dca56faab3e1fa9ffb12512f4d86e9a11ff7f865b80",
+      "transactionIndex": 17,
+      "feeUpperBoundWei": "702209220496",
+      "receiptReportedExecutionFeeWei": "146634000000"
+    }
+  },
+  "validation": {
+    "confirmationsAfterEach": 2,
+    "canonicalReceipts": true,
+    "approvalEvents": [
+      "1000000000000000000",
+      "0"
+    ],
+    "receiptTransferEvents": 0,
+    "tokenTransferEventsInBoundBlockRange": 0,
+    "transferLogRange": {
+      "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+      "topic": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+      "fromBlock": 44965711,
+      "toBlock": 44965712,
+      "baselineBlockHash": "0xf52f1ba715d73a1620c032d745e5bd9640a051b5e1eba10356c8928809e5c111",
+      "completionBlockHash": "0xa862026609a02a6878076dca56faab3e1fa9ffb12512f4d86e9a11ff7f865b80"
+    },
+    "finalAllowanceBaseUnits": "0",
+    "unchangedTokenBalances": true,
+    "unchangedTotalSupply": true,
+    "preBroadcastFeePolicySatisfied": true,
+    "actualTotalNetworkFeeWei": null,
+    "actualTotalNetworkFeeStatus": "not-derived-from-account-balance-delta-or-receipt-execution-fee",
+    "receiptReportedExecutionFeeTotalWei": "425100000000",
+    "netResearchEthBalanceChangeWei": "-436995691514"
+  },
+  "finalBalances": {
+    "researchEthWei": "4350160492128",
+    "researchTokenBaseUnits": "699999000000000000000000",
+    "ecosystemTokenBaseUnits": "200001000000000000000000"
+  },
+  "economicValue": "none-promised-testnet-only"
+}

@@ -15,7 +15,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | REIST-FPGA-Implementierung | [VHDL, Testbenches und Gowin-Buildquellen öffentlich einsehbar](https://github.com/rudolfstepan/6502-sbc-fpga); unabhängige Hardware-Reproduktion offen |
 | Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
 | Technischer Treasury-Test | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-smoke-transfer.json) |
-| Allowance-Roundtrip | [exakt vorbereitet](plans/base-sepolia-allowance-smoke.json), nicht ausgeführt |
+| Allowance-Roundtrip | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-allowance-roundtrip.json), finale Allowance `0`, keine REIST-`Transfer`-Events im gebundenen Blockbereich |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -41,6 +41,8 @@ BaseScan einsehbar:
 | Deployment-Transaktion | [`0x4d8f54cd…f38f021c`](https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c) |
 | Treasury-Funding | [`0xe3f9e726…9a2864af`](https://sepolia.basescan.org/tx/0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af) |
 | Treasury-Transfer | [`0x308a8c07…f2bdcde8`](https://sepolia.basescan.org/tx/0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8) |
+| Allowance setzen | [`0x5b355cd4…b53180`](https://sepolia.basescan.org/tx/0x5b355cd4e660fa3659eb33100e1bcc361ac92917a86f958dbdbe136e96b53180) |
+| Allowance widerrufen | [`0xdfc94680…747e07`](https://sepolia.basescan.org/tx/0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07) |
 | Quellstand | Tag `v0.1.0-predeployment.2`, Commit `e3a732afcc0a6ced913621edcef49f81046979bf` |
 
 Das vollständige, maschinenlesbare Manifest steht unter
@@ -50,10 +52,13 @@ Mainnet-Asset, kein Verkaufsangebot und kein Nachweis eines externen Audits.
 Der gebundene Treasury-Funktionstest ist getrennt unter
 [`operations/base-sepolia-smoke-transfer.json`](operations/base-sepolia-smoke-transfer.json)
 dokumentiert; er ist weder ein Bounty noch ein akzeptierter Beitrag.
-Der nächste On-chain-Schritt ist als
-[`approve(1 REIST) -> approve(0)`-Plan](plans/base-sepolia-allowance-smoke.json)
-öffentlich gebunden. Der Plan wurde noch nicht signiert oder gesendet und
-überträgt bei einer späteren Ausführung keine Token.
+Der getrennt geplante Allowance-Roundtrip wurde ebenfalls abgeschlossen. Der
+[`Operationsnachweis`](operations/base-sepolia-allowance-roundtrip.json) bindet
+`approve(1 REIST)` und den unmittelbaren Widerruf mit `approve(0)` an die
+kanonischen Receipts. Die finale Allowance ist `0`; im gebundenen Blockbereich
+wurde kein REIST-`Transfer`-Event erzeugt. Die Plan-JSON bleibt als historische
+Momentaufnahme des Zustands vor Signatur und Broadcast unverändert; sie ist
+nicht der aktuelle Ausführungsstatus.
 
 ## Vertrag
 
@@ -132,16 +137,17 @@ einsehbar. Die zusätzlichen Befehle `npm run check:testnet:rpc` und
 Konfiguration. Der Verifier sendet keine Blockchain-Transaktion, fragt aber den
 Explorer ab und aktualisiert bei Erfolg die lokalen Statusdateien.
 
-Der vorbereitete Allowance-Schritt besitzt einen getrennten, ausschließlich
-lesenden Precheck:
+Der Allowance-Ablauf besitzt einen getrennten, ausschließlich lesenden
+Precheck:
 
 ```powershell
 npm run check:base-sepolia-allowance
 ```
 
 Dieser Befehl entschlüsselt keinen Keystore, signiert nichts und sendet keine
-Transaktion. Der Ausführungsbefehl ist absichtlich separat und verlangt später
-eine neue, exakte lokale Freigabe.
+Transaktion. Seit dem Abschluss verweigert er absichtlich jede erneute
+Vorbereitung. Auch der einmalige Ausführungsbefehl darf nicht erneut gestartet
+werden.
 
 Private Schlüssel gehören niemals in Git, Tickets, Webseiten oder Chats. Für
 die erzeugten Keystores müssen Passwort und Verzeichnis getrennt gesichert

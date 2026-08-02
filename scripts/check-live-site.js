@@ -1,5 +1,8 @@
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
-import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
+import {
+  validateCompletedAllowanceEvidence,
+  validatePreparedAllowancePlan,
+} from "./lib/base-sepolia-allowance-plan.js";
 import {
   CANONICAL_PAPER_DOI,
   CANONICAL_PAPER_URL,
@@ -213,7 +216,7 @@ assert(
     liveProject.status?.independentFpgaReproduction === false &&
     liveProject.status?.technicalTreasurySmoke === true &&
     liveProject.status?.allowanceTestPrepared === true &&
-    liveProject.status?.allowanceTestCompleted === false &&
+    liveProject.status?.allowanceTestCompleted === true &&
     liveProject.status?.fullTestnetSmoke === false,
   "Live-Projektmetadaten enthalten nicht die kanonische Identität sowie den korrekten FPGA- und Smoke-Status."
 );
@@ -280,14 +283,40 @@ try {
   fail("Vorbereiteter Allowance-Plan ist kein gültiges JSON.");
 }
 validatePreparedAllowancePlan(liveAllowancePlan);
+
+const allowanceEvidenceCheck = await request(
+  "/operations/base-sepolia-allowance-roundtrip.json"
+);
+assertStatus(
+  allowanceEvidenceCheck,
+  200,
+  "Abgeschlossener Allowance-Operationsnachweis"
+);
 assert(
-  home.body.includes('href="plans/base-sepolia-allowance-smoke.json"') &&
-    home.body.includes("vorbereitet, nicht ausgeführt") &&
-    englishHome.body.includes(
-      'href="../plans/base-sepolia-allowance-smoke.json"'
+  allowanceEvidenceCheck.response.headers
+    .get("content-type")
+    ?.startsWith("application/json"),
+  "Allowance-Operationsnachweis besitzt nicht application/json."
+);
+let liveAllowanceEvidence;
+try {
+  liveAllowanceEvidence = JSON.parse(allowanceEvidenceCheck.body);
+} catch {
+  fail("Allowance-Operationsnachweis ist kein gültiges JSON.");
+}
+validateCompletedAllowanceEvidence(liveAllowanceEvidence);
+assert(
+  home.body.includes(
+      'href="operations/base-sepolia-allowance-roundtrip.json"'
     ) &&
-    englishHome.body.includes("prepared, not executed"),
-  "Live-Startseiten trennen vorbereiteten Allowance-Plan nicht von einer Ausführung."
+    home.body.includes("bestätigter") &&
+    home.body.includes("unmittelbar auf 0 widerrufen") &&
+    englishHome.body.includes(
+      'href="../operations/base-sepolia-allowance-roundtrip.json"'
+    ) &&
+    englishHome.body.includes("confirmed") &&
+    englishHome.body.includes("immediately cleared to zero"),
+  "Live-Startseiten verlinken den abgeschlossenen Allowance-Operationsnachweis nicht."
 );
 
 for (const document of publicDocumentBuilds) {

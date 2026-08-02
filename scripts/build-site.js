@@ -43,10 +43,18 @@ const smokeOperation = resolve(
   "operations",
   "base-sepolia-smoke-transfer.json"
 );
+const allowanceOperation = resolve(
+  "operations",
+  "base-sepolia-allowance-roundtrip.json"
+);
 mkdirSync(resolve(output, "operations"), { recursive: true });
 copyFileSync(
   smokeOperation,
   resolve(output, "operations", "base-sepolia-smoke-transfer.json")
+);
+copyFileSync(
+  allowanceOperation,
+  resolve(output, "operations", "base-sepolia-allowance-roundtrip.json")
 );
 mkdirSync(resolve(output, "plans"), { recursive: true });
 copyFileSync(

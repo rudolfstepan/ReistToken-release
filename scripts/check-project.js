@@ -2,7 +2,10 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { getAddress, ZeroAddress } from "ethers";
 import { canonicalJsonSha256 } from "./lib/build-provenance.js";
-import { validatePreparedAllowancePlan } from "./lib/base-sepolia-allowance-plan.js";
+import {
+  validateCompletedAllowanceEvidence,
+  validatePreparedAllowancePlan,
+} from "./lib/base-sepolia-allowance-plan.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
 import {
@@ -169,6 +172,7 @@ const requiredFiles = [
   "plans/README.md",
   "plans/base-sepolia-allowance-smoke.json",
   "operations/README.md",
+  "operations/base-sepolia-allowance-roundtrip.json",
   "operations/base-sepolia-smoke-transfer.json",
   "docs/SCIENTIFIC_BASIS.md",
   "docs/PROJECT_STATUS.md",
@@ -343,9 +347,10 @@ const preparedAllowancePlan = readJson(
   "plans/base-sepolia-allowance-smoke.json"
 );
 validatePreparedAllowancePlan(preparedAllowancePlan);
-if (existsSync(resolve("operations/base-sepolia-allowance-roundtrip.json"))) {
-  fail("Allowance-Plan ist als offen markiert, besitzt aber bereits einen Operationsnachweis.");
-}
+const completedAllowanceEvidence = readJson(
+  "operations/base-sepolia-allowance-roundtrip.json"
+);
+validateCompletedAllowanceEvidence(completedAllowanceEvidence);
 const allowancePrecheckSource = readFileSync(
   resolve("scripts/check-base-sepolia-allowance-smoke.js"),
   "utf8"
@@ -492,7 +497,7 @@ if (
   project.status.independentFpgaReproduction !== false ||
   project.status.technicalTreasurySmoke !== true ||
   project.status.allowanceTestPrepared !== true ||
-  project.status.allowanceTestCompleted !== false ||
+  project.status.allowanceTestCompleted !== true ||
   project.status.fullTestnetSmoke !== false ||
   project.status.externalAudit !== false ||
   project.status.activeBounties !== 0 ||
@@ -736,8 +741,8 @@ const germanRequiredSiteContent = [
   "funktioniert ohne Token",
   "öffentlich einsehbare REIST-FPGA-RTL",
   "explizite FPGA-Lizenzierung und unabhängige Hardware-Reproduktion",
-  "Allowance- und Widerrufsplan",
-  "vorbereitet, nicht ausgeführt",
+  "Allowance-Roundtrip",
+  "unmittelbar auf 0 widerrufen",
 ];
 const englishRequiredSiteContent = [
   "no investment offering",
@@ -745,8 +750,8 @@ const englishRequiredSiteContent = [
   "works without a token",
   "publicly accessible REIST FPGA RTL",
   "explicit FPGA licensing and independent hardware reproduction",
-  "allowance and revocation plan",
-  "prepared, not executed",
+  "allowance roundtrip",
+  "immediately cleared to zero",
 ];
 if (project.status.testnetDeployment) {
   germanRequiredSiteContent.push("deployed", "Quellcode verifiziert");
