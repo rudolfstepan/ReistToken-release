@@ -36,9 +36,7 @@ try {
     if ($keystoreEntries.Count -ne 1) {
         throw "REIST_KEYSTORE_DIRECTORY muss in der .env-Datei exakt einmal vorkommen."
     }
-    $walletDirectory = ($keystoreEntries[0] -replace "^\s*(?:export\s+)?REIST_KEYSTORE_DIRECTORY\s*=\s*", "").Trim().Trim('"').Trim("'")
     & (Join-Path $PSScriptRoot "check-testnet-acl.ps1") `
-        -WalletDirectory $walletDirectory `
         -EnvironmentFile $resolvedEnvironmentFile
     $confirmation = Read-Host "Zur lokalen Freigabe exakt EXECUTE BASE SEPOLIA SMOKE eingeben"
     if ($confirmation -cne "EXECUTE BASE SEPOLIA SMOKE") {
