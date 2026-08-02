@@ -96,10 +96,12 @@ maschinenlesbares Manifest.
    Testnet-Keypairs und die lokale `.env` erzeugen.
 2. `npm run check:testnet-wallets` ausführen und die vier öffentlichen Adressen
    unabhängig kontrollieren.
-3. Mit `npm run check:testnet-acl` den lokalen Zugriffsschutz prüfen,
-   Keystore-Verzeichnis und Passwort getrennt sichern und mit `npm run
-   check:testnet-recovery -- -WalletDirectory <BACKUP-PFAD>` die tatsächliche
-   Sicherung aller vier Wallets prüfen.
+3. Mit `npm run check:testnet-acl` den lokalen Zugriffsschutz prüfen. Eine neue
+   verschlüsselte Kopie auf einem anderen Laufwerk mit `npm run
+   backup:testnet-wallets -- -DestinationDirectory <BACKUP-PFAD>` anlegen und
+   anschließend mit `npm run check:testnet-recovery -- -WalletDirectory
+   <BACKUP-PFAD>` die tatsächliche Sicherung aller vier Wallets prüfen. Das
+   Passwort getrennt aufbewahren.
 4. Erst danach die Deployment-Wallet mit Faucet-ETH versorgen und `npm run
    check:testnet:rpc` ausführen.
 5. `npm run preflight` ausführen.

@@ -50,13 +50,31 @@ werden:
 ```powershell
 npm run check:testnet-acl
 npm run check:testnet-recovery
+npm run backup:testnet-wallets -- -DestinationDirectory "E:\REIST-Backup\base-sepolia-wallets"
 npm run check:testnet-recovery -- -WalletDirectory "E:\REIST-Backup\base-sepolia-wallets"
 ```
 
-Der letzte Pfad ist ein Beispiel und muss auf eine tatsächlich getrennte Kopie
-des Keystore-Verzeichnisses zeigen. Der ACL-Check ist idempotent; falls die
-Rechte nach einem abgebrochenen Setup repariert werden müssen, kann lokal
-`powershell.exe -File scripts/check-testnet-acl.ps1 -Repair` ausgeführt werden.
+Der Pfad ist ein Beispiel und muss auf ein anderes Laufwerk zeigen. Das
+Backup-Skript überschreibt keine vorhandene Sicherung, kopiert ausschließlich
+die sechs erwarteten Dateien (vier verschlüsselte Keystores sowie
+`addresses.json` und `RECOVERY.txt`), vergleicht SHA-256-Hashes und
+beschränkt den Zugriff auf das aktuelle Windows-Benutzerkonto. Die anschließende
+Recovery-Prüfung kontrolliert zusätzlich die Zugriffsrechte der Sicherung. Eine
+Kopie auf einem zweiten internen Datenträger ist nur eine Zwischenstufe; für die
+dauerhafte Verwahrung ist zusätzlich ein getrennt gelagertes Offline-Medium
+erforderlich. Der ACL-Check ist idempotent; falls die Rechte nach einem
+abgebrochenen Setup repariert werden müssen, kann lokal `powershell.exe -File
+scripts/check-testnet-acl.ps1 -Repair` ausgeführt werden.
+
+Eine Sicherung benötigt NTFS oder ein anderes Dateisystem mit kompatiblen
+Windows-ACLs; FAT und exFAT genügen diesem Ablauf nicht. Die Laufwerksprüfung
+belegt nur verschiedene Laufwerksbuchstaben, nicht automatisch verschiedene
+physische Datenträger. Das Zielmedium deshalb unabhängig kontrollieren. Nach
+einem Verlust des ursprünglichen Windows-Profils muss ein Administrator den
+Besitz der Backup-Dateien übernehmen und die ACL auf das neue Benutzerkonto
+setzen. Die Recovery-Prüfung mit `-WalletDirectory` benötigt weder das
+ursprüngliche Keystore-Verzeichnis noch dessen `.env`; sie vergleicht die
+Sicherung mit dem öffentlichen Rollenregister in `data/testnet-roles.json`.
 
 Alle vier Keystores teilen im zentral kontrollierten Testpiloten ein Passwort
 und einen lokalen Verwahrungsort. Das ist ein gemeinsamer Verlust- und

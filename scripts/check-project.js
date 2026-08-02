@@ -61,6 +61,12 @@ function isIsoCalendarDate(value) {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
+function isIsoInstant(value) {
+  if (typeof value !== "string") return false;
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString() === value;
+}
+
 function validateActiveBounty(bounty, researchTreasuryAddress) {
   const expectedIssuePrefix = `${PUBLIC_RELEASE_REPOSITORY}/issues/`;
   if (
@@ -129,6 +135,8 @@ const requiredFiles = [
   "scripts/check-language.js",
   "scripts/check-live-site.js",
   "scripts/check-testnet-config.js",
+  "scripts/check-testnet-recovery.js",
+  "scripts/backup-testnet-wallets.ps1",
   "scripts/check-testnet-acl.ps1",
   "scripts/check-testnet-recovery.ps1",
   "scripts/deploy-testnet.js",
@@ -317,6 +325,11 @@ if (
   testnetRoles.chainId !== 84532 ||
   testnetRoles.status !==
     "wallets-created-recovery-checked-unfunded-not-deployed" ||
+  !isIsoInstant(testnetRoles.createdAt) ||
+  !isIsoInstant(testnetRoles.recoveryCheckedAt) ||
+  !isIsoInstant(testnetRoles.backupRecoveryCheckedAt) ||
+  testnetRoles.recoveryCheckedAt < testnetRoles.createdAt ||
+  testnetRoles.backupRecoveryCheckedAt < testnetRoles.recoveryCheckedAt ||
   testnetRoles.custody?.multisig !== false ||
   testnetRoles.custody?.mainnetSuitable !== false
 ) {

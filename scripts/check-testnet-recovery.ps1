@@ -7,6 +7,14 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$defaultWalletDirectory = [IO.Path]::GetFullPath(
+    (Join-Path $env:LOCALAPPDATA "REIST\base-sepolia-wallets")
+)
+$recoveryDirectory = if ($WalletDirectory) {
+    [IO.Path]::GetFullPath($WalletDirectory)
+} else {
+    $defaultWalletDirectory
+}
 $passwordPointer = [IntPtr]::Zero
 $passwordSecure = $null
 $password = $null
@@ -17,8 +25,12 @@ $nodeProcess = $null
 Push-Location -LiteralPath $projectRoot
 try {
     Write-Host "REIST Base-Sepolia-Keystore-Recovery-Test"
-    Write-Host "Alle vier Keystores werden lokal entschlüsselt; private Schlüssel werden nicht ausgegeben."
-    & (Join-Path $PSScriptRoot "check-testnet-acl.ps1")
+    Write-Host "Alle vier Keystores werden lokal entschluesselt; private Schluessel werden nicht ausgegeben."
+    if ($WalletDirectory) {
+        & (Join-Path $PSScriptRoot "check-testnet-acl.ps1") -WalletDirectory $recoveryDirectory
+    } else {
+        & (Join-Path $PSScriptRoot "check-testnet-acl.ps1")
+    }
     $passwordSecure = Read-Host "Bestehendes Keystore-Passwort" -AsSecureString
     $passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($passwordSecure)
     $password = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
@@ -33,7 +45,7 @@ try {
     $nodeCommand = Get-Command node -ErrorAction Stop
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $startInfo.FileName = $nodeCommand.Source
-    $startInfo.Arguments = "scripts/check-testnet-config.js --wallets --recovery"
+    $startInfo.Arguments = "scripts/check-testnet-recovery.js"
     $startInfo.WorkingDirectory = $projectRoot
     $startInfo.UseShellExecute = $false
     $startInfo.RedirectStandardInput = $true
@@ -45,16 +57,12 @@ try {
     }
     $startInfo.EnvironmentVariables.Remove("REIST_WALLET_PASSWORD")
     $startInfo.EnvironmentVariables["REIST_CONFIRM_TESTNET_RECOVERY"] = "CHECK"
-    if ($WalletDirectory) {
-        $startInfo.EnvironmentVariables["REIST_RECOVERY_WALLET_DIRECTORY"] = [IO.Path]::GetFullPath($WalletDirectory)
-    } else {
-        $startInfo.EnvironmentVariables.Remove("REIST_RECOVERY_WALLET_DIRECTORY")
-    }
+    $startInfo.EnvironmentVariables["REIST_RECOVERY_WALLET_DIRECTORY"] = $recoveryDirectory
 
     $nodeProcess = [System.Diagnostics.Process]::new()
     $nodeProcess.StartInfo = $startInfo
     if (-not $nodeProcess.Start()) {
-        throw "Node-Prozess für den Recovery-Test konnte nicht gestartet werden."
+        throw "Node-Prozess fuer den Recovery-Test konnte nicht gestartet werden."
     }
     $nodeProcess.StandardInput.Write($passwordTransport)
     $nodeProcess.StandardInput.Close()

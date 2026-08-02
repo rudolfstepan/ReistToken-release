@@ -5,6 +5,7 @@
   "status": "wallets-created-recovery-checked-unfunded-not-deployed",
   "createdAt": "2026-08-02T12:56:36.840Z",
   "recoveryCheckedAt": "2026-08-02T13:00:42.737Z",
+  "backupRecoveryCheckedAt": "2026-08-02T14:05:52.419Z",
   "custody": {
     "model": "single-operator technical testnet pilot",
     "keypairs": "four independent encrypted EOA keypairs",

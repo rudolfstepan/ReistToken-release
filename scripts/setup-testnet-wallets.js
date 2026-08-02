@@ -25,6 +25,13 @@ function privateFile(path, contents) {
   });
 }
 
+function dotenvSingleQuoted(value, description) {
+  if (/[\r\n']/.test(value)) {
+    fail(`${description} kann nicht sicher in .env serialisiert werden.`);
+  }
+  return `'${value}'`;
+}
+
 function assertRepositoryIgnore(path) {
   const result = spawnSync(
     "git",
@@ -175,7 +182,7 @@ try {
       "# Enthält Adressen und lokale Dienstkonfiguration, aber keinen privaten Wallet-Schlüssel.",
       `TESTNET_DEPLOYER_ADDRESS=${addresses.deployer}`,
       "",
-      `REIST_KEYSTORE_DIRECTORY=${targetDirectory}`,
+      `REIST_KEYSTORE_DIRECTORY=${dotenvSingleQuoted(targetDirectory, "Keystore-Pfad")}`,
       "",
       "BASE_SEPOLIA_RPC_URL=https://sepolia.base.org",
       "",

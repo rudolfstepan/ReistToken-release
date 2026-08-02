@@ -2,13 +2,10 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { config as loadEnvironment, parse as parseEnvironment } from "dotenv";
-import { formatEther, getAddress, Wallet, ZeroAddress } from "ethers";
+import { formatEther, getAddress, ZeroAddress } from "ethers";
 import { CANONICAL_PAPER_DOI } from "./lib/project-identity.js";
-import { readPasswordFromStandardInput } from "./lib/password-transport.js";
 
-const checkWallets =
-  process.argv.includes("--wallets") || process.argv.includes("--recovery");
-const checkRecovery = process.argv.includes("--recovery");
+const checkWallets = process.argv.includes("--wallets");
 const checkRpc = process.argv.includes("--rpc");
 
 function fail(message) {
@@ -134,15 +131,8 @@ if (
 
 assertRepositoryIgnore(".env");
 
-const encryptedKeystores = new Map();
 if (checkWallets) {
-  const requestedRecoveryDirectory = checkRecovery
-    ? String(process.env.REIST_RECOVERY_WALLET_DIRECTORY || "").trim()
-    : "";
-  delete process.env.REIST_RECOVERY_WALLET_DIRECTORY;
-  const keystoreDirectory = requestedRecoveryDirectory
-    ? externalKeystoreDirectory(requestedRecoveryDirectory)
-    : configuredKeystoreDirectory;
+  const keystoreDirectory = configuredKeystoreDirectory;
   const addressDocumentPath = join(keystoreDirectory, "addresses.json");
   if (!existsSync(addressDocumentPath)) {
     fail("Lokales Keystore-Adressdokument fehlt.");
@@ -179,7 +169,6 @@ if (checkWallets) {
     if (!existsSync(absoluteKeystorePath)) {
       fail(`Verschlüsselter Keystore fehlt: ${id}.`);
     }
-    const encryptedKeystore = readFileSync(absoluteKeystorePath, "utf8");
     const keystore = parseJsonFile(
       absoluteKeystorePath,
       `Verschlüsselter Keystore ${id}`
@@ -199,35 +188,6 @@ if (checkWallets) {
     ) {
       fail(`Verschlüsselter Keystore ist strukturell ungültig: ${id}.`);
     }
-    encryptedKeystores.set(id, encryptedKeystore);
-  }
-}
-
-if (checkRecovery) {
-  if (process.env.REIST_CONFIRM_TESTNET_RECOVERY !== "CHECK") {
-    fail("Recovery-Prüfung verlangt den interaktiven PowerShell-Wrapper.");
-  }
-  delete process.env.REIST_CONFIRM_TESTNET_RECOVERY;
-  let password = "";
-  try {
-    password = readPasswordFromStandardInput();
-    for (const [id, encryptedKeystore] of encryptedKeystores) {
-      let recoveredWallet;
-      try {
-        recoveredWallet = await Wallet.fromEncryptedJson(
-          encryptedKeystore,
-          password
-        );
-      } catch {
-        fail(`Recovery-Prüfung ist für ${id} fehlgeschlagen.`);
-      }
-      if (getAddress(recoveredWallet.address) !== addresses[id]) {
-        fail(`Recovery-Prüfung lieferte eine falsche Adresse für ${id}.`);
-      }
-      recoveredWallet = null;
-    }
-  } finally {
-    password = "";
   }
 }
 
@@ -237,9 +197,6 @@ for (const [id, address] of Object.entries(addresses)) {
 }
 if (checkWallets) {
   console.log("Vier verschlüsselte Testnet-Keystores sind strukturell konsistent.");
-}
-if (checkRecovery) {
-  console.log("Alle vier Keystores wurden erfolgreich entschlüsselt und zugeordnet.");
 }
 console.log(
   `Etherscan-API-Key: ${String(process.env.ETHERSCAN_API_KEY || "").trim() ? "konfiguriert" : "fehlt noch"}`
