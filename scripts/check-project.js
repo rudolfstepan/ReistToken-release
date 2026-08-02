@@ -201,6 +201,7 @@ const requiredFiles = [
   "site/index.html",
   "site/404.html",
   "site/en/index.html",
+  "site/assets/reist-token-logo.svg",
   "site/styles.css",
   "site/app.js",
   "site/language.js",
@@ -685,6 +686,32 @@ function validateSitePage(pageName, language, requiredStatements) {
     fail(`${label}: Sprachumschaltung oder Alternativlinks fehlen.`);
   }
   const canonicalUrl = language === "de" ? publicSiteUrl() : publicSiteUrl("en/");
+  const expectedDescription =
+    language === "de"
+      ? "REIST Research Token (REIST): dokumentierter ERC-20-Testtoken des REIST-Division-Forschungsprojekts auf Base Sepolia; kein Investmentangebot."
+      : "REIST Research Token (REIST): documented ERC-20 test token for the REIST Division research project on Base Sepolia; not an investment offering.";
+  const expectedOgDescription =
+    language === "de"
+      ? "Dokumentierter ERC-20-Testtoken des REIST-Division-Forschungsprojekts auf Base Sepolia; kein Investmentangebot."
+      : "Documented ERC-20 test token for the REIST Division research project on Base Sepolia; not an investment offering.";
+  for (const requiredMetadata of [
+    `<title>REIST Research Token (REIST) — Base Sepolia</title>`,
+    `name="description"\n      content="${expectedDescription}"`,
+    `property="og:site_name" content="REIST Research Token"`,
+    `property="og:title" content="REIST Research Token (REIST) — Base Sepolia"`,
+    `property="og:description"\n      content="${expectedOgDescription}"`,
+    `property="og:url" content="${canonicalUrl}"`,
+    `itemscope itemtype="https://schema.org/WebSite"`,
+    `itemprop="name" content="REIST Research Token"`,
+    `itemprop="alternateName" content="REIST"`,
+    `itemprop="url" href="${publicSiteUrl()}"`,
+    `<h1>REIST <span>Research Token</span></h1>`,
+    `https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`,
+  ]) {
+    if (!content.includes(requiredMetadata)) {
+      fail(`${label}: Namens- oder Suchmaschinenmetadaten fehlen.`);
+    }
+  }
   if (!content.includes(`<link rel="canonical" href="${canonicalUrl}" />`)) {
     fail(`${label}: kanonische Live-URL fehlt.`);
   }
@@ -808,6 +835,22 @@ const englishPage = validateSitePage(
 );
 const germanSiteSource = readFileSync(resolve("site/index.html"), "utf8");
 const englishSiteSource = readFileSync(resolve("site/en/index.html"), "utf8");
+for (const [source, link, label] of [
+  [
+    germanSiteSource,
+    '<a href="docs/token-und-verteilung.html">REIST Research Token (REIST) — Vertrag und Verteilung</a>',
+    "Deutsche Website",
+  ],
+  [
+    englishSiteSource,
+    '<a href="docs/token-and-allocation.html">REIST Research Token (REIST) — Contract and Allocation</a>',
+    "Englische Website",
+  ],
+]) {
+  if (!source.includes(link)) {
+    fail(`${label} verlinkt die benannte Token-Dokumentation nicht sichtbar.`);
+  }
+}
 for (const [source, label] of [
   [germanSiteSource, "Deutsche Website"],
   [englishSiteSource, "Englische Website"],
@@ -817,6 +860,44 @@ for (const [source, label] of [
     !source.includes(`href="${FPGA_SOURCE_SNAPSHOT_URL}"`)
   ) {
     fail(`${label} verlinkt FPGA-Repository oder geprüften Quellstand nicht.`);
+  }
+}
+
+for (const expectedTokenDocument of [
+  {
+    language: "de",
+    target: "docs/token-und-verteilung.html",
+    title: "REIST Research Token (REIST) — Vertrag und Verteilung",
+    description:
+      "Offizielle Base-Sepolia-Dokumentation des REIST Research Token (REIST): Vertrag 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68.",
+  },
+  {
+    language: "en",
+    target: "en/docs/token-and-allocation.html",
+    title: "REIST Research Token (REIST) — Contract and Allocation",
+    description:
+      "Official Base Sepolia documentation for the REIST Research Token (REIST): contract 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68.",
+  },
+]) {
+  const configuration = publicDocumentBuilds.find(
+    (document) => document.target === expectedTokenDocument.target
+  );
+  if (
+    configuration?.language !== expectedTokenDocument.language ||
+    configuration.seoTitle !== expectedTokenDocument.title ||
+    configuration.description !== expectedTokenDocument.description
+  ) {
+    fail(`${expectedTokenDocument.target}: Token-Suchmetadaten sind nicht kanonisch.`);
+  }
+  const markdown = readFileSync(resolve(configuration.source), "utf8");
+  if (
+    !markdown.startsWith("# REIST Research Token (REIST)\n") ||
+    !markdown.includes("0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68") ||
+    !markdown.includes(
+      "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+    )
+  ) {
+    fail(`${expectedTokenDocument.target}: sichtbare Token-Identität ist unvollständig.`);
   }
 }
 if (JSON.stringify(germanPage.ids) !== JSON.stringify(englishPage.ids)) {

@@ -1,4 +1,10 @@
-# Token und Verteilung
+# REIST Research Token (REIST)
+
+Der REIST Research Token ist der dokumentierte ERC-20-Testtoken des
+REIST-Division-Forschungsprojekts auf Base Sepolia. Seine offizielle
+Vertragsadresse lautet
+[`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68).
+Nur Netzwerk und Adresse zusammen identifizieren diesen Testtoken eindeutig.
 
 ## Spezifikation
 
@@ -20,7 +26,8 @@ Netzwerk und veröffentlichter Vertragsadresse identifiziert den Token.
 
 | Vertrag | Offizielle Base-Sepolia-Adresse |
 |---|---|
-| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Token-Seite | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68) |
+| Token-Quellcode | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
 | Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 
 ## Genesis-Verteilung

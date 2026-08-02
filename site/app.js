@@ -114,7 +114,7 @@ async function updateDeploymentStatus() {
     if (deployment.chainId !== 84532 || !deployment.contracts?.token) return;
 
     const address = deployment.contracts.token;
-    const explorerUrl = `https://sepolia.basescan.org/address/${address}`;
+    const explorerUrl = `https://sepolia.basescan.org/token/${address}`;
     const status = document.querySelector("[data-testnet-status]");
     const panel = document.querySelector("[data-address-panel]");
     const addressElement = document.querySelector("[data-token-address]");

@@ -37,7 +37,8 @@ BaseScan einsehbar:
 
 | Nachweis | Wert |
 |---|---|
-| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Token-Seite | [REIST Research Token (REIST)](https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68) |
+| Token-Quellcode | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
 | Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 | Deployment-Transaktion | [`0x4d8f54cd…f38f021c`](https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c) |
 | Treasury-Funding | [`0xe3f9e726…9a2864af`](https://sepolia.basescan.org/tx/0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af) |

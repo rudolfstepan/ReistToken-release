@@ -1,4 +1,9 @@
-# Token and Allocation
+# REIST Research Token (REIST)
+
+The REIST Research Token is the documented ERC-20 test token for the REIST
+Division research project on Base Sepolia. Its official contract address is
+[`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68).
+Only the network and address together uniquely identify this test token.
 
 ## Specification
 
@@ -20,7 +25,8 @@ network and the published contract address identifies the token.
 
 | Contract | Official Base Sepolia address |
 |---|---|
-| Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
+| Token page | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68) |
+| Token source | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
 | Founder vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 
 ## Genesis Allocation

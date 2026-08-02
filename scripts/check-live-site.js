@@ -34,6 +34,26 @@ function assertPublicProjectIdentity(check, label) {
   );
 }
 
+function assertTokenDiscoveryIdentity(check, canonicalUrl, label) {
+  for (const requiredContent of [
+    "<title>REIST Research Token (REIST) — Base Sepolia</title>",
+    '<meta property="og:site_name" content="REIST Research Token" />',
+    '<meta property="og:title" content="REIST Research Token (REIST) — Base Sepolia" />',
+    `<meta property="og:url" content="${canonicalUrl}" />`,
+    'itemscope itemtype="https://schema.org/WebSite"',
+    'itemprop="name" content="REIST Research Token"',
+    'itemprop="alternateName" content="REIST"',
+    `itemprop="url" href="${PUBLIC_SITE_ORIGIN}/"`,
+    "<h1>REIST <span>Research Token</span></h1>",
+    "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+  ]) {
+    assert(
+      check.body.includes(requiredContent),
+      `${label}: eindeutige Token-Suchidentität fehlt.`
+    );
+  }
+}
+
 const requestedOrigin = process.argv[2] || PUBLIC_SITE_ORIGIN;
 let originUrl;
 try {
@@ -137,6 +157,7 @@ const home = await request("/");
 assertStatus(home, 200, "Deutsche Startseite");
 assert(home.body.includes("REIST Research Token"), "Projektidentität fehlt live.");
 assertPublicProjectIdentity(home, "Deutsche Startseite");
+assertTokenDiscoveryIdentity(home, `${PUBLIC_SITE_ORIGIN}/`, "Deutsche Startseite");
 assertIndexableHtml(
   home,
   `${PUBLIC_SITE_ORIGIN}/`,
@@ -173,6 +194,11 @@ assert(
 const englishHome = await request("/en/");
 assertStatus(englishHome, 200, "Englische Startseite");
 assertPublicProjectIdentity(englishHome, "Englische Startseite");
+assertTokenDiscoveryIdentity(
+  englishHome,
+  `${PUBLIC_SITE_ORIGIN}/en/`,
+  "Englische Startseite"
+);
 assertIndexableHtml(
   englishHome,
   `${PUBLIC_SITE_ORIGIN}/en/`,
@@ -387,6 +413,34 @@ for (const document of publicDocumentBuilds) {
     !/href=["'][^"']+\.md(?:[?#][^"']*)?["']/i.test(check.body),
     `${document.target}: rohe Markdown-Verknüpfung gefunden.`
   );
+  if (document.target === "docs/token-und-verteilung.html") {
+    assert(
+      check.body.includes(
+        "<title>REIST Research Token (REIST) — Vertrag und Verteilung</title>"
+      ) &&
+        check.body.includes(
+          '<meta name="description" content="Offizielle Base-Sepolia-Dokumentation des REIST Research Token (REIST): Vertrag 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68." />'
+        ) &&
+        check.body.includes(
+          '<h1 id="reist-research-token-reist">REIST Research Token (REIST)</h1>'
+        ),
+      `${document.target}: deutsche Token-Suchidentität fehlt.`
+    );
+  }
+  if (document.target === "en/docs/token-and-allocation.html") {
+    assert(
+      check.body.includes(
+        "<title>REIST Research Token (REIST) — Contract and Allocation</title>"
+      ) &&
+        check.body.includes(
+          '<meta name="description" content="Official Base Sepolia documentation for the REIST Research Token (REIST): contract 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68." />'
+        ) &&
+        check.body.includes(
+          '<h1 id="reist-research-token-reist">REIST Research Token (REIST)</h1>'
+        ),
+      `${document.target}: englische Token-Suchidentität fehlt.`
+    );
+  }
 }
 
 const robots = await request("/robots.txt");

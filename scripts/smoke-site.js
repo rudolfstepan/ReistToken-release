@@ -49,6 +49,17 @@ try {
   const html = await home.text();
   assert(html.includes("REIST Research Token"), "Projektidentität fehlt im HTML.");
   assert(
+    html.includes("<title>REIST Research Token (REIST) — Base Sepolia</title>") &&
+      html.includes('<meta property="og:site_name" content="REIST Research Token" />') &&
+      html.includes('itemscope itemtype="https://schema.org/WebSite"') &&
+      html.includes('itemprop="alternateName" content="REIST"') &&
+      html.includes("<h1>REIST <span>Research Token</span></h1>") &&
+      html.includes(
+        "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+      ),
+    "Deutsche Startseite besitzt keine eindeutige Token-Suchidentität."
+  );
+  assert(
     home.headers.get("content-security-policy")?.includes("default-src 'self'"),
     "Content-Security-Policy fehlt."
   );
@@ -67,8 +78,15 @@ try {
   const englishHtml = await englishHome.text();
   assert(englishHtml.includes('lang="en"'), "Englische Sprachkennung fehlt.");
   assert(
-    englishHtml.includes("REIST Division — Project Documentation"),
-    "Englische Projektidentität fehlt."
+    englishHtml.includes("<title>REIST Research Token (REIST) — Base Sepolia</title>") &&
+      englishHtml.includes('<meta property="og:site_name" content="REIST Research Token" />') &&
+      englishHtml.includes('itemscope itemtype="https://schema.org/WebSite"') &&
+      englishHtml.includes('itemprop="alternateName" content="REIST"') &&
+      englishHtml.includes("<h1>REIST <span>Research Token</span></h1>") &&
+      englishHtml.includes(
+        "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+      ),
+    "Englische Startseite besitzt keine eindeutige Token-Suchidentität."
   );
   assert(
     englishHtml.includes('data-language="de"'),
@@ -84,6 +102,20 @@ try {
   );
   assert(!/href=["'][^"']+\.md(?:[?#][^"']*)?["']/i.test(html), "Deutsche Website verweist noch auf Markdown-Dateien.");
   assert(!/href=["'][^"']+\.md(?:[?#][^"']*)?["']/i.test(englishHtml), "Englische Website verweist noch auf Markdown-Dateien.");
+
+  const tokenLogo = await fetch(`${origin}/assets/reist-token-logo.svg`);
+  assert(tokenLogo.ok, "Öffentliches Token-Logo ist nicht erreichbar.");
+  assert(
+    tokenLogo.headers.get("content-type")?.startsWith("image/svg+xml"),
+    "Token-Logo besitzt einen falschen MIME-Typ."
+  );
+  const tokenLogoSource = await tokenLogo.text();
+  assert(
+    tokenLogoSource.includes('width="32"') &&
+      tokenLogoSource.includes('height="32"') &&
+      tokenLogoSource.includes("REIST Research Token"),
+    "Token-Logo besitzt nicht die veröffentlichte 32-x-32-Identität."
+  );
 
   const languageScript = await fetch(`${origin}/language.js`);
   assert(languageScript.ok, "Sprachrouting-Skript ist nicht erreichbar.");
@@ -330,6 +362,47 @@ try {
       `<link rel="canonical" href="${publicSiteUrl("docs/token-und-verteilung.html")}" />`
     ),
     "Kanonische URL der gerenderten Dokumentseite fehlt."
+  );
+  assert(
+    allocationHtml.includes(
+      "<title>REIST Research Token (REIST) — Vertrag und Verteilung</title>"
+    ) &&
+      allocationHtml.includes(
+        '<meta name="description" content="Offizielle Base-Sepolia-Dokumentation des REIST Research Token (REIST): Vertrag 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68." />'
+      ) &&
+      allocationHtml.includes(
+        '<meta property="og:site_name" content="REIST Research Token" />'
+      ) &&
+      allocationHtml.includes('<h1 id="reist-research-token-reist">REIST Research Token (REIST)</h1>') &&
+      allocationHtml.includes(
+        "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+      ),
+    "Deutsche Token-Dokumentseite besitzt keine eindeutige Suchidentität."
+  );
+
+  const englishAllocationDocument = await fetch(
+    `${origin}/en/docs/token-and-allocation.html`
+  );
+  assert(
+    englishAllocationDocument.ok,
+    "Gerenderte englische Token-Dokumentation ist nicht erreichbar."
+  );
+  const englishAllocationHtml = await englishAllocationDocument.text();
+  assert(
+    englishAllocationHtml.includes(
+      "<title>REIST Research Token (REIST) — Contract and Allocation</title>"
+    ) &&
+      englishAllocationHtml.includes(
+        '<meta name="description" content="Official Base Sepolia documentation for the REIST Research Token (REIST): contract 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68." />'
+      ) &&
+      englishAllocationHtml.includes(
+        '<meta property="og:site_name" content="REIST Research Token" />'
+      ) &&
+      englishAllocationHtml.includes('<h1 id="reist-research-token-reist">REIST Research Token (REIST)</h1>') &&
+      englishAllocationHtml.includes(
+        "https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+      ),
+    "Englische Token-Dokumentseite besitzt keine eindeutige Suchidentität."
   );
 
   const robotsResponse = await fetch(`${origin}/robots.txt`);

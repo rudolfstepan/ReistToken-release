@@ -5,8 +5,20 @@ import { publicSiteUrl } from "./site-publication.js";
 
 const documentPairs = [
   {
-    de: { source: "docs/TOKENOMICS.md", target: "docs/token-und-verteilung.html" },
-    en: { source: "docs/en/TOKEN_AND_ALLOCATION.md", target: "en/docs/token-and-allocation.html" },
+    de: {
+      source: "docs/TOKENOMICS.md",
+      target: "docs/token-und-verteilung.html",
+      seoTitle: "REIST Research Token (REIST) — Vertrag und Verteilung",
+      description:
+        "Offizielle Base-Sepolia-Dokumentation des REIST Research Token (REIST): Vertrag 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68.",
+    },
+    en: {
+      source: "docs/en/TOKEN_AND_ALLOCATION.md",
+      target: "en/docs/token-and-allocation.html",
+      seoTitle: "REIST Research Token (REIST) — Contract and Allocation",
+      description:
+        "Official Base Sepolia documentation for the REIST Research Token (REIST): contract 0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68.",
+    },
   },
   {
     de: { source: "docs/RISKS.md", target: "docs/risiken.html" },
@@ -161,9 +173,12 @@ function documentTemplate(configuration, rendered) {
   const autoLanguageAttribute = isEnglish
     ? ""
     : '\n  data-auto-language="true"';
-  const description = isEnglish
-    ? `REIST project document: ${rendered.title}.`
-    : `REIST-Projektdokument: ${rendered.title}.`;
+  const description =
+    configuration.description ||
+    (isEnglish
+      ? `REIST project document: ${rendered.title}.`
+      : `REIST-Projektdokument: ${rendered.title}.`);
+  const pageTitle = configuration.seoTitle || `${rendered.title} — REIST`;
 
   return `<!doctype html>
 <html
@@ -175,7 +190,12 @@ function documentTemplate(configuration, rendered) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="${escapeHtml(description)}" />
     <meta name="theme-color" content="#102028" />
-    <title>${escapeHtml(rendered.title)} — REIST</title>
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="REIST Research Token" />
+    <meta property="og:title" content="${escapeHtml(pageTitle)}" />
+    <meta property="og:description" content="${escapeHtml(description)}" />
+    <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
+    <title>${escapeHtml(pageTitle)}</title>
     <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
     <link rel="alternate" hreflang="de" href="${escapeHtml(germanUrl)}" />
     <link rel="alternate" hreflang="en" href="${escapeHtml(englishUrl)}" />

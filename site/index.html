@@ -9,10 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="REIST Division: offene zentrierte Restarithmetik und Dokumentation des getrennten, auf Base Sepolia bereitgestellten Research-Token-Piloten."
+      content="REIST Research Token (REIST): dokumentierter ERC-20-Testtoken des REIST-Division-Forschungsprojekts auf Base Sepolia; kein Investmentangebot."
     />
     <meta name="theme-color" content="#0b1720" />
-    <title>REIST Division — Projektdokumentation</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="REIST Research Token" />
+    <meta property="og:title" content="REIST Research Token (REIST) — Base Sepolia" />
+    <meta
+      property="og:description"
+      content="Dokumentierter ERC-20-Testtoken des REIST-Division-Forschungsprojekts auf Base Sepolia; kein Investmentangebot."
+    />
+    <meta property="og:url" content="https://reist-token.intracom.at/" />
+    <title>REIST Research Token (REIST) — Base Sepolia</title>
     <link rel="icon" href="assets/reist-mark.svg" type="image/svg+xml" />
     <link rel="canonical" href="https://reist-token.intracom.at/" />
     <link rel="alternate" hreflang="de" href="https://reist-token.intracom.at/" />
@@ -23,6 +31,11 @@
     <script src="app.js" defer></script>
   </head>
   <body>
+    <div itemscope itemtype="https://schema.org/WebSite">
+      <meta itemprop="name" content="REIST Research Token" />
+      <meta itemprop="alternateName" content="REIST" />
+      <link itemprop="url" href="https://reist-token.intracom.at/" />
+    </div>
     <a class="skip-link" href="#inhalt">Zum Inhalt</a>
 
     <header class="site-header">
@@ -63,19 +76,19 @@
     <main id="inhalt" tabindex="-1">
       <section id="top" class="hero section-shell">
         <div class="hero-copy">
-          <p class="section-label">Forschungsprojekt · Stand 2. August 2026</p>
-          <h1>REIST Division</h1>
+          <p class="section-label">REIST Division · Forschungsprojekt · Stand 2. August 2026</p>
+          <h1>REIST <span>Research Token</span></h1>
           <p class="hero-subtitle">
-            Zentrierte Restarithmetik und ein dokumentierter
-            Research-Token-Pilot
+            Dokumentierter Testnet-Pilot für das Forschungsprojekt zur
+            zentrierten Restarithmetik
           </p>
           <p class="hero-lead">
             REIST beschreibt eine implementierungsorientierte Verwendung
             zentrierter Reste für additionsdominierte modulare Rechenkerne. Ein
-            davon getrennter ERC-20-Pilot wurde auf Base Sepolia bereitgestellt
-            und bildet die technische Grundlage für eine dokumentierte
-            Anerkennung reproduzierbarer Implementierungen und unabhängiger
-            Prüfungen.
+            davon getrennter ERC-20-Pilot, der REIST Research Token, wurde auf
+            Base Sepolia bereitgestellt und bildet die technische Grundlage für
+            eine dokumentierte Anerkennung reproduzierbarer Implementierungen
+            und unabhängiger Prüfungen.
           </p>
           <div class="hero-actions">
             <a
@@ -244,7 +257,8 @@
             Forschungsbeiträge vorgesehen; Auswahl und Review bleiben off-chain.
             Er beschleunigt das Framework nicht. Der Zugang zu Paper und Code ist
             nicht an Tokenbesitz gebunden. Es besteht kein Anspruch auf Rendite
-            oder Rücknahme.
+            oder Rücknahme. Die vollständige Spezifikation steht unter
+            <a href="docs/token-und-verteilung.html">REIST Research Token (REIST) — Vertrag und Verteilung</a>.
           </p>
         </div>
 
@@ -286,7 +300,7 @@
           <code data-token-address>0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68</code>
           <div>
             <button type="button" class="text-button" data-copy-address>Adresse kopieren</button>
-            <a data-explorer-link href="https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code" rel="noreferrer">Token-Vertrag</a>
+            <a data-explorer-link href="https://sepolia.basescan.org/token/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68" rel="noreferrer">Token bei BaseScan</a>
             <a data-vesting-explorer-link href="https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code" rel="noreferrer">Vesting-Vertrag</a>
             <a data-transaction-explorer-link href="https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c" rel="noreferrer">Deployment-Transaktion</a>
           </div>
