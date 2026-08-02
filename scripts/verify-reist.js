@@ -471,6 +471,76 @@ function parsePublishedInput(sourceCode) {
   }
 }
 
+function assertPublishedInputMatches(publishedInput, label) {
+  if (
+    canonicalJsonSha256(publishedInput) ===
+    manifest.source.standardJsonInputSha256
+  ) {
+    return;
+  }
+
+  if (
+    !publishedInput ||
+    typeof publishedInput !== "object" ||
+    Array.isArray(publishedInput)
+  ) {
+    fail(`${label}: Etherscan-Standard-JSON ist kein Objekt.`);
+  }
+  const unexpectedRootKeys = Object.keys(publishedInput).filter(
+    (key) => !new Set(["language", "sources", "settings"]).has(key)
+  );
+  if (unexpectedRootKeys.length > 0) {
+    fail(`${label}: Etherscan-Standard-JSON enthaelt unerwartete Felder.`);
+  }
+  if (
+    !publishedInput.sources ||
+    typeof publishedInput.sources !== "object" ||
+    Array.isArray(publishedInput.sources)
+  ) {
+    fail(`${label}: Etherscan-Standard-JSON enthaelt keine Quellen.`);
+  }
+
+  const publishedSources = { ...publishedInput.sources };
+  let publishedSettings = publishedInput.settings;
+  if (Object.hasOwn(publishedSources, "settings.json")) {
+    if (publishedSettings !== undefined) {
+      fail(`${label}: Etherscan liefert widerspruechliche Compiler-Einstellungen.`);
+    }
+    const settingsSource = publishedSources["settings.json"];
+    if (
+      !settingsSource ||
+      typeof settingsSource !== "object" ||
+      Array.isArray(settingsSource) ||
+      Object.keys(settingsSource).length !== 1 ||
+      typeof settingsSource.content !== "string"
+    ) {
+      fail(`${label}: Etherscan-settings.json hat ein unerwartetes Format.`);
+    }
+    try {
+      publishedSettings = JSON.parse(settingsSource.content);
+    } catch {
+      fail(`${label}: Etherscan-settings.json ist kein gueltiges JSON.`);
+    }
+    delete publishedSources["settings.json"];
+  }
+
+  assertEqual(
+    publishedInput.language,
+    standardInput.language,
+    `${label}: veroeffentlichte Sprache weicht ab.`
+  );
+  assertEqual(
+    canonicalJsonSha256(publishedSources),
+    canonicalJsonSha256(standardInput.sources),
+    `${label}: veroeffentlichte Quellen weichen vom Deployment-Bundle ab.`
+  );
+  assertEqual(
+    canonicalJsonSha256(publishedSettings),
+    canonicalJsonSha256(standardInput.settings),
+    `${label}: veroeffentlichte Compiler-Einstellungen weichen ab.`
+  );
+}
+
 async function publishedRecord(address) {
   const response = await etherscanGetRequest({
     action: "getsourcecode",
@@ -486,11 +556,7 @@ async function publishedRecord(address) {
 
 function validatePublishedRecord(record, specification) {
   const publishedInput = parsePublishedInput(record.SourceCode);
-  assertEqual(
-    canonicalJsonSha256(publishedInput),
-    manifest.source.standardJsonInputSha256,
-    `${specification.label}: veröffentlichter Standard-JSON-Hash weicht ab.`
-  );
+  assertPublishedInputMatches(publishedInput, specification.label);
   assertEqual(
     record.ContractName,
     specification.contractName,
