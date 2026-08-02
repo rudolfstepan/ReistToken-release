@@ -150,6 +150,7 @@ const requiredFiles = [
   "scripts/deploy-testnet.js",
   "scripts/deploy-testnet.ps1",
   "scripts/check-base-sepolia-allowance-smoke.js",
+  "scripts/check-base-sepolia-vesting.js",
   "scripts/execute-base-sepolia-allowance-smoke.js",
   "scripts/execute-base-sepolia-allowance-smoke.ps1",
   "scripts/execute-base-sepolia-smoke.js",
@@ -161,6 +162,7 @@ const requiredFiles = [
   "scripts/lib/build-provenance.js",
   "scripts/lib/base-sepolia-allowance-plan.js",
   "scripts/lib/base-sepolia-smoke-plan.js",
+  "scripts/lib/base-sepolia-vesting-evidence.js",
   "scripts/lib/password-transport.js",
   "scripts/lib/project-identity.js",
   "scripts/lib/repository-provenance.js",
@@ -168,6 +170,7 @@ const requiredFiles = [
   "scripts/lib/site-publication.js",
   "scripts/tests/base-sepolia-smoke-plan.test.js",
   "scripts/tests/base-sepolia-allowance-plan.test.js",
+  "scripts/tests/base-sepolia-vesting-evidence.test.js",
   "scripts/smoke-site.js",
   "plans/README.md",
   "plans/base-sepolia-allowance-smoke.json",
@@ -365,6 +368,23 @@ for (const forbidden of [
 ]) {
   if (allowancePrecheckSource.includes(forbidden)) {
     fail(`Read-only-Allowance-Precheck enthält verbotene Sendefähigkeit: ${forbidden}.`);
+  }
+}
+const vestingObserverSource = readFileSync(
+  resolve("scripts/check-base-sepolia-vesting.js"),
+  "utf8"
+);
+for (const forbidden of [
+  "Wallet",
+  "signTransaction",
+  "broadcastTransaction",
+  "sendTransaction",
+  "readPasswordFromStandardInput",
+  "eth_sendRawTransaction",
+  "eth_sendTransaction",
+]) {
+  if (vestingObserverSource.includes(forbidden)) {
+    fail(`Read-only-Vesting-Observer enthält verbotene Sendefähigkeit: ${forbidden}.`);
   }
 }
 const fundedTestnetStatus =
