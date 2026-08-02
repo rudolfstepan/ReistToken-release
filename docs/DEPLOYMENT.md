@@ -106,6 +106,20 @@ Deployment-Wallet prüft `npm run check:testnet:rpc` per direkter JSON-RPC-Antwo
 mit Timeout Chain-ID, aktuellen Block und öffentlichen Test-ETH-Bestand, ohne
 eine Transaktion zu senden.
 
+Für die spätere Explorer-Verifikation einen Etherscan-V2-API-Schlüssel im
+offiziellen Dashboard erzeugen, ausschließlich in die Zwischenablage kopieren
+und lokal speichern:
+
+```powershell
+npm run configure:etherscan-key
+```
+
+Der Helfer zeigt den Schlüssel nicht an, lehnt getrackte oder nicht ignorierte
+`.env`-Dateien ab, übernimmt nur die freigegebenen Testnet-Variablen, erhält die
+exklusiven Windows-Zugriffsrechte und ersetzt anschließend den
+Zwischenablageinhalt. API-Schlüssel gehören ebenso wenig in Git, Issues oder
+Chats wie Wallet-Schlüssel.
+
 ## 4. Reproduzierbarer Preflight
 
 ```powershell

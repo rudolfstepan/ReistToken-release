@@ -34,6 +34,7 @@
     "check:testnet-wallets": "node scripts/check-testnet-config.js --wallets",
     "check:testnet-recovery": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-testnet-recovery.ps1",
     "check:testnet:rpc": "node scripts/check-testnet-config.js --rpc",
+    "configure:etherscan-key": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/configure-etherscan-api-key.ps1",
     "estimate:testnet-deployment": "node scripts/estimate-testnet-deployment.js",
     "export:testnet-addresses": "node scripts/export-testnet-addresses.js",
     "preflight": "npm run clean && npm run compile && npm run check:build && npm test && npm run check && npm audit",

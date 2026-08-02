@@ -139,6 +139,7 @@ const requiredFiles = [
   "scripts/backup-testnet-wallets.ps1",
   "scripts/check-testnet-acl.ps1",
   "scripts/check-testnet-recovery.ps1",
+  "scripts/configure-etherscan-api-key.ps1",
   "scripts/deploy-testnet.js",
   "scripts/deploy-testnet.ps1",
   "scripts/estimate-testnet-deployment.js",
