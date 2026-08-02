@@ -59,8 +59,17 @@ function assertDistinct(addresses) {
 }
 
 function gitOutput(arguments_, description) {
+  const gitEnvironment = { ...process.env };
+  for (const name of [
+    "ETHERSCAN_API_KEY",
+    "REIST_WALLET_PASSWORD",
+    "TESTNET_DEPLOYER_PRIVATE_KEY",
+  ]) {
+    delete gitEnvironment[name];
+  }
   const result = spawnSync("git", arguments_, {
     encoding: "utf8",
+    env: gitEnvironment,
     shell: false,
   });
   if (result.status !== 0) {

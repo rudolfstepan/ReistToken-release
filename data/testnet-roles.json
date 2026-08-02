@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "status": "wallets-created-recovery-checked-unfunded-not-deployed",
+  "createdAt": "2026-08-02T12:56:36.840Z",
+  "recoveryCheckedAt": "2026-08-02T13:00:42.737Z",
+  "custody": {
+    "model": "single-operator technical testnet pilot",
+    "keypairs": "four independent encrypted EOA keypairs",
+    "multisig": false,
+    "mainnetSuitable": false
+  },
+  "roles": {
+    "deployer": "0xCfE0Cbb18351C31E00778fEa42b4b260112Aa48e",
+    "founderBeneficiary": "0xdc9F744C2D9e5962EC8839085ACADB5deFf585Ed",
+    "researchRewardsTreasury": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+    "ecosystemTreasury": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC"
+  },
+  "notice": "These public addresses are for a Base Sepolia pilot only. No token has been deployed and no economic value is promised."
+}

@@ -90,14 +90,27 @@ Das Deployment ist absichtlich ausschließlich für Base Sepolia (Chain-ID
 von der Deployment-Wallet verschieden sind, und erzeugt anschließend ein
 maschinenlesbares Manifest.
 
-1. Zwei separate Testnet-Treasuries erstellen, vorzugsweise Safes.
-2. `.env.example` nach `.env` kopieren und nur lokal ausfüllen.
-3. Eine eigene wertlose Testnet-Wallet mit Faucet-ETH versorgen.
-4. `npm run preflight` ausführen.
-5. `npm run deploy:testnet` ausführen.
-6. `npm run verify:testnet` ausführen und Explorer-Ergebnis kontrollieren.
+1. Zwei separate Testnet-Treasuries erstellen, vorzugsweise Safes. Für einen
+   zentral kontrollierten technischen Piloten kann `npm run
+   setup:testnet-wallets` vier unabhängige, verschlüsselt gesicherte
+   Testnet-Keypairs und die lokale `.env` erzeugen.
+2. `npm run check:testnet-wallets` ausführen und die vier öffentlichen Adressen
+   unabhängig kontrollieren.
+3. Mit `npm run check:testnet-acl` den lokalen Zugriffsschutz prüfen,
+   Keystore-Verzeichnis und Passwort getrennt sichern und mit `npm run
+   check:testnet-recovery -- -WalletDirectory <BACKUP-PFAD>` die tatsächliche
+   Sicherung aller vier Wallets prüfen.
+4. Erst danach die Deployment-Wallet mit Faucet-ETH versorgen und `npm run
+   check:testnet:rpc` ausführen.
+5. `npm run preflight` ausführen.
+6. Erst nach expliziter Freigabe `npm run deploy:testnet` ausführen.
+7. `npm run verify:testnet` ausführen und Explorer-Ergebnis kontrollieren.
 
 Private Schlüssel gehören niemals in Git, Tickets, Webseiten oder Chats. Für
+die erzeugten Keystores müssen Passwort und Verzeichnis getrennt gesichert
+werden; das Passwort wird nicht gespeichert oder wiederhergestellt. Der
+private Deployer-Key wird nicht in `.env` gespeichert und nur für den
+freigegebenen Deployment-Prozess kurzzeitig aus dem Keystore entschlüsselt. Für
 ein späteres Mainnet wäre ein hardwaregestützter Signer und eine erneute
 Deployment-Konfiguration erforderlich; dieses Repository stellt derzeit keinen
 Mainnet-Befehl bereit.

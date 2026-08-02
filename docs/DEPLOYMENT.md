@@ -23,23 +23,70 @@ Base-Sepolia-Safes sein. Vor Mainnet sollten sie durch voneinander unabhängige
 Signer kontrolliert werden. Eine Person mit mehreren Wallets ist nicht
 dezentral.
 
+Für einen rein technischen, offen zentral kontrollierten Testnet-Piloten kann
+der lokale Bootstrap vier voneinander unabhängige EOA-Keypairs erzeugen:
+
+```powershell
+npm run setup:testnet-wallets
+```
+
+Das sichtbare Passwortfenster liest ein mindestens 16 Zeichen langes Passwort
+verdeckt ein. Das Skript überschreibt niemals vorhandene `.env`- oder
+Keystore-Dateien. Es legt vier verschlüsselte JSON-Keystores außerhalb des
+Repositorys unter `%LOCALAPPDATA%\REIST\base-sepolia-wallets` und die lokale
+`.env` an. Das externe Verzeichnis kann weder von Git noch von Hardhats
+Quellensuche erfasst werden; beide Pfade werden unter Windows auf das aktuelle
+Benutzerkonto beschränkt. `.env` enthält nur die öffentliche Deployer-Adresse
+und den externen Keystore-Pfad, keinen privaten Wallet-Schlüssel. Das ist
+getrennte Schlüsselverwahrung, aber keine Dezentralisierung oder
+Multisig-Governance.
+
+Vor Faucet oder Deployment müssen Keystore-Verzeichnis und Passwort getrennt
+gesichert werden. Ohne Passwort lassen sich die Keystores nicht
+wiederherstellen. Alle vier Wiederherstellungen müssen vor der Finanzierung
+zuerst lokal und anschließend direkt aus einer getrennten Sicherung geprüft
+werden:
+
+```powershell
+npm run check:testnet-acl
+npm run check:testnet-recovery
+npm run check:testnet-recovery -- -WalletDirectory "E:\REIST-Backup\base-sepolia-wallets"
+```
+
+Der letzte Pfad ist ein Beispiel und muss auf eine tatsächlich getrennte Kopie
+des Keystore-Verzeichnisses zeigen. Der ACL-Check ist idempotent; falls die
+Rechte nach einem abgebrochenen Setup repariert werden müssen, kann lokal
+`powershell.exe -File scripts/check-testnet-acl.ps1 -Repair` ausgeführt werden.
+
+Alle vier Keystores teilen im zentral kontrollierten Testpiloten ein Passwort
+und einen lokalen Verwahrungsort. Das ist ein gemeinsamer Verlust- und
+Kompromittierungspunkt und für Mainnet ausdrücklich ungeeignet.
+
 ## 2. Wegwerf-Testnet-Wallet
 
 Eine separate Wallet ohne Mainnet-Guthaben verwenden. Kostenloses
 Base-Sepolia-ETH gibt es über die in der
 [Base-Dokumentation gelisteten Faucets](https://docs.base.org/base-chain/network-information/network-faucets).
 
-Der private Schlüssel wird ausschließlich lokal in `.env` verwendet. Niemals
-den Schlüssel einer Wallet einsetzen, die reale Vermögenswerte hält.
+Der private Schlüssel bleibt verschlüsselt im lokalen Keystore und wird erst
+für einen ausdrücklich bestätigten Deployment-Prozess kurzzeitig im Speicher
+entschlüsselt. Niemals eine Wallet einsetzen, die reale Vermögenswerte hält.
 
 ## 3. Konfiguration
 
+Nach dem automatischen Setup:
+
 ```powershell
-Copy-Item .env.example .env
+npm run check:testnet-wallets
 ```
 
-`.env` lokal ausfüllen. `REIST_PAPER_DOI` muss vor Veröffentlichung auf die
-tatsächlich zitierte, überprüfte Paper-Version zeigen.
+Alternativ `.env.example` manuell nach `.env` kopieren und ausfüllen; `npm run
+check:testnet-config` prüft dann die öffentlichen Angaben ohne lokale
+Bootstrap-Keystores vorauszusetzen. `REIST_PAPER_DOI` muss auf die tatsächlich
+zitierte, überprüfte Paper-Version zeigen. Nach Finanzierung der
+Deployment-Wallet prüft `npm run check:testnet:rpc` per direkter JSON-RPC-Antwort
+mit Timeout Chain-ID, aktuellen Block und öffentlichen Test-ETH-Bestand, ohne
+eine Transaktion zu senden.
 
 ## 4. Reproduzierbarer Preflight
 
@@ -75,6 +122,8 @@ npm run deploy:testnet
 
 Das Skript:
 
+- verlangt im sichtbaren Fenster die exakte Freigabe `DEPLOY BASE SEPOLIA`,
+- entschlüsselt den Deployer-Key nur für den kurzlebigen Hardhat-Prozess,
 - verweigert andere Netzwerke und Chain-IDs,
 - validiert alle Adressen und ihre Verschiedenheit,
 - prüft Test-ETH,

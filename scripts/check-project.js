@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
+import { getAddress, ZeroAddress } from "ethers";
 import { canonicalJsonSha256 } from "./lib/build-provenance.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
@@ -16,14 +17,20 @@ import {
 
 const root = resolve(".");
 const excludedDirectories = new Set([
+  ".agents",
+  ".codex",
   ".git",
   "artifacts",
   "cache",
   "coverage",
   "dist",
+  "keystore",
+  "keystores",
   "node_modules",
+  "secrets",
   "typechain-types",
   "types",
+  "wallets",
 ]);
 const textExtensions = new Set([
   ".conf",
@@ -66,7 +73,16 @@ const requiredFiles = [
   "scripts/deploy-reist.js",
   "scripts/check-language.js",
   "scripts/check-live-site.js",
+  "scripts/check-testnet-config.js",
+  "scripts/check-testnet-acl.ps1",
+  "scripts/check-testnet-recovery.ps1",
+  "scripts/deploy-testnet.js",
+  "scripts/deploy-testnet.ps1",
+  "scripts/export-testnet-addresses.js",
+  "scripts/setup-testnet-wallets.js",
+  "scripts/setup-testnet-wallets.ps1",
   "scripts/lib/build-provenance.js",
+  "scripts/lib/password-transport.js",
   "scripts/lib/project-identity.js",
   "scripts/lib/repository-provenance.js",
   "scripts/lib/render-markdown.js",
@@ -84,6 +100,7 @@ const requiredFiles = [
   "docs/en/SECURITY.md",
   "docs/en/TRADEMARKS.md",
   "data/project.json",
+  "data/testnet-roles.json",
   "data/bounties.json",
   "data/contributions.json",
   "site/index.html",
@@ -237,7 +254,35 @@ for (const file of collectFiles(root)) {
 }
 
 const project = readJson("data/project.json");
+const testnetRoles = readJson("data/testnet-roles.json");
 const projectPackage = readJson("package.json");
+if (
+  testnetRoles.schemaVersion !== 1 ||
+  testnetRoles.network !== "Base Sepolia" ||
+  testnetRoles.chainId !== 84532 ||
+  testnetRoles.status !==
+    "wallets-created-recovery-checked-unfunded-not-deployed" ||
+  testnetRoles.custody?.multisig !== false ||
+  testnetRoles.custody?.mainnetSuitable !== false
+) {
+  fail("Öffentliches Testnet-Rollenregister besitzt einen falschen Status.");
+}
+const publicTestnetAddresses = Object.values(testnetRoles.roles || {});
+if (publicTestnetAddresses.length !== 4) {
+  fail("Öffentliches Testnet-Rollenregister muss vier Adressen enthalten.");
+}
+const normalizedTestnetAddresses = publicTestnetAddresses.map((address) => {
+  try {
+    const normalized = getAddress(address);
+    if (normalized === ZeroAddress) fail("Testnet-Rolle darf keine Nulladresse sein.");
+    return normalized.toLowerCase();
+  } catch {
+    fail("Öffentliches Testnet-Rollenregister enthält eine ungültige Adresse.");
+  }
+});
+if (new Set(normalizedTestnetAddresses).size !== 4) {
+  fail("Öffentliche Testnet-Rollenadressen müssen paarweise verschieden sein.");
+}
 const expectedPaperHash =
   "369B9FB75C1B6D4C2CBBA91FF63DB4420900AB30B6EEC137BFD72290AE7D45C4";
 if (
