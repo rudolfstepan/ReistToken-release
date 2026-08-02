@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en" data-alternate-language-url="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="REIST Division: open documentation of centered remainder arithmetic and a separate, not-yet-deployed research-token pilot for Base Sepolia."
+    />
+    <meta name="theme-color" content="#0b1720" />
+    <title>REIST Division — Project Documentation</title>
+    <link rel="canonical" href="https://reist-token.intracom.at/en/" />
+    <link rel="alternate" hreflang="de" href="https://reist-token.intracom.at/" />
+    <link rel="alternate" hreflang="en" href="https://reist-token.intracom.at/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://reist-token.intracom.at/" />
+    <link rel="icon" href="../assets/reist-mark.svg" type="image/svg+xml" />
+    <script src="../language.js"></script>
+    <link rel="stylesheet" href="../styles.css" />
+    <script src="../app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="REIST home page">
+        <img src="../assets/reist-mark.svg" width="42" height="42" alt="" />
+        <span>
+          <strong>REIST</strong>
+          <small>Division · Research Token</small>
+        </span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        Menu
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+        <a href="#forschung">Research</a>
+        <a href="#evidenz">Evidence</a>
+        <a href="#token">Token</a>
+        <a href="#beitraege">Contributions</a>
+        <a href="#transparenz">Transparency</a>
+        <a class="language-switch" data-language-switch data-language="de" href="../?lang=de" hreflang="de" aria-label="Switch to German">DE</a>
+      </nav>
+    </header>
+
+    <main id="inhalt" tabindex="-1">
+      <section id="top" class="hero section-shell">
+        <div class="hero-copy">
+          <p class="section-label">Research project · Status as of 2 August 2026</p>
+          <h1>REIST Division</h1>
+          <p class="hero-subtitle">
+            Centered remainder arithmetic and a documented research-token pilot
+          </p>
+          <p class="hero-lead">
+            REIST describes an implementation-oriented use of centered
+            remainders for addition-dominated modular compute kernels. A
+            separate ERC-20 pilot is intended to recognize reproducible
+            implementations and independent evaluations.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="button button-primary"
+              href="https://doi.org/10.5281/zenodo.21206471"
+              rel="noreferrer"
+            >
+              Canonical paper
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://github.com/rudolfstepan/reist-crypto-bench"
+              rel="noreferrer"
+            >
+              Benchmark repository
+            </a>
+          </div>
+          <p class="plain-statement">
+            <strong>Classification:</strong> The method works without a token.
+            There is no investment offering; the token confers no equity,
+            redemption, or return rights and is not a mark of scientific
+            quality.
+          </p>
+        </div>
+
+        <div class="formula-card" aria-label="Basic mathematical principle of REIST">
+          <div class="formula-card-head">
+            <span>Centered remainder</span>
+            <span class="formula-status">Requirement: B &gt; 0</span>
+          </div>
+          <div class="formula" aria-label="T equals q times B plus r">
+            <i>T</i> = <i>qB</i> + <i>r</i>
+          </div>
+          <div class="interval">
+            <span>−B/2</span>
+            <span class="interval-line"><b></b></span>
+            <span>+B/2</span>
+          </div>
+          <p>−B/2 ≤ r &lt; B/2</p>
+          <div class="example-grid">
+            <span>Classical</span><code>17 = 1 · 10 + 7</code>
+            <span>REIST</span><code>17 = 2 · 10 − 3</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-status section-shell" aria-labelledby="projektstatus-heading">
+        <h2 id="projektstatus-heading">Project status</h2>
+        <dl>
+          <div><dt>Contract</dt><dd><span data-test-count>14</span> local tests passing</dd></div>
+          <div><dt>Base Sepolia</dt><dd data-testnet-status aria-live="polite">not deployed</dd></div>
+          <div><dt>Mainnet</dt><dd>not approved</dd></div>
+          <div><dt>Token sale</dt><dd>not planned</dd></div>
+          <div><dt>External audit</dt><dd>not yet performed</dd></div>
+        </dl>
+      </section>
+
+      <section id="forschung" class="content-section section-shell">
+        <div class="section-intro">
+          <p class="section-label">Mathematical basis</p>
+          <h2>Scope and invariant</h2>
+          <p>
+            Centered remainders are mathematically classical. REIST's
+            contribution lies in their implementation-oriented use as a
+            persistent state for addition-dominated modular compute kernels.
+          </p>
+        </div>
+
+        <div class="principle-grid">
+          <article>
+            <h3>Small-magnitude remainder</h3>
+            <p>
+              Positive and negative deviations are represented symmetrically
+              around zero. The remainder is interpreted as a bidirectional
+              correction term.
+            </p>
+          </article>
+          <article>
+            <h3>Persistent invariant</h3>
+            <p>
+              If both the state and step remain centered, at most one ±B
+              correction returns the sum to the target interval.
+            </p>
+          </article>
+          <article>
+            <h3>Hardware-friendly</h3>
+            <p>
+              Addition, comparisons, and masks enable branchless code, SIMD
+              vectorization, and a small FPGA datapath.
+            </p>
+          </article>
+        </div>
+
+        <aside class="boundary-note">
+          <strong>Boundaries</strong>
+          <p>
+            REIST is not a general-purpose divider, a cryptographic primitive,
+            a replacement for Montgomery or Barrett reduction, or a claimed
+            side-channel protection measure.
+          </p>
+        </aside>
+      </section>
+
+      <section id="evidenz" class="content-section evidence-section">
+        <div class="section-shell">
+          <div class="section-intro split-intro">
+            <div>
+              <p class="section-label">Measurements and scope of validity</p>
+              <h2>Reported results</h2>
+            </div>
+            <p>
+              All values refer to the platforms, compiler configurations, and
+              baselines documented in the canonical German paper. They are not
+              a general performance guarantee.
+            </p>
+          </div>
+
+          <p class="evidence-provenance">
+            <strong>Source status:</strong> The following table comes from the
+            canonical German paper published on Zenodo (SHA-256
+            <code>369B9FB75C1B6D4C2CBBA91FF63DB4420900AB30B6EEC137BFD72290AE7D45C4</code>),
+            DOI <code>10.5281/zenodo.21206471</code>, published on 5 July 2026
+            under CC BY 4.0.
+          </p>
+
+          <div class="evidence-table-wrap">
+            <table>
+              <caption>Measurements reported in the canonical German paper</caption>
+              <thead>
+                <tr><th scope="col">Workload</th><th scope="col">Result</th><th scope="col">Measurement context</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Modular addition counter</td><td class="metric">2.1–4.4×</td><td>Apple M2 Pro · O3 through NEON</td></tr>
+                <tr><td>Modular addition counter</td><td class="metric">7.9–8.9×</td><td>Intel i9-14900K · O3</td></tr>
+                <tr><td>Polynomial addition</td><td class="metric">4.3–4.5×</td><td>Apple M2 Pro · O3/NEON</td></tr>
+                <tr><td>Polynomial addition</td><td class="metric">up to 17.0×</td><td>Intel i9-14900K · AVX2</td></tr>
+                <tr><td>Feedback-coupled FPGA accumulator</td><td class="metric">1 cycle/step</td><td>GW2A-18; isolated 32-bit correction unit: 161.8 MHz · 101 logic cells</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="negative-results">
+            <h3>Negative and neutral controls</h3>
+            <ul>
+              <li>Pure remainder computation: scalar O3 is approximately equal; x86 SIMD is slower in the reported test.</li>
+              <li>No structural point of application in ARX code such as ChaCha20; the manuscript classifies measured throughput as unchanged.</li>
+              <li>Hash mixing is approximately 15–25% slower under O3/SIMD; O0 is substantially worse.</li>
+              <li>Without O3/SIMD, branchless REIST can be slower.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="token" class="content-section section-shell">
+        <div class="section-intro">
+          <p class="section-label">Token specification</p>
+          <h2>Fixed ERC-20 model for a testnet pilot</h2>
+          <p>
+            The token is intended as a transferable means of recognizing
+            reviewed research contributions; selection and review remain
+            off-chain. It does not accelerate the framework. Access to the paper
+            and code is not tied to token ownership. There is no entitlement to
+            returns or redemption.
+          </p>
+        </div>
+
+        <div class="token-layout">
+          <div class="token-specs">
+            <dl>
+              <div><dt>Name</dt><dd>REIST Research Token</dd></div>
+              <div><dt>Symbol</dt><dd>REIST</dd></div>
+              <div><dt>Supply</dt><dd>1,000,000</dd></div>
+              <div><dt>Standard</dt><dd>ERC-20 · 18 decimals</dd></div>
+              <div><dt>Mint/Tax/Blacklist</dt><dd>not present</dd></div>
+              <div><dt>Pilot network</dt><dd>Base Sepolia · no economic value promised</dd></div>
+            </dl>
+          </div>
+
+          <div class="allocation-table">
+            <table>
+              <caption>Genesis allocation</caption>
+              <thead>
+                <tr><th scope="col">Purpose</th><th scope="col">Amount</th><th scope="col">Share</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Research Rewards</th><td>700,000</td><td>70%</td></tr>
+                <tr><th scope="row">Ecosystem Treasury</th><td>200,000</td><td>20%</td></tr>
+                <tr><th scope="row">Founder Vesting</th><td>100,000</td><td>10%</td></tr>
+              </tbody>
+            </table>
+            <p>
+              Founder allocation: one-year cliff and three-year linear vesting.
+              One third is vested at the cliff. Planned at launch: 0% public
+              sale and 0% DEX liquidity. This is project policy, not a technical
+              transfer restriction.
+            </p>
+          </div>
+        </div>
+
+        <div class="address-panel" data-address-panel aria-live="polite" hidden>
+          <span>Official Base Sepolia address</span>
+          <code data-token-address></code>
+          <div>
+            <button type="button" class="text-button" data-copy-address>Copy address</button>
+            <a data-explorer-link rel="noreferrer">View in explorer</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="beitraege" class="content-section contributions-section">
+        <div class="section-shell">
+          <div class="section-intro split-intro">
+            <div>
+              <p class="section-label">Contribution process</p>
+              <h2>Awards following documented review</h2>
+            </div>
+            <p>
+              No rewards for advertising, trading, or reach. Suitable work
+              includes implementations, reproductions, hardware ports, and
+              robust negative results.
+            </p>
+          </div>
+
+          <ol class="process" aria-label="Bounty process">
+            <li><span>01</span><b>Scope</b><small>public issue and criteria</small></li>
+            <li><span>02</span><b>Artifact</b><small>code, raw data, and hash</small></li>
+            <li><span>03</span><b>Review</b><small>reproduction and conflicts</small></li>
+            <li><span>04</span><b>Transfer</b><small>Safe transaction with evidence</small></li>
+          </ol>
+
+          <div class="bounty-register" data-bounty-grid>
+            <h3>Bounty register</h3>
+            <ul>
+              <li data-bounty-id="REIST-B001">
+                <code>REIST-B001</code><b>CPU reproduction</b>
+                <span>New CPU, raw data, baseline, and negative control.</span>
+                <small data-bounty-status>Draft</small>
+              </li>
+              <li data-bounty-id="REIST-B002">
+                <code>REIST-B002</code><b>Rust reference</b>
+                <span>Even and odd moduli with property tests.</span>
+                <small data-bounty-status>Draft</small>
+              </li>
+              <li data-bounty-id="REIST-B003">
+                <code>REIST-B003</code><b>RISC-V port</b>
+                <span>Compiler comparison, assembly, and reproducible measurement.</span>
+                <small data-bounty-status>Draft</small>
+              </li>
+            </ul>
+            <a href="../data/bounties.json">Machine-readable register (JSON)</a>
+          </div>
+
+          <p class="ledger-status">
+            Active bounties: <b data-active-bounties>0</b> · Accepted
+            contributions: <b data-contribution-count>0</b>. Only publicly
+            documented bounties and accepted contributions are counted.
+          </p>
+        </div>
+      </section>
+
+      <section id="transparenz" class="content-section section-shell">
+        <div class="section-intro">
+          <p class="section-label">Project status</p>
+          <h2>Existing work and outstanding prerequisites</h2>
+        </div>
+
+        <div class="transparency-grid">
+          <article class="transparency-card">
+            <h3>Available today</h3>
+            <ul>
+              <li>local, non-upgradeable contract design</li>
+              <li>genesis allocation fixed in the constructor</li>
+              <li>automatically created founder vesting contract</li>
+              <li>local tests and deployment invariants</li>
+              <li>public, history-free token release source snapshot</li>
+              <li>private channel for sensitive security reports</li>
+              <li>prepared bounty and contribution-register formats</li>
+            </ul>
+          </article>
+          <article class="transparency-card transparency-card-pending">
+            <h3>Still outstanding</h3>
+            <ul>
+              <li>Base Sepolia deployment and explorer verification</li>
+              <li>complete public FPGA sources</li>
+              <li>separate treasury Safes and signers</li>
+              <li>external contract review</li>
+              <li>legal clearance for economically relevant steps</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="release-gate">
+          <div>
+            <span>Release gate</span>
+            <h3>Canonical scientific reference</h3>
+          </div>
+          <p>
+            DOI <code>10.5281/zenodo.21206471</code> is canonical for the token
+            pilot. DOI <code>10.5281/zenodo.17897540</code> remains historically
+            referenced as the earlier public version 2.0. Zenodo identifies the
+            canonical record as a new version of that predecessor; the
+            identifiers are not identical.
+          </p>
+        </div>
+
+        <div class="next-steps">
+          <h3>Next steps</h3>
+          <ol>
+            <li>Designate separate treasury Safes and signers.</li>
+            <li>Deploy and verify the contracts on Base Sepolia.</li>
+            <li>Open the first reproduction bounty as a public issue.</li>
+            <li>Consider mainnet only after documented utility, an audit, and legal review.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="source-section">
+        <div class="section-shell source-layout">
+          <div>
+            <p class="section-label">Sources and reproducibility</p>
+            <h2>Documents and verifiable artifacts</h2>
+          </div>
+          <div class="source-links">
+            <a href="https://doi.org/10.5281/zenodo.21206471" rel="noreferrer"><span>Canonical paper</span><small>DOI · CC BY 4.0 · Zenodo ↗</small></a>
+            <a href="https://github.com/rudolfstepan/reist-crypto-bench" rel="noreferrer"><span>Benchmark code</span><small>GitHub ↗</small></a>
+            <a href="https://github.com/rudolfstepan/ReistToken-release" rel="noreferrer"><span>Token release source</span><small>History-free public snapshot · GitHub ↗</small></a>
+            <a href="../contracts/REISTToken.sol"><span>ERC-20 contract source</span><small>Local release build · Solidity ↗</small></a>
+            <a href="https://intracom.at/demo/reist/" rel="noreferrer"><span>Live demo</span><small>REIST SIMD ↗</small></a>
+            <a href="https://www.fma.gv.at/querschnittsthemen/markets-in-crypto-assets-regulation-micar/" rel="noreferrer"><span>Regulatory context</span><small>FMA Austria ↗</small></a>
+            <a href="https://orcid.org/0009-0004-2842-2579" rel="noreferrer"><span>Rudolf Stepan</span><small>Paper author and project maintainer · ORCID ↗</small></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand">
+        <img src="../assets/reist-mark.svg" width="36" height="36" alt="" />
+        <p><strong>REIST</strong><span>Research project and documented token pilot</span></p>
+      </div>
+      <p>
+        No investment offering. No mainnet token. No promise of returns or an
+        exchange listing. According to the EUIPO registration certificate dated
+        20 March 2026, REIST is European Union trade mark No. 019285788.
+      </p>
+      <nav class="footer-links" aria-label="Project and legal documents">
+        <a href="docs/token-and-allocation.html">Token and allocation</a>
+        <a href="docs/risks.html">Risks</a>
+        <a href="docs/legal-notice.html">Legal notice</a>
+        <a href="docs/security-policy.html">Security</a>
+        <a href="docs/trademark-notice.html">Trade mark</a>
+        <a href="../LICENSE.txt">MIT License</a>
+      </nav>
+      <p>Updated <time datetime="2026-08-02">2 August 2026</time></p>
+    </footer>
+  </body>
+</html>

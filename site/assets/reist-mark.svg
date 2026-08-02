@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">REIST Intervallzeichen</title>
+  <desc id="desc">Ein symmetrisches Restintervall mit negativer und positiver Korrektur um einen Mittelpunkt.</desc>
+  <rect width="96" height="96" rx="24" fill="#0b1720"/>
+  <path d="M18 48h60" stroke="#d8e5e5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M24 35v26M72 35v26" stroke="#67e8c2" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="48" cy="48" r="6" fill="#f2b84b"/>
+  <path d="M37 27 24 35l13 8M59 69l13-8-13-8" fill="none" stroke="#67e8c2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

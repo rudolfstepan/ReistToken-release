@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reist.example/schema/contribution-v1.json",
+  "title": "REIST contribution ledger entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "bountyId",
+    "title",
+    "contributor",
+    "evidenceUrl",
+    "artifactSha256",
+    "reviewers",
+    "decisionUrl",
+    "network",
+    "recipient",
+    "amount",
+    "transactionHash",
+    "acceptedAt"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^REIST-C[0-9]{3,}$" },
+    "bountyId": { "type": "string", "pattern": "^REIST-B[0-9]{3,}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "contributor": { "type": "string", "minLength": 1 },
+    "evidenceUrl": { "type": "string", "format": "uri" },
+    "artifactSha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "reviewers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "decisionUrl": { "type": "string", "format": "uri" },
+    "network": { "const": "Base Sepolia" },
+    "recipient": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+    "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+    "transactionHash": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+    "acceptedAt": { "type": "string", "format": "date-time" },
+    "conflicts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    }
+  }
+}

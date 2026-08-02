@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "network": "Base Sepolia",
+  "notice": "Draft rewards are testnet-only and have no promised economic value.",
+  "bounties": [
+    {
+      "id": "REIST-B001",
+      "status": "draft",
+      "title": "Independent CPU benchmark reproduction",
+      "reward": "5000",
+      "token": "testnet REIST",
+      "scope": "Reproduce the documented modular-addition benchmark on a CPU model not used in the paper.",
+      "acceptanceCriteria": [
+        "public source commit and permissive license",
+        "hardware, OS, compiler version and exact flags",
+        "raw measurements with at least five repetitions",
+        "classic baseline, REIST implementation and negative control",
+        "analysis includes variance and limitations"
+      ],
+      "issueUrl": null
+    },
+    {
+      "id": "REIST-B002",
+      "status": "draft",
+      "title": "Rust reference implementation with property tests",
+      "reward": "7500",
+      "token": "testnet REIST",
+      "scope": "Implement centered remainder and persistent modular addition in safe Rust with executable properties.",
+      "acceptanceCriteria": [
+        "tests cover even and odd moduli plus midpoint convention",
+        "property comparison against a clear mathematical reference",
+        "overflow assumptions documented",
+        "no performance claim without reproducible benchmark data"
+      ],
+      "issueUrl": null
+    },
+    {
+      "id": "REIST-B003",
+      "status": "draft",
+      "title": "RISC-V implementation and compiler inspection",
+      "reward": "10000",
+      "token": "testnet REIST",
+      "scope": "Port the additive correction kernel to a documented RISC-V target and inspect generated code.",
+      "acceptanceCriteria": [
+        "exact ISA extensions and target hardware or simulator identified",
+        "classic and REIST sources compiled with matching settings",
+        "assembly and raw timing artifacts published",
+        "positive and negative outcomes reported equally"
+      ],
+      "issueUrl": null
+    }
+  ]
+}

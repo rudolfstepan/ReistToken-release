@@ -1,0 +1,44 @@
+name: REIST quality gates
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts-and-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Compile contracts
+        run: npm run compile
+
+      - name: Check compiler provenance
+        run: npm run check:build
+
+      - name: Run contract tests
+        run: npm test
+
+      - name: Check project invariants and JavaScript syntax
+        run: npm run check
+
+      - name: Build and smoke-test static project site
+        run: npm run smoke:site
+
+      - name: Audit dependencies
+        run: npm audit

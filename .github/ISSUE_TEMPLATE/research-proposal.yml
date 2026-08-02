@@ -1,0 +1,46 @@
+name: Research or reproduction proposal
+description: Propose a reproducible benchmark, implementation, or independent evaluation.
+title: "research: "
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Research question and scope
+      description: State both the intended scope and explicit non-scope.
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Reproduction method
+      description: Identify hardware or simulator, OS, compiler, exact flags, workloads, and repetitions.
+    validations:
+      required: true
+  - type: textarea
+    id: controls
+    attributes:
+      label: Baseline and negative control
+      description: Explain how classic, REIST, and negative-control cases will be compared.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and acceptance criteria
+      description: List raw artifacts, analysis, license, and measurable criteria.
+    validations:
+      required: true
+  - type: textarea
+    id: conflicts
+    attributes:
+      label: Conflicts and limitations
+      description: Disclose relevant interests and known limitations, including expected negative results.
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Project boundaries
+      options:
+        - label: I understand that opening an issue creates no token entitlement and that testnet REIST has no assured economic value.
+          required: true

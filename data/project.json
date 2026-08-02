@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2026-08-02",
+  "framework": {
+    "name": "REIST Division",
+    "expansion": "Remainder-Extended Inversion and Subtraction Technique",
+    "type": "implementation-oriented centered remainder arithmetic",
+    "publicPaper": {
+      "status": "canonical",
+      "doi": "10.5281/zenodo.21206471",
+      "url": "https://doi.org/10.5281/zenodo.21206471",
+      "zenodoRecord": "https://zenodo.org/records/21206471",
+      "publicationDate": "2026-07-05",
+      "license": "CC-BY-4.0",
+      "sha256": "369B9FB75C1B6D4C2CBBA91FF63DB4420900AB30B6EEC137BFD72290AE7D45C4"
+    },
+    "previousPublicVersion": {
+      "version": "2.0",
+      "doi": "10.5281/zenodo.17897540",
+      "url": "https://doi.org/10.5281/zenodo.17897540",
+      "relationFromCanonical": "isNewVersionOf",
+      "status": "historical-noncanonical-for-token-pilot"
+    },
+    "benchmarkRepository": "https://github.com/rudolfstepan/reist-crypto-bench",
+    "tokenSourceRepository": "https://github.com/rudolfstepan/ReistToken-release",
+    "liveDemo": "https://intracom.at/demo/reist/"
+  },
+  "token": {
+    "name": "REIST Research Token",
+    "symbol": "REIST",
+    "decimals": 18,
+    "totalSupply": "1000000",
+    "status": "local-tested-not-deployed",
+    "networkPilot": {
+      "name": "Base Sepolia",
+      "chainId": 84532,
+      "economicValue": "none-promised"
+    },
+    "allocations": [
+      {
+        "id": "research-rewards",
+        "label": "Research Rewards",
+        "amount": "700000",
+        "percentage": 70
+      },
+      {
+        "id": "ecosystem-treasury",
+        "label": "Ecosystem Treasury",
+        "amount": "200000",
+        "percentage": 20
+      },
+      {
+        "id": "founder-vesting",
+        "label": "Founder Vesting",
+        "amount": "100000",
+        "percentage": 10,
+        "cliffDays": 365,
+        "durationDays": 1095
+      }
+    ],
+    "featuresAbsent": [
+      "minting",
+      "upgrade proxy",
+      "pause",
+      "blacklist",
+      "transfer tax",
+      "rebase",
+      "staking yield"
+    ]
+  },
+  "status": {
+    "contractTestsPassing": 14,
+    "testnetDeployment": false,
+    "mainnetDeployment": false,
+    "sourceVerified": false,
+    "externalAudit": false,
+    "publicSale": false,
+    "dexLiquidity": false,
+    "activeBounties": 0,
+    "acceptedContributions": 0
+  },
+  "trademark": {
+    "mark": "REIST",
+    "status": "registered-according-to-euipo-certificate",
+    "registrationNumber": "019285788",
+    "registrationDate": "2026-03-20",
+    "jurisdiction": "European Union",
+    "certificateSha256": "BA7C981DA1821DCF0E06B9857E3B755F0B9E05A37B72A8DD53405D2865B3E67C",
+    "registerUrl": "https://euipo.europa.eu/eSearch/#details/trademarks/019285788"
+  }
+}

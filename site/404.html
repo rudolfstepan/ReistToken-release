@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="REIST: Die angeforderte Seite wurde nicht gefunden. The requested page was not found."
+    />
+    <meta name="robots" content="noindex,follow" />
+    <meta name="theme-color" content="#102028" />
+    <title>404 — Seite nicht gefunden / Page not found — REIST</title>
+    <link rel="icon" href="/assets/reist-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="not-found-page">
+    <a class="skip-link" href="#inhalt">Zum Inhalt / Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="REIST Projektübersicht">
+        <img src="/assets/reist-mark.svg" width="42" height="42" alt="" />
+        <span>
+          <strong>REIST</strong>
+          <small>Division</small>
+        </span>
+      </a>
+
+      <nav class="document-nav" aria-label="Sprachauswahl / Language selection">
+        <a href="/" lang="de">Deutsch</a>
+        <a href="/en/" lang="en">English</a>
+      </nav>
+    </header>
+
+    <main id="inhalt" class="not-found-shell" tabindex="-1">
+      <p class="section-label">HTTP 404</p>
+      <h1>
+        <span>Seite nicht gefunden</span>
+        <span lang="en">Page not found</span>
+      </h1>
+
+      <div class="not-found-grid">
+        <section class="not-found-panel" lang="de" aria-labelledby="fehler-de">
+          <h2 id="fehler-de">Deutsch</h2>
+          <p>
+            Die angeforderte Adresse ist auf diesem Server nicht vorhanden.
+            Möglicherweise ist der Link veraltet oder unvollständig.
+          </p>
+          <a class="button button-secondary" href="/">Zur Projektübersicht</a>
+        </section>
+
+        <section class="not-found-panel" lang="en" aria-labelledby="error-en">
+          <h2 id="error-en">English</h2>
+          <p>
+            The requested address does not exist on this server. The link may
+            be outdated or incomplete.
+          </p>
+          <a class="button button-secondary" href="/en/">Open project overview</a>
+        </section>
+      </div>
+    </main>
+
+    <footer class="document-page-footer">
+      <p><strong>REIST</strong> · Projektdokumentation / Project documentation</p>
+      <a href="/">reist-token.intracom.at</a>
+    </footer>
+  </body>
+</html>

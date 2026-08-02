@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible non-security defect in the contract, tooling, website, or documentation.
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: Suspected vulnerabilities must use private security reporting, not this public form.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Smart contract
+        - Deployment or verification tooling
+        - Website
+        - Documentation or project data
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: Describe the defect without including secrets or personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest deterministic sequence, commit, and environment details.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Public-disclosure check
+      options:
+        - label: This report contains no private key, seed phrase, API key, personal data, or suspected vulnerability.
+          required: true

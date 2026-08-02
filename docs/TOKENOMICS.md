@@ -1,0 +1,75 @@
+# Token und Verteilung
+
+## Spezifikation
+
+| Merkmal | Wert |
+|---|---|
+| Name | REIST Research Token |
+| Symbol | REIST |
+| Standard | ERC-20 |
+| Zielnetz für Pilot | Base Sepolia, Chain-ID 84532 |
+| Dezimalstellen | 18 |
+| Gesamtmenge | 1.000.000 REIST |
+| Späteres Minting | technisch nicht vorhanden |
+| Upgrade/Proxy | nicht vorhanden |
+| Transfersteuer | nicht vorhanden |
+| Blacklist/Pause/Rebase | nicht vorhanden |
+
+Name und Symbol sind auf Blockchains nicht eindeutig. Nur die Kombination aus
+Netzwerk und veröffentlichter Vertragsadresse identifiziert den Token.
+
+## Genesis-Verteilung
+
+Die Verteilung wird im Konstruktor erzeugt. Die direkte Deployment-Adresse darf
+keine der drei Empfängerrollen übernehmen und erhält null Token.
+
+| Pool | Anteil | Menge | Zweck |
+|---|---:|---:|---|
+| Research Rewards | 70 % | 700.000 | überprüfte Reproduktionen, Implementierungen und Forschungsbeiträge |
+| Ecosystem Treasury | 20 % | 200.000 | dokumentierter Projektbetrieb, Infrastruktur und Integrationen |
+| Founder Vesting | 10 % | 100.000 | Gründer-/Autorenzuteilung mit Zeitbindung |
+
+Zum Start sind `0 %` für öffentlichen Verkauf und `0 %` für DEX-Liquidität
+vorgesehen. Es gibt keine private Vorverkaufsrunde und keine Preiszusage.
+Dies ist eine dokumentierte Startpolitik, keine Transferbeschränkung des
+Standard-ERC-20: Treasuries und spätere Besitzer können technisch übertragen
+und könnten dadurch auch Sekundärmärkte ermöglichen.
+
+## Founder Vesting
+
+- Start: Timestamp des Token-Deployments
+- Cliff: 365 Tage
+- Gesamtdauer: 1.095 Tage
+- Verlauf: linear ab Start, Auszahlung vor dem Cliff gesperrt
+- Am Cliff: ein Drittel ist freigeschaltet
+- Ende: vollständige Freischaltung nach drei Jahren
+
+Der Vertrag basiert auf OpenZeppelins `VestingWalletCliff`. Dessen
+Begünstigtenrolle ist übertragbar. Das beschleunigt den Zeitplan nicht, erlaubt
+aber die Übertragung der noch nicht ausgezahlten wirtschaftlichen Rechte.
+Ein Verzicht auf die Begünstigtenrolle (`renounceOwnership`) ist im
+REIST-Vesting-Vertrag deaktiviert, damit noch gesperrte Token nicht
+versehentlich dauerhaft unzugänglich werden.
+
+## Treasury-Kontrolle
+
+Der Tokenvertrag erzwingt die anfänglichen Empfänger und Mengen, nicht die
+spätere Verwendung der Treasury-Bestände. Für den Testnet-Pilot und zwingend
+vor einem Mainnet sind vorgesehen:
+
+- zwei voneinander getrennte Safe-Multisigs,
+- veröffentlichte Signeranzahl und Schwelle,
+- jede Ausgabe mit Bounty-/Beschluss-ID und Beleg,
+- öffentliches Beitragsregister mit Transaktionslink,
+- periodischer Soll-Ist-Abgleich der Wallet-Bestände.
+
+Solange eine einzelne Person alle Safe-Schlüssel kontrolliert, ist das offen
+als zentrale Kontrolle zu bezeichnen. Ein Multisig-Label allein ist keine
+Dezentralisierung.
+
+## Kein ökonomisches Versprechen
+
+Die feste Menge erzeugt weder Nachfrage noch Wert. Token können wertlos bleiben
+und vollständig illiquide sein. Es gibt keine Dividende, Gewinnbeteiligung,
+Rücknahme, Mindestpreis, Verzinsung, Staking-Rendite oder Zusage einer späteren
+Börsennotierung.
