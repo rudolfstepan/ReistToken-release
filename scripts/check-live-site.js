@@ -1,4 +1,9 @@
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
+import {
+  CANONICAL_PAPER_DOI,
+  CANONICAL_PAPER_URL,
+  PUBLIC_RELEASE_REPOSITORY,
+} from "./lib/project-identity.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
 
 function fail(message) {
@@ -7,6 +12,18 @@ function fail(message) {
 
 function assert(condition, message) {
   if (!condition) fail(message);
+}
+
+function assertPublicProjectIdentity(check, label) {
+  assert(
+    check.body.includes(CANONICAL_PAPER_DOI) &&
+      check.body.includes(`href="${CANONICAL_PAPER_URL}"`),
+    `${label}: kanonischer Paper-DOI oder DOI-Link fehlt.`
+  );
+  assert(
+    check.body.includes(`href="${PUBLIC_RELEASE_REPOSITORY}"`),
+    `${label}: Link zum öffentlichen Release-Repository fehlt.`
+  );
 }
 
 const requestedOrigin = process.argv[2] || PUBLIC_SITE_ORIGIN;
@@ -111,6 +128,7 @@ function assertIndexableHtml(check, canonicalUrl, alternates, label) {
 const home = await request("/");
 assertStatus(home, 200, "Deutsche Startseite");
 assert(home.body.includes("REIST Research Token"), "Projektidentität fehlt live.");
+assertPublicProjectIdentity(home, "Deutsche Startseite");
 assertIndexableHtml(
   home,
   `${PUBLIC_SITE_ORIGIN}/`,
@@ -146,6 +164,7 @@ assert(
 
 const englishHome = await request("/en/");
 assertStatus(englishHome, 200, "Englische Startseite");
+assertPublicProjectIdentity(englishHome, "Englische Startseite");
 assertIndexableHtml(
   englishHome,
   `${PUBLIC_SITE_ORIGIN}/en/`,
@@ -155,6 +174,27 @@ assertIndexableHtml(
     "x-default": `${PUBLIC_SITE_ORIGIN}/`,
   },
   "Englische Startseite"
+);
+
+const projectMetadata = await request("/data/project.json");
+assertStatus(projectMetadata, 200, "Live-Projektmetadaten");
+let liveProject;
+try {
+  liveProject = JSON.parse(projectMetadata.body);
+} catch {
+  fail("Live-Projektmetadaten sind kein gültiges JSON.");
+}
+assert(
+  projectMetadata.response.headers
+    .get("content-type")
+    ?.startsWith("application/json"),
+  "Live-Projektmetadaten besitzen nicht application/json."
+);
+assert(
+  liveProject.framework?.publicPaper?.doi === CANONICAL_PAPER_DOI &&
+    liveProject.framework?.publicPaper?.url === CANONICAL_PAPER_URL &&
+    liveProject.framework?.tokenSourceRepository === PUBLIC_RELEASE_REPOSITORY,
+  "Live-Projektmetadaten enthalten nicht die kanonische Paper- und Repository-Identität."
 );
 
 for (const document of publicDocumentBuilds) {
