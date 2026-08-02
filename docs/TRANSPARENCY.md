@@ -9,8 +9,8 @@ Stand: 2. August 2026.
 - beim Deployment erzeugter `REISTFounderVesting`,
 - über Etherscan V2 verifizierter Quellcode beider Verträge,
 - 14 lokale Hardhat-Tests und dokumentierte Deployment-Invarianten,
-- historienfreies öffentliches Release-Repository mit dem reproduzierbaren
-  Deployment-Quellstand,
+- öffentliches Release-Repository, dessen erster Commit als historienfreier
+  Snapshot den reproduzierbaren Deployment-Quellstand festhält,
 - privater GitHub-Kanal für sensible Sicherheitsmeldungen,
 - maschinenlesbare Bounty-, Beitrags- und Projektdaten,
 - trackerfreie statische Projektseite.
