@@ -534,10 +534,21 @@ function assertPublishedInputMatches(publishedInput, label) {
     canonicalJsonSha256(standardInput.sources),
     `${label}: veroeffentlichte Quellen weichen vom Deployment-Bundle ab.`
   );
+  if (
+    !publishedSettings ||
+    typeof publishedSettings !== "object" ||
+    Array.isArray(publishedSettings)
+  ) {
+    fail(`${label}: Etherscan liefert keine Compiler-Einstellungen.`);
+  }
+  const publishedCompilationSettings = structuredClone(publishedSettings);
+  const expectedCompilationSettings = structuredClone(standardInput.settings);
+  delete publishedCompilationSettings.outputSelection;
+  delete expectedCompilationSettings.outputSelection;
   assertEqual(
-    canonicalJsonSha256(publishedSettings),
-    canonicalJsonSha256(standardInput.settings),
-    `${label}: veroeffentlichte Compiler-Einstellungen weichen ab.`
+    canonicalJsonSha256(publishedCompilationSettings),
+    canonicalJsonSha256(expectedCompilationSettings),
+    `${label}: veroeffentlichte codewirksame Compiler-Einstellungen weichen ab.`
   );
 }
 
