@@ -4,6 +4,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   rmSync,
 } from "node:fs";
 import { basename, resolve } from "node:path";
@@ -16,6 +17,16 @@ import { writeDiscoveryFiles } from "./lib/site-publication.js";
 const output = resolve("dist");
 if (basename(output) !== "dist" || !output.startsWith(resolve("."))) {
   throw new Error("Unsicheres Ausgabeziel für Website-Build.");
+}
+if (existsSync(output)) {
+  const nestedRepository = readdirSync(output, { withFileTypes: true }).find(
+    (entry) => existsSync(resolve(output, entry.name, ".git"))
+  );
+  if (existsSync(resolve(output, ".git")) || nestedRepository) {
+    throw new Error(
+      "Website-Build verweigert das Leeren eines Ausgabeziels mit Git-Repository."
+    );
+  }
 }
 
 rmSync(output, { recursive: true, force: true });
