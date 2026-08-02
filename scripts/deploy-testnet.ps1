@@ -21,6 +21,10 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "Öffentliche Testnet-Vorprüfung ist fehlgeschlagen."
     }
+    & node "scripts/estimate-testnet-deployment.js"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Deployment-Kostenschätzung ist fehlgeschlagen oder die Reserve reicht nicht."
+    }
     $confirmation = Read-Host "Zur Freigabe exakt DEPLOY BASE SEPOLIA eingeben"
     if ($confirmation -cne "DEPLOY BASE SEPOLIA") {
         throw "Deployment wurde nicht freigegeben."

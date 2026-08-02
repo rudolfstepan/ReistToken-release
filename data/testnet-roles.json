@@ -2,10 +2,15 @@
   "schemaVersion": 1,
   "network": "Base Sepolia",
   "chainId": 84532,
-  "status": "wallets-created-recovery-checked-unfunded-not-deployed",
+  "status": "wallets-created-recovery-checked-funded-not-deployed",
   "createdAt": "2026-08-02T12:56:36.840Z",
   "recoveryCheckedAt": "2026-08-02T13:00:42.737Z",
   "backupRecoveryCheckedAt": "2026-08-02T14:05:52.419Z",
+  "fundingSnapshot": {
+    "checkedAt": "2026-08-02T14:43:26.248Z",
+    "blockNumber": 44956758,
+    "deployerBalanceWei": "200000000000000"
+  },
   "custody": {
     "model": "single-operator technical testnet pilot",
     "keypairs": "four independent encrypted EOA keypairs",

@@ -134,6 +134,23 @@ geschrieben.
 
 ## 5. Deployment
 
+Unmittelbar vor einer Freigabe die Gesamtkosten erneut rein lesend schätzen:
+
+```powershell
+npm run estimate:testnet-deployment
+```
+
+Der Check konstruiert die unsignierte Deployment-Transaktion aus dem geprüften
+Build, fragt Base Sepolia nach Ausführungsgas sowie die offizielle
+`GasPriceOracle`-Predeploy-Adresse nach L1-Daten- und Operatorgebühr und rechnet
+eine konservative aktuelle Kostenschätzung mit 20 Prozent Gaspuffer. Die
+Oracle-Methode bildet dabei eine sehr hohe, aber keine absolute statistische
+Abdeckung ab. Der Check liest keinen Keystore, lädt keinen privaten Schlüssel
+und sendet keine Transaktion. Gebühren sind
+zeitabhängig; deshalb ist nur eine unmittelbar vor dem Deployment erzeugte
+Schätzung entscheidend. Der Deployment-Wrapper wiederholt genau diesen Check
+automatisch, bevor er die ausdrückliche Freigabe abfragt.
+
 ```powershell
 npm run deploy:testnet
 ```
@@ -154,6 +171,13 @@ Das Skript:
 Ein bestehendes Manifest wird nicht still überschrieben. Für einen bewussten
 neuen Pilotvertrag muss `ALLOW_MANIFEST_OVERWRITE=YES` gesetzt und der Grund
 öffentlich dokumentiert werden.
+
+Die lokalen Manifest- und Statusdateien werden nach dem bestätigten Receipt
+jeweils atomar ersetzt. Meldet das Skript ein erfolgreiches oder noch unklares
+On-chain-Ergebnis mit fehlgeschlagener lokaler Finalisierung oder Validierung,
+darf der Deployment-Befehl nicht erneut ausgeführt werden: zuerst
+Transaktionshash und Vertragsadressen aus der Ausgabe sichern, den Receipt per
+Explorer oder RPC prüfen und danach den lokalen Status reparieren.
 
 Nach dem Deployment die Statuszeilen in `README.md` und
 `docs/TRANSPARENCY.md` auf die tatsächlichen Adressen und Transaktionen

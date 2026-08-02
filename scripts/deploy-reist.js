@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { network } from "hardhat";
@@ -23,6 +31,9 @@ const VERIFICATION_INPUT_PATH = resolve(
   "base-sepolia-standard-input.json"
 );
 const PROJECT_DATA_PATH = resolve("data", "project.json");
+const TESTNET_ROLES_PATH = resolve("data", "testnet-roles.json");
+const FUNDED_TESTNET_STATUS =
+  "wallets-created-recovery-checked-funded-not-deployed";
 
 function requiredEnvironment(name) {
   const value = process.env[name]?.trim();
@@ -30,6 +41,40 @@ function requiredEnvironment(name) {
     throw new Error(`${name} fehlt. Siehe .env.example.`);
   }
   return value;
+}
+
+function writeJsonAtomically(path, value) {
+  const temporaryPath = `${path}.${process.pid}.${randomUUID()}.tmp`;
+  try {
+    writeFileSync(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, {
+      encoding: "utf8",
+      flag: "wx",
+    });
+    renameSync(temporaryPath, path);
+  } catch (error) {
+    try {
+      if (existsSync(temporaryPath)) unlinkSync(temporaryPath);
+    } catch {
+      // Der ursprüngliche Schreibfehler ist für die Recovery maßgeblich.
+    }
+    throw error;
+  }
+}
+
+function assertOutputDirectoriesWritable() {
+  const directories = [resolve("deployments"), resolve("data")];
+  mkdirSync(directories[0], { recursive: true });
+  for (const directory of directories) {
+    const probePath = resolve(
+      directory,
+      `.reist-write-probe-${process.pid}-${randomUUID()}`
+    );
+    try {
+      writeFileSync(probePath, "", { encoding: "utf8", flag: "wx" });
+    } finally {
+      if (existsSync(probePath)) unlinkSync(probePath);
+    }
+  }
 }
 
 function validatedAddress(ethers, name) {
@@ -140,6 +185,7 @@ if (
       "ALLOW_MANIFEST_OVERWRITE=YES setzen."
   );
 }
+assertOutputDirectoriesWritable();
 
 const founderBeneficiary = validatedAddress(ethers, "FOUNDER_BENEFICIARY");
 const researchRewardsTreasury = validatedAddress(
@@ -154,12 +200,36 @@ if (paperDoi !== CANONICAL_PAPER_DOI) {
   );
 }
 
+const testnetRoles = JSON.parse(readFileSync(TESTNET_ROLES_PATH, "utf8"));
+const projectData = JSON.parse(readFileSync(PROJECT_DATA_PATH, "utf8"));
+if (
+  testnetRoles.network !== "Base Sepolia" ||
+  testnetRoles.chainId !== Number(EXPECTED_CHAIN_ID) ||
+  testnetRoles.status !== FUNDED_TESTNET_STATUS
+) {
+  throw new Error(
+    "Öffentliches Testnet-Rollenregister ist nicht finanziert und deploymentbereit."
+  );
+}
+for (const [roleName, configuredAddress] of [
+  ["founderBeneficiary", founderBeneficiary],
+  ["researchRewardsTreasury", researchRewardsTreasury],
+  ["ecosystemTreasury", ecosystemTreasury],
+]) {
+  if (ethers.getAddress(testnetRoles.roles?.[roleName]) !== configuredAddress) {
+    throw new Error(`Rollenregister widerspricht der Konfiguration: ${roleName}.`);
+  }
+}
+
 const [deployer] = await ethers.getSigners();
 if (!deployer) {
   throw new Error("Kein Testnet-Deployment-Signer konfiguriert.");
 }
 
 const deployerAddress = await deployer.getAddress();
+if (ethers.getAddress(testnetRoles.roles?.deployer) !== deployerAddress) {
+  throw new Error("Rollenregister widerspricht der Deployment-Adresse.");
+}
 assertDistinct([
   deployerAddress,
   founderBeneficiary,
@@ -177,144 +247,193 @@ console.log(`Research treasury: ${researchRewardsTreasury}`);
 console.log(`Ecosystem treasury: ${ecosystemTreasury}`);
 console.log(`Founder beneficiary: ${founderBeneficiary}`);
 
-const token = await ethers.deployContract(
-  "REISTToken",
-  [founderBeneficiary, researchRewardsTreasury, ecosystemTreasury],
-  deployer
-);
-await token.waitForDeployment();
+let deploymentTransaction;
+let receipt;
+let tokenAddress;
+let founderVestingAddress;
+let deploymentConfirmed = false;
 
-const tokenAddress = await token.getAddress();
-const founderVestingAddress = await token.founderVesting();
-const vesting = await ethers.getContractAt(
-  "REISTFounderVesting",
-  founderVestingAddress
-);
+try {
+  const token = await ethers.deployContract(
+    "REISTToken",
+    [founderBeneficiary, researchRewardsTreasury, ecosystemTreasury],
+    deployer
+  );
+  deploymentTransaction = token.deploymentTransaction();
+  if (!deploymentTransaction) {
+    throw new Error("Deployment-Transaktion konnte nicht ermittelt werden.");
+  }
+  tokenAddress = await token.getAddress();
+  console.log(`Deployment-Transaktion gesendet: ${deploymentTransaction.hash}`);
 
-const expectedSupply = ethers.parseUnits("1000000", 18);
-const expectedResearch = ethers.parseUnits("700000", 18);
-const expectedEcosystem = ethers.parseUnits("200000", 18);
-const expectedFounder = ethers.parseUnits("100000", 18);
+  receipt = await deploymentTransaction.wait();
+  if (!receipt || receipt.status !== 1) {
+    throw new Error("Deployment-Transaktion wurde nicht erfolgreich bestätigt.");
+  }
+  deploymentConfirmed = true;
 
-const checks = await Promise.all([
-  token.totalSupply(),
-  token.balanceOf(researchRewardsTreasury),
-  token.balanceOf(ecosystemTreasury),
-  token.balanceOf(founderVestingAddress),
-  token.balanceOf(deployerAddress),
-  vesting.owner(),
-]);
+  const block = await ethers.provider.getBlock(receipt.blockNumber);
+  if (!block) throw new Error("Deployment-Block ist nicht abrufbar.");
 
-if (
-  checks[0] !== expectedSupply ||
-  checks[1] !== expectedResearch ||
-  checks[2] !== expectedEcosystem ||
-  checks[3] !== expectedFounder ||
-  checks[4] !== 0n ||
-  checks[5].toLowerCase() !== founderBeneficiary.toLowerCase()
-) {
-  throw new Error("Post-Deployment-Invarianten sind fehlgeschlagen.");
-}
+  founderVestingAddress = await token.founderVesting();
+  const vesting = await ethers.getContractAt(
+    "REISTFounderVesting",
+    founderVestingAddress
+  );
+  const expectedSupply = ethers.parseUnits("1000000", 18);
+  const expectedResearch = ethers.parseUnits("700000", 18);
+  const expectedEcosystem = ethers.parseUnits("200000", 18);
+  const expectedFounder = ethers.parseUnits("100000", 18);
+  const checks = await Promise.all([
+    token.totalSupply(),
+    token.balanceOf(researchRewardsTreasury),
+    token.balanceOf(ecosystemTreasury),
+    token.balanceOf(founderVestingAddress),
+    token.balanceOf(deployerAddress),
+    vesting.owner(),
+  ]);
+  if (
+    checks[0] !== expectedSupply ||
+    checks[1] !== expectedResearch ||
+    checks[2] !== expectedEcosystem ||
+    checks[3] !== expectedFounder ||
+    checks[4] !== 0n ||
+    checks[5].toLowerCase() !== founderBeneficiary.toLowerCase()
+  ) {
+    throw new Error("Post-Deployment-Invarianten sind fehlgeschlagen.");
+  }
 
-const deploymentTransaction = token.deploymentTransaction();
-if (!deploymentTransaction) {
-  throw new Error("Deployment-Transaktion konnte nicht ermittelt werden.");
-}
-const receipt = await deploymentTransaction.wait();
-const block = await ethers.provider.getBlock(receipt.blockNumber);
-if (!block || receipt.status !== 1) {
-  throw new Error("Deployment-Receipt oder Blockdaten sind ungültig.");
-}
-const [tokenCode, vestingCode] = await Promise.all([
-  ethers.provider.getCode(tokenAddress),
-  ethers.provider.getCode(founderVestingAddress),
-]);
-if (tokenCode === "0x" || vestingCode === "0x") {
-  throw new Error("Runtime-Bytecode eines Deployment-Vertrags fehlt.");
-}
+  const [tokenCode, vestingCode, vestingStart, vestingCliff, vestingEnd] =
+    await Promise.all([
+      ethers.provider.getCode(tokenAddress),
+      ethers.provider.getCode(founderVestingAddress),
+      vesting.start(),
+      vesting.cliff(),
+      vesting.end(),
+    ]);
+  if (tokenCode === "0x" || vestingCode === "0x") {
+    throw new Error("Runtime-Bytecode eines Deployment-Vertrags fehlt.");
+  }
 
-const manifest = {
-  schemaVersion: 2,
-  status: "testnet-pilot-no-economic-value",
-  network: "Base Sepolia",
-  chainId: Number(EXPECTED_CHAIN_ID),
-  deployedAt: new Date(Number(block.timestamp) * 1000).toISOString(),
-  deployer: deployerAddress,
-  transactionHash: receipt.hash,
-  blockNumber: receipt.blockNumber,
-  contracts: {
-    token: tokenAddress,
-    founderVesting: founderVestingAddress,
-  },
-  runtimeCodeHashes: {
-    token: ethers.keccak256(tokenCode),
-    founderVesting: ethers.keccak256(vestingCode),
-  },
-  token: {
-    name: "REIST Research Token",
-    symbol: "REIST",
-    decimals: 18,
-    totalSupply: "1000000",
-    deployedCodeHash: ethers.keccak256(tokenCode),
-  },
-  allocations: {
-    researchRewards: {
-      amount: "700000",
-      address: researchRewardsTreasury,
+  const manifest = {
+    schemaVersion: 2,
+    status: "testnet-pilot-no-economic-value",
+    network: "Base Sepolia",
+    chainId: Number(EXPECTED_CHAIN_ID),
+    deployedAt: new Date(Number(block.timestamp) * 1000).toISOString(),
+    deployer: deployerAddress,
+    transactionHash: receipt.hash,
+    blockNumber: receipt.blockNumber,
+    contracts: {
+      token: tokenAddress,
+      founderVesting: founderVestingAddress,
     },
-    ecosystemTreasury: {
-      amount: "200000",
-      address: ecosystemTreasury,
+    runtimeCodeHashes: {
+      token: ethers.keccak256(tokenCode),
+      founderVesting: ethers.keccak256(vestingCode),
     },
-    founderVesting: {
-      amount: "100000",
-      beneficiary: founderBeneficiary,
-      vestingContract: founderVestingAddress,
-      start: Number(await vesting.start()),
-      cliff: Number(await vesting.cliff()),
-      end: Number(await vesting.end()),
+    token: {
+      name: "REIST Research Token",
+      symbol: "REIST",
+      decimals: 18,
+      totalSupply: "1000000",
+      deployedCodeHash: ethers.keccak256(tokenCode),
     },
-  },
-  source: {
-    sourceCommit: provenance.commit,
-    repositoryRemote: provenance.remote,
-    buildInfoId: build.buildInfoId,
-    standardJsonInput: "base-sepolia-standard-input.json",
-    standardJsonInputSha256: build.inputSha256,
-    sourceKeys: build.sourceKeys,
-    contractNames: build.contractNames,
-    solidity: build.compilerLongVersion,
-    openZeppelin: projectPackage.dependencies["@openzeppelin/contracts"],
-    hardhat: projectPackage.devDependencies.hardhat,
-    ethers: projectPackage.devDependencies.ethers,
-    paperDoi,
-  },
-  verification: {
-    sourceVerified: false,
-    externalAudit: false,
-  },
-};
+    allocations: {
+      researchRewards: {
+        amount: "700000",
+        address: researchRewardsTreasury,
+      },
+      ecosystemTreasury: {
+        amount: "200000",
+        address: ecosystemTreasury,
+      },
+      founderVesting: {
+        amount: "100000",
+        beneficiary: founderBeneficiary,
+        vestingContract: founderVestingAddress,
+        start: Number(vestingStart),
+        cliff: Number(vestingCliff),
+        end: Number(vestingEnd),
+      },
+    },
+    source: {
+      sourceCommit: provenance.commit,
+      repositoryRemote: provenance.remote,
+      buildInfoId: build.buildInfoId,
+      standardJsonInput: "base-sepolia-standard-input.json",
+      standardJsonInputSha256: build.inputSha256,
+      sourceKeys: build.sourceKeys,
+      contractNames: build.contractNames,
+      solidity: build.compilerLongVersion,
+      openZeppelin: projectPackage.dependencies["@openzeppelin/contracts"],
+      hardhat: projectPackage.devDependencies.hardhat,
+      ethers: projectPackage.devDependencies.ethers,
+      paperDoi,
+    },
+    verification: {
+      sourceVerified: false,
+      externalAudit: false,
+    },
+  };
 
-mkdirSync(resolve("deployments"), { recursive: true });
-writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`, {
-  encoding: "utf8",
-  flag: "w",
-});
-writeFileSync(
-  VERIFICATION_INPUT_PATH,
-  `${JSON.stringify(build.input, null, 2)}\n`,
-  { encoding: "utf8", flag: "w" }
-);
+  writeJsonAtomically(MANIFEST_PATH, manifest);
+  writeJsonAtomically(VERIFICATION_INPUT_PATH, build.input);
 
-const projectData = JSON.parse(readFileSync(PROJECT_DATA_PATH, "utf8"));
-projectData.lastUpdated = new Date().toISOString().slice(0, 10);
-projectData.token.status = "base-sepolia-pilot-deployed-no-economic-value";
-projectData.status.testnetDeployment = true;
-projectData.status.sourceVerified = false;
-writeFileSync(PROJECT_DATA_PATH, `${JSON.stringify(projectData, null, 2)}\n`, "utf8");
+  projectData.lastUpdated = new Date().toISOString().slice(0, 10);
+  projectData.token.status = "base-sepolia-pilot-deployed-no-economic-value";
+  projectData.status.testnetDeployment = true;
+  projectData.status.sourceVerified = false;
+  writeJsonAtomically(PROJECT_DATA_PATH, projectData);
 
-console.log(`Token: ${tokenAddress}`);
-console.log(`Founder vesting: ${founderVestingAddress}`);
-console.log(`Manifest: ${MANIFEST_PATH}`);
-console.log(`Verifikations-Bundle: ${VERIFICATION_INPUT_PATH}`);
-console.log("Deployment und Invariantenprüfung erfolgreich.");
+  testnetRoles.status = "base-sepolia-pilot-deployed-no-economic-value";
+  testnetRoles.deployment = {
+    manifest: "deployments/base-sepolia.json",
+    deployedAt: manifest.deployedAt,
+    transactionHash: manifest.transactionHash,
+    blockNumber: manifest.blockNumber,
+    token: manifest.contracts.token,
+    founderVesting: manifest.contracts.founderVesting,
+  };
+  testnetRoles.notice =
+    "The REIST Research Token pilot is deployed on Base Sepolia only. It has no promised economic value and is not a mainnet asset.";
+  writeJsonAtomically(TESTNET_ROLES_PATH, testnetRoles);
+
+  console.log(`Token: ${tokenAddress}`);
+  console.log(`Founder vesting: ${founderVestingAddress}`);
+  console.log(`Manifest: ${MANIFEST_PATH}`);
+  console.log(`Verifikations-Bundle: ${VERIFICATION_INPUT_PATH}`);
+  console.log("Deployment und Invariantenprüfung erfolgreich.");
+} catch (error) {
+  const observedReceipt = receipt || error?.receipt;
+  const transactionHash =
+    observedReceipt?.hash || deploymentTransaction?.hash || "nicht verfügbar";
+  const replacementReceiptConfirmsDeployment =
+    observedReceipt?.status === 1 &&
+    typeof observedReceipt.contractAddress === "string" &&
+    typeof tokenAddress === "string" &&
+    observedReceipt.contractAddress.toLowerCase() === tokenAddress.toLowerCase();
+  const confirmedExpectedDeployment =
+    deploymentConfirmed || replacementReceiptConfirmsDeployment;
+  if (confirmedExpectedDeployment) {
+    console.error("WICHTIG: Das On-chain-Deployment war erfolgreich.");
+  } else {
+    console.error(
+      "WICHTIG: Ein Deployment-Versuch wurde gestartet; sein On-chain-Ergebnis ist nicht sicher finalisiert."
+    );
+  }
+  console.error(`Transaktion: ${transactionHash}`);
+  if (tokenAddress) console.error(`Token: ${tokenAddress}`);
+  if (founderVestingAddress) {
+    console.error(`Founder vesting: ${founderVestingAddress}`);
+  }
+  console.error(
+    "Nicht erneut deployen; zuerst Transaktion und Adressen per Explorer oder RPC prüfen."
+  );
+  throw new Error(
+    confirmedExpectedDeployment
+      ? "On-chain erfolgreich, lokale Finalisierung oder Validierung fehlgeschlagen."
+      : "Deployment-Ergebnis unklar; vor jedem weiteren Versuch On-chain prüfen.",
+    { cause: error }
+  );
+}

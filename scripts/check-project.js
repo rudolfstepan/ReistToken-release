@@ -141,6 +141,7 @@ const requiredFiles = [
   "scripts/check-testnet-recovery.ps1",
   "scripts/deploy-testnet.js",
   "scripts/deploy-testnet.ps1",
+  "scripts/estimate-testnet-deployment.js",
   "scripts/export-testnet-addresses.js",
   "scripts/setup-testnet-wallets.js",
   "scripts/setup-testnet-wallets.ps1",
@@ -319,17 +320,27 @@ for (const file of collectFiles(root)) {
 const project = readJson("data/project.json");
 const testnetRoles = readJson("data/testnet-roles.json");
 const projectPackage = readJson("package.json");
+const fundedTestnetStatus =
+  "wallets-created-recovery-checked-funded-not-deployed";
+const deployedTestnetStatus = "base-sepolia-pilot-deployed-no-economic-value";
+const fundingSnapshot = testnetRoles.fundingSnapshot;
 if (
   testnetRoles.schemaVersion !== 1 ||
   testnetRoles.network !== "Base Sepolia" ||
   testnetRoles.chainId !== 84532 ||
-  testnetRoles.status !==
-    "wallets-created-recovery-checked-unfunded-not-deployed" ||
+  !new Set([fundedTestnetStatus, deployedTestnetStatus]).has(
+    testnetRoles.status
+  ) ||
   !isIsoInstant(testnetRoles.createdAt) ||
   !isIsoInstant(testnetRoles.recoveryCheckedAt) ||
   !isIsoInstant(testnetRoles.backupRecoveryCheckedAt) ||
+  !isIsoInstant(fundingSnapshot?.checkedAt) ||
   testnetRoles.recoveryCheckedAt < testnetRoles.createdAt ||
   testnetRoles.backupRecoveryCheckedAt < testnetRoles.recoveryCheckedAt ||
+  fundingSnapshot.checkedAt < testnetRoles.backupRecoveryCheckedAt ||
+  !Number.isSafeInteger(fundingSnapshot.blockNumber) ||
+  fundingSnapshot.blockNumber <= 0 ||
+  !/^[1-9]\d*$/.test(fundingSnapshot.deployerBalanceWei || "") ||
   testnetRoles.custody?.multisig !== false ||
   testnetRoles.custody?.mainnetSuitable !== false
 ) {
@@ -756,6 +767,18 @@ if (existsSync(manifestPath)) {
   if (!project.status.testnetDeployment) {
     fail("Manifest existiert, aber Projektstatus meldet kein Testnet-Deployment.");
   }
+  const roleDeployment = testnetRoles.deployment;
+  if (
+    testnetRoles.status !== deployedTestnetStatus ||
+    roleDeployment?.manifest !== "deployments/base-sepolia.json" ||
+    roleDeployment?.deployedAt !== manifest.deployedAt ||
+    roleDeployment?.transactionHash !== manifest.transactionHash ||
+    roleDeployment?.blockNumber !== manifest.blockNumber ||
+    roleDeployment?.token !== manifest.contracts?.token ||
+    roleDeployment?.founderVesting !== manifest.contracts?.founderVesting
+  ) {
+    fail("Testnet-Rollenregister widerspricht dem Deployment-Manifest.");
+  }
   if (project.status.sourceVerified !== manifest.verification?.sourceVerified) {
     fail("Projekt- und Manifeststatus widersprechen sich bei der Source-Verifikation.");
   }
@@ -792,7 +815,11 @@ if (existsSync(manifestPath)) {
   }
   const readme = readFileSync(resolve("README.md"), "utf8");
   const transparency = readFileSync(resolve("docs/TRANSPARENCY.md"), "utf8");
-  if (/base sepolia\s*\|\s*noch nicht deployed/i.test(readme)) {
+  if (
+    /\|\s*base sepolia\s*\|[^\r\n|]*noch nicht deployed[^\r\n|]*\|/i.test(
+      readme
+    )
+  ) {
     fail("README muss nach Deployment den Base-Sepolia-Status aktualisieren.");
   }
   if (/kein Testnet- oder Mainnet-Vertrag/i.test(transparency)) {
@@ -807,12 +834,31 @@ if (existsSync(manifestPath)) {
   if (new Set(roleAddresses).size !== 4) {
     fail("Deployment- und Empfängerrollen sind nicht paarweise verschieden.");
   }
+  const registeredRoleAddresses = [
+    publicTestnetRoles.deployer,
+    publicTestnetRoles.founderBeneficiary,
+    publicTestnetRoles.researchRewardsTreasury,
+    publicTestnetRoles.ecosystemTreasury,
+  ].map((address) => String(address).toLowerCase());
+  if (
+    roleAddresses.some(
+      (address, index) => address !== registeredRoleAddresses[index]
+    )
+  ) {
+    fail("Deployment-Manifest widerspricht den registrierten Testnet-Rollen.");
+  }
 } else {
   if (project.status.testnetDeployment || project.status.sourceVerified) {
     fail("Projektstatus meldet ein Deployment oder eine Verifikation ohne Manifest.");
   }
   if (existsSync(resolve("deployments/base-sepolia-standard-input.json"))) {
     fail("Verifikations-Bundle existiert ohne Deployment-Manifest.");
+  }
+  if (
+    testnetRoles.status !== fundedTestnetStatus ||
+    Object.hasOwn(testnetRoles, "deployment")
+  ) {
+    fail("Testnet-Rollenregister meldet ohne Manifest einen falschen Zustand.");
   }
 }
 

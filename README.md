@@ -12,7 +12,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | Smart Contracts | lokal implementiert und getestet |
 | Projektwebsite | veröffentlicht unter `reist-token.intracom.at` |
 | Öffentlicher Quellcode | [`ReistToken-release`](https://github.com/rudolfstepan/ReistToken-release) |
-| Base Sepolia | noch nicht deployed |
+| Base Sepolia | Deployment-Wallet finanziert; noch nicht deployed |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -104,7 +104,9 @@ maschinenlesbares Manifest.
    Passwort getrennt aufbewahren.
 4. Erst danach die Deployment-Wallet mit Faucet-ETH versorgen und `npm run
    check:testnet:rpc` ausführen.
-5. `npm run preflight` ausführen.
+5. `npm run preflight` ausführen und danach mit `npm run
+   estimate:testnet-deployment` Gas, L1-Datengebühr und verfügbare Reserve
+   nochmals rein lesend prüfen.
 6. Erst nach expliziter Freigabe `npm run deploy:testnet` ausführen.
 7. `npm run verify:testnet` ausführen und Explorer-Ergebnis kontrollieren.
 
