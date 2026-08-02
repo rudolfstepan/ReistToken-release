@@ -431,11 +431,10 @@ if (
 async function etherscanPostRequest(parameters) {
   const body = new URLSearchParams({
     apikey: apiKey,
-    chainid: String(CHAIN_ID),
     module: "contract",
     ...parameters,
   });
-  const response = await fetch(API_URL, {
+  const response = await fetch(`${API_URL}?chainid=${CHAIN_ID}`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
