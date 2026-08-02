@@ -16,6 +16,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
 | Technischer Treasury-Test | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-smoke-transfer.json) |
 | Allowance-Roundtrip | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-allowance-roundtrip.json), finale Allowance `0`, keine REIST-`Transfer`-Events im gebundenen Blockbereich |
+| Founder-Vesting-Nachweis | rein lesend abgeschlossen; [finalisierter Operationsnachweis](operations/base-sepolia-vesting-readonly.json), `100.000 REIST` vollständig im Vesting, vor dem Cliff `released = releasable = vested = 0` |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -60,6 +61,17 @@ wurde kein REIST-`Transfer`-Event erzeugt. Die Plan-JSON bleibt als historische
 Momentaufnahme des Zustands vor Signatur und Broadcast unverändert; sie ist
 nicht der aktuelle Ausführungsstatus.
 
+Der Founder-Vesting-Vertrag wurde anschließend ohne Keystore, Signatur oder
+Transaktion an einem finalisierten Base-Sepolia-Block geprüft. Der
+[`Operationsnachweis`](operations/base-sepolia-vesting-readonly.json) bindet
+Block `44966505` (`0xa738b375…2202c965`) und bestätigt: Die vollständigen
+`100.000 REIST` liegen weiterhin im Vesting-Vertrag, der Owner entspricht dem
+Founder-Beneficiary, und vor dem Cliff sind `released`, `releasable` und
+`vested` jeweils `0`. Seit der initialen Zuteilung wurden keine weiteren
+REIST-Eingänge oder -Ausgänge festgestellt. Dies ist eine punktuelle,
+rein lesende Testnet-Beobachtung, kein Audit, keine Auszahlung und keine
+Garantie für einen zukünftigen Zustand.
+
 ## Vertrag
 
 `REISTToken` verwendet OpenZeppelins Standard-ERC-20 und erzeugt einmalig
@@ -80,6 +92,10 @@ Der Vesting-Zeitplan beginnt beim Deployment. Am einjährigen Cliff ist deshalb
 ein Drittel der Gründerzuteilung freigeschaltet; nach drei Jahren ist sie
 vollständig freigeschaltet. Die wirtschaftlichen Rechte des OpenZeppelin-
 Vesting-Wallets sind durch Übertragung der Begünstigtenrolle übertragbar.
+Die exakten UTC-Zeitpunkte sind Start `2026-08-02 15:41:30`, Cliff
+`2027-08-02 15:41:30` und Ende `2029-08-01 15:41:30`. Das Enddatum folgt aus
+der fest codierten Dauer von `3 × 365` Tagen und ist daher nicht der
+2. August 2029.
 
 ## Lokale Verifikation
 
@@ -148,6 +164,12 @@ Dieser Befehl entschlüsselt keinen Keystore, signiert nichts und sendet keine
 Transaktion. Seit dem Abschluss verweigert er absichtlich jede erneute
 Vorbereitung. Auch der einmalige Ausführungsbefehl darf nicht erneut gestartet
 werden.
+
+Der abgeschlossene Founder-Vesting-Check ist ebenfalls ausschließlich lesend
+und unter
+[`operations/base-sepolia-vesting-readonly.json`](operations/base-sepolia-vesting-readonly.json)
+veröffentlicht. Er war keine On-chain-Operation; seine Ergebnisse beziehen sich
+auf den darin gebundenen finalisierten Block.
 
 Private Schlüssel gehören niemals in Git, Tickets, Webseiten oder Chats. Für
 die erzeugten Keystores müssen Passwort und Verzeichnis getrennt gesichert

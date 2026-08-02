@@ -56,6 +56,16 @@ Ein Verzicht auf die Begünstigtenrolle (`renounceOwnership`) ist im
 REIST-Vesting-Vertrag deaktiviert, damit noch gesperrte Token nicht
 versehentlich dauerhaft unzugänglich werden.
 
+Ein [rein lesender Base-Sepolia-Nachweis](../operations/base-sepolia-vesting-readonly.json)
+hat den Zustand am finalisierten Block `44966505` gebunden. Dort lagen die
+vollständigen `100.000 REIST` weiterhin im Vesting-Vertrag; der Owner entsprach
+dem Founder-Beneficiary. Vor dem Cliff waren `released`, `releasable` und
+`vested` jeweils `0`, und nach der initialen Zuteilung wurden keine weiteren
+eingehenden oder ausgehenden REIST-Transfers festgestellt. Die exakten
+Zeitpunkte sind Start 2. August 2026, Cliff 2. August 2027 und Ende
+1. August 2029. Das Enddatum folgt aus exakt `3 × 365` Tagen. Der Nachweis war
+keine Transaktion oder Auszahlung und ist weder Audit noch Zukunftsgarantie.
+
 ## Treasury-Kontrolle
 
 Der Tokenvertrag erzwingt die anfänglichen Empfänger und Mengen, nicht die

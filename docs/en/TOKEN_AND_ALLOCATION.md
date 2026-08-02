@@ -57,6 +57,17 @@ Renouncing the beneficiary role (`renounceOwnership`) is disabled in the REIST
 vesting contract so that tokens still subject to vesting cannot accidentally
 become permanently inaccessible.
 
+A [read-only Base Sepolia record](../../operations/base-sepolia-vesting-readonly.json)
+binds the observed state to finalized block `44966505`. At that block, the full
+`100,000 REIST` remained in the vesting contract and its owner matched the
+published founder beneficiary. Before the cliff, `released`, `releasable`, and
+`vested` were all `0`; no later incoming or outgoing REIST transfers had
+occurred after the initial allocation. The exact dates are 2 August 2026 for
+the start, 2 August 2027 for the cliff, and 1 August 2029 for the end. The end
+date results from the exact duration of `3 × 365` days. This observation was
+not a transaction or disbursement and is neither an audit nor a guarantee of
+future state.
+
 ## Treasury Control
 
 The token contract enforces the initial recipients and amounts, not the later

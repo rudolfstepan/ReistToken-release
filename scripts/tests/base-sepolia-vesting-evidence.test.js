@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   FIXED_VESTING,
+  EXPECTED_VESTING_TOOLING_COMMIT,
   VESTING_CLIFF,
   VESTING_START,
   createVestingEvidence,
@@ -16,15 +17,17 @@ function readJson(path) {
 
 function evidenceFixture() {
   return createVestingEvidence({
-    toolingCommit: "ab".repeat(20),
-    checkedAt: new Date(Number(VESTING_START + 1_005n) * 1000).toISOString(),
-    initialAllocationLogIndex: 2,
-    ownershipTransferLogIndex: 0,
-    blockNumber: 44_965_000,
-    blockHash: `0x${"11".repeat(32)}`,
-    parentHash: `0x${"22".repeat(32)}`,
-    blockTimestamp: Number(VESTING_START + 1_000n),
-    finalizedBlockNumberAtCapture: 44_965_001,
+    toolingCommit: EXPECTED_VESTING_TOOLING_COMMIT,
+    checkedAt: "2026-08-02T20:33:10.421Z",
+    initialAllocationLogIndex: 28,
+    ownershipTransferLogIndex: 25,
+    blockNumber: 44_966_505,
+    blockHash:
+      "0xa738b375aff6433fe7382bd0e939d0ba39cf8631616eba88fe751f2d2202c965",
+    parentHash:
+      "0x9754f59f055c31003967dc2397493f75ad54f44a17a7275a544d7e9f85dee11a",
+    blockTimestamp: 1_785_701_298,
+    finalizedBlockNumberAtCapture: 44_966_505,
     incomingTransferEventCount: 0,
     outgoingTransferEventCount: 0,
     erc20ReleaseEventCount: 0,
@@ -84,6 +87,10 @@ test("public vesting configuration separates prepared and completed observation"
 
 test("vesting evidence is a finalized read-only pre-cliff snapshot", () => {
   const evidence = evidenceFixture();
+  assert.deepEqual(
+    readJson("operations/base-sepolia-vesting-readonly.json"),
+    evidence
+  );
   assert.doesNotThrow(() => validateVestingEvidence(evidence));
   assert.equal(evidence.readOnlyExecution.keystoreRead, false);
   assert.equal(evidence.readOnlyExecution.signerUsed, false);
@@ -102,10 +109,11 @@ test("vesting evidence is a finalized read-only pre-cliff snapshot", () => {
   for (const mutate of [
     (copy) => { copy.status = "prepared"; },
     (copy) => { copy.mode = "transaction"; },
-    (copy) => { copy.toolingCommit = "00"; },
-    (copy) => { copy.checkedAt = "not-an-instant"; },
+    (copy) => { copy.toolingCommit = "cd".repeat(20); },
+    (copy) => { copy.checkedAt = "2026-08-02T20:33:11.421Z"; },
     (copy) => { copy.observation.finality = "latest"; },
     (copy) => { copy.observation.blockHash = `0x${"00".repeat(32)}`; },
+    (copy) => { copy.observation.blockHash = `0x${"44".repeat(32)}`; },
     (copy) => { copy.observation.blockTimestamp = Number(VESTING_CLIFF); },
     (copy) => { copy.observation.finalizedBlockNumberAtCapture = copy.observation.blockNumber - 1; },
     (copy) => { copy.schedule.end += 1; },

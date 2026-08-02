@@ -221,7 +221,7 @@ Explorer-Verifikation ersetzt kein Sicherheitsaudit.
 
 - kleine Standardübertragung aus einer Treasury,
 - Approve und Zurücksetzen der Allowance,
-- Vesting `releasable(token)` vor dem Cliff = 0,
+- Vesting `releasable(token)` vor dem Cliff = 0 und Bestand unverändert,
 - Bounty-Testtransfer mit öffentlicher Test-ID,
 - Transaktion im Beitragsregister verlinken,
 - Website neu bauen und angezeigte Adressen gegen Explorer prüfen.
@@ -284,7 +284,29 @@ gebundenen Blockbereich wurde kein REIST-`Transfer`-Event erzeugt.
 
 Der einmalig gebundene Ausführungsbefehl darf nicht erneut gestartet werden.
 Der Allowance-Roundtrip schließt nur diesen Teil der Smoke-Test-Checkliste ab;
-Vesting-, Bounty- und weitere Freigabeprüfungen bleiben offen.
+Bounty-/Contribution-Fluss und weitere Freigabeprüfungen bleiben offen.
+
+### Abgeschlossener Founder-Vesting-Nachweis
+
+Der Founder-Vesting-Zustand wurde ohne Walletzugriff und ohne On-chain-
+Transaktion rein lesend geprüft. Der
+[Operationsnachweis](../operations/base-sepolia-vesting-readonly.json) bindet
+sämtliche Abfragen an den finalisierten Base-Sepolia-Block `44966505` mit Hash
+`0xa738b375aff6433fe7382bd0e939d0ba39cf8631616eba88fe751f2d2202c965`.
+
+Die Prüfung bestätigt für diesen Block den unveränderten Bestand von
+`100.000 REIST`, den Founder-Beneficiary als Owner, sowie vor dem Cliff
+`released = 0`, `releasable = 0` und `vested = 0`. Die Ereignishistorie enthält
+nach der initialen Zuteilung keine weiteren eingehenden oder ausgehenden
+REIST-Transfers. Der Zeitplan beginnt am 2. August 2026, erreicht den Cliff am
+2. August 2027 und endet aufgrund der exakten Dauer von `3 × 365` Tagen am
+1. August 2029.
+
+Der Nachweis hat keinen Keystore gelesen, keine Signatur erstellt und keine
+Transaktion gesendet. Er ist eine punktuelle Testnet-Beobachtung, kein Audit,
+keine Auszahlung und keine Garantie für einen späteren Zustand. Der
+vollständige Testnet-Smoke-Test bleibt bis zur Prüfung des Bounty-/Contribution-
+Flusses und Veröffentlichung eines konsolidierten Abschlussberichts offen.
 
 ## Mainnet-Gate
 

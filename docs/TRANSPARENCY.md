@@ -23,6 +23,9 @@ Stand: 2. August 2026.
   [Allowance- und Widerrufsplan](../plans/base-sepolia-allowance-smoke.json)
   abgeschlossener Roundtrip mit finaler Allowance `0`, ohne Token-Transfer und
   mit [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json),
+- ein rein lesender Founder-Vesting-Nachweis am finalisierten Block `44966505`
+  mit unverändert `100.000 REIST` im Vesting und
+  [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-vesting-readonly.json),
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
@@ -41,12 +44,20 @@ ist weder ein Verkaufsangebot noch eine Zusage für ein späteres
 Mainnet-Deployment.
 
 Der technische Treasury-Transfer und der Allowance-Roundtrip sind weder
-Prämienauszahlungen noch akzeptierte Beiträge und bilden zusammen noch keinen
-vollständigen Testnet-Smoke-Test. Vesting- und Bounty-Prüfungen sowie der
-konsolidierte Bericht dieses Gates bleiben offen. Der zuletzt bereitgestellte
-Website-Stand bestand den Live-Check; dieser neue Operationsnachweis und die
-zugehörigen Statusangaben benötigen nach dem Release einen erneuten
-Webspace-Abgleich.
+Prämienauszahlungen noch akzeptierte Beiträge. Der Founder-Vesting-Nachweis
+war eine rein lesende Beobachtung und ebenfalls keine Auszahlung oder
+Transaktion. Diese drei Nachweise bilden noch keinen vollständigen
+Testnet-Smoke-Test: Bounty-/Contribution-Fluss und konsolidierter
+Abschlussbericht dieses Gates bleiben offen.
+
+Der Vesting-Nachweis bindet den finalisierten Block `44966505` mit Hash
+`0xa738b375aff6433fe7382bd0e939d0ba39cf8631616eba88fe751f2d2202c965`.
+Zu diesem Zeitpunkt lagen die vollständigen `100.000 REIST` im Vertrag;
+`released`, `releasable` und `vested` waren vor dem Cliff jeweils `0`. Seit
+der initialen Zuteilung wurden keine späteren eingehenden oder ausgehenden
+REIST-Transfers festgestellt. Der Owner entsprach dem veröffentlichten
+Founder-Beneficiary. Das ist ein punktueller Testnet-Nachweis, kein externes
+Audit und keine Zukunftsgarantie.
 
 ## Deployment-Manifest
 

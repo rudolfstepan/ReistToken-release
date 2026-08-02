@@ -89,6 +89,7 @@
     "technicalTreasurySmoke": true,
     "allowanceTestPrepared": true,
     "allowanceTestCompleted": true,
+    "vestingReadOnlyCheckCompleted": true,
     "fullTestnetSmoke": false,
     "externalAudit": false,
     "publicSale": false,

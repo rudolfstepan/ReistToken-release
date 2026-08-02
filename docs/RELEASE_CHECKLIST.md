@@ -18,6 +18,8 @@
 - [x] fail-closed Allowance-/Widerrufsplan mit Read-only-Precheck vorbereitet
 - [x] Allowance `1 REIST` on-chain gesetzt, unmittelbar auf `0` widerrufen und
   mit öffentlichem Operationsnachweis dokumentiert
+- [x] Founder-Vesting am finalisierten Block rein lesend geprüft und mit
+  öffentlichem Operationsnachweis dokumentiert
 - [ ] erstes Pilot-Bounty als öffentliches Issue aktiviert
 
 ## Wissenschaftliche Konsistenz

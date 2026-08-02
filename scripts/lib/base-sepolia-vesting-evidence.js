@@ -1,5 +1,6 @@
 import { getAddress, parseUnits } from "ethers";
 import { BASE_SEPOLIA_CHAIN_ID } from "./base-sepolia-smoke-plan.js";
+import { canonicalJsonSha256 } from "./build-provenance.js";
 
 export const VESTING_OBSERVATION_ID =
   "reist-base-sepolia-founder-vesting-readonly-v1";
@@ -14,8 +15,10 @@ export const VESTING_START = 1_785_685_290n;
 export const VESTING_CLIFF = 1_817_221_290n;
 export const VESTING_END = 1_880_293_290n;
 
-// Set to the published observer commit after the first canonical capture.
-export const EXPECTED_VESTING_TOOLING_COMMIT = null;
+export const EXPECTED_VESTING_TOOLING_COMMIT =
+  "44f5c9bd1d80fe523034587868c26798d3f34337";
+export const EXPECTED_VESTING_EVIDENCE_SHA256 =
+  "EE9CF30DF6A8641016CDFCEF62BED3A7B5F5E989AD559BD574B80C0E88903BCB";
 
 export const FIXED_VESTING = Object.freeze({
   deploymentTransaction:
@@ -280,8 +283,7 @@ export function validateVestingEvidence(evidence) {
   const checkedAt = new Date(evidence?.checkedAt);
   if (
     !/^[0-9a-f]{40}$/.test(String(evidence?.toolingCommit || "")) ||
-    (EXPECTED_VESTING_TOOLING_COMMIT !== null &&
-      evidence.toolingCommit !== EXPECTED_VESTING_TOOLING_COMMIT) ||
+    evidence.toolingCommit !== EXPECTED_VESTING_TOOLING_COMMIT ||
     !safeInteger(evidence?.observation?.blockNumber) ||
     evidence.observation.blockNumber < FIXED_VESTING.deploymentBlockNumber ||
     !isHash(evidence?.observation?.blockHash) ||
@@ -334,6 +336,9 @@ export function validateVestingEvidence(evidence) {
   });
   if (JSON.stringify(evidence) !== JSON.stringify(expected)) {
     fail("Vesting-Nachweis weicht vom exakt gebundenen Read-only-Schema ab.");
+  }
+  if (canonicalJsonSha256(evidence) !== EXPECTED_VESTING_EVIDENCE_SHA256) {
+    fail("Vesting-Nachweis weicht vom eingefrorenen kanonischen Snapshot ab.");
   }
   return expected;
 }

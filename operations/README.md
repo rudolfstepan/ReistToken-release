@@ -27,3 +27,13 @@ Abschluss wird jeweils durch eine Datei in diesem Verzeichnis dokumentiert.
   [`0xdfc94680…747e07`](https://sepolia.basescan.org/tx/0xdfc94680a2aff29cb7ea6a86a4a098ec95176e621d8b402bd6df210b8e747e07),
   unveränderte Tokenbestände und keine REIST-`Transfer`-Events im gebundenen
   Blockbereich. Der vollständige Testnet-Smoke-Test bleibt offen.
+- [Rein lesender Base-Sepolia-Founder-Vesting-Nachweis vom 2. August 2026](base-sepolia-vesting-readonly.json):
+  an Block `44966505` (`0xa738b375…2202c965`) gebundene finalisierte
+  Beobachtung. Die vollständigen `100.000 REIST` lagen im Vesting-Vertrag; der
+  Owner entsprach dem Founder-Beneficiary. Vor dem Cliff waren `released`,
+  `releasable` und `vested` jeweils `0`, und seit der initialen Zuteilung gab es
+  keine späteren eingehenden oder ausgehenden REIST-Transfers. Der Nachweis hat
+  keinen Keystore gelesen, keine Signatur erzeugt und keine Transaktion
+  gesendet. Er ist weder Audit noch Auszahlung oder Zukunftsgarantie. Der
+  Bounty-/Contribution-Fluss und der konsolidierte Abschlussbericht des
+  vollständigen Testnet-Smoke-Tests bleiben offen.

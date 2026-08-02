@@ -197,13 +197,19 @@ async function main() {
   if (configuredEnvironmentFile !== undefined) {
     process.env.REIST_VESTING_ENV_FILE = configuredEnvironmentFile;
   }
-  if (existsSync(OUTPUT_PATH)) {
-    fail("Vesting-Read-only-Nachweis existiert bereits; keine Wiederholung.");
-  }
-
   const deployment = readJson(DEPLOYMENT_PATH, "Deployment-Manifest");
   const roles = readJson(ROLES_PATH, "Rollenregister");
   const project = readJson(PROJECT_PATH, "Projektstatus");
+  if (existsSync(OUTPUT_PATH)) {
+    validateVestingPublicConfiguration(deployment, roles, project, true);
+    const evidence = readJson(OUTPUT_PATH, "Vesting-Read-only-Nachweis");
+    validateVestingEvidence(evidence);
+    console.log(
+      `Kanonischer Base-Sepolia-Vesting-Nachweis gültig: Block ${evidence.observation.blockNumber}.`
+    );
+    console.log("Offline validiert; kein RPC, keine Signatur und keine Transaktion.");
+    return;
+  }
   const publicConfig = validateVestingPublicConfiguration(
     deployment,
     roles,

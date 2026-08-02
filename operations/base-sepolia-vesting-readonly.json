@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "observationId": "reist-base-sepolia-founder-vesting-readonly-v1",
+  "status": "completed",
+  "mode": "read-only-rpc-finalized-snapshot",
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "toolingCommit": "44f5c9bd1d80fe523034587868c26798d3f34337",
+  "checkedAt": "2026-08-02T20:33:10.421Z",
+  "sourceDeployment": {
+    "manifest": "deployments/base-sepolia.json",
+    "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+    "blockNumber": 44958501,
+    "blockHash": "0x84e5975b36774a2e5b66bdbcc9d3b1729e2d2c59c09ef41067d47715c94899c5",
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+    "founderVesting": "0x0A062Ff80791a96bda452A72094c98E87e3E67e6",
+    "tokenRuntimeCodeHash": "0xd7b8b0e3c8e55a8221fa15e07c0f8cab75695e20660bb1a84cb645e2b3c63e38",
+    "vestingRuntimeCodeHash": "0x7cf933dcf909061a5bab1cd98fef3258354852aeb34f6b6407261fabf1de53ec",
+    "sourceVerified": true
+  },
+  "observation": {
+    "blockNumber": 44966505,
+    "blockHash": "0xa738b375aff6433fe7382bd0e939d0ba39cf8631616eba88fe751f2d2202c965",
+    "parentHash": "0x9754f59f055c31003967dc2397493f75ad54f44a17a7275a544d7e9f85dee11a",
+    "blockTimestamp": 1785701298,
+    "finality": "rpc-finalized",
+    "finalizedBlockNumberAtCapture": 44966505
+  },
+  "schedule": {
+    "beneficiary": "0xdc9F744C2D9e5962EC8839085ACADB5deFf585Ed",
+    "start": 1785685290,
+    "cliff": 1817221290,
+    "end": 1880293290,
+    "startIso": "2026-08-02T15:41:30.000Z",
+    "cliffIso": "2027-08-02T15:41:30.000Z",
+    "endIso": "2029-08-01T15:41:30.000Z",
+    "cliffDurationSeconds": "31536000",
+    "durationSeconds": "94608000",
+    "secondsUntilCliff": "31519992"
+  },
+  "tokenState": {
+    "balanceAtVestingBaseUnits": "100000000000000000000000",
+    "releasedBaseUnits": "0",
+    "releasableBaseUnits": "0",
+    "vestedAtObservationBaseUnits": "0",
+    "historicalAllocationBaseUnits": "100000000000000000000000",
+    "totalSupplyBaseUnits": "1000000000000000000000000"
+  },
+  "milestones": {
+    "vestedImmediatelyBeforeCliffBaseUnits": "0",
+    "vestedAtCliffBaseUnits": "33333333333333333333333",
+    "vestedAtEndBaseUnits": "100000000000000000000000"
+  },
+  "history": {
+    "initialAllocation": {
+      "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+      "blockNumber": 44958501,
+      "logIndex": 28,
+      "from": "0x0000000000000000000000000000000000000000",
+      "to": "0x0A062Ff80791a96bda452A72094c98E87e3E67e6",
+      "amountBaseUnits": "100000000000000000000000"
+    },
+    "laterIncomingTransfers": {
+      "eventCount": 0,
+      "amountBaseUnits": "0"
+    },
+    "outgoingTransfers": {
+      "eventCount": 0,
+      "amountBaseUnits": "0"
+    },
+    "erc20ReleaseEvents": {
+      "eventCount": 0,
+      "amountBaseUnits": "0"
+    },
+    "ownershipTransfer": {
+      "eventCount": 1,
+      "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+      "blockNumber": 44958501,
+      "logIndex": 25,
+      "previousOwner": "0x0000000000000000000000000000000000000000",
+      "newOwner": "0xdc9F744C2D9e5962EC8839085ACADB5deFf585Ed"
+    }
+  },
+  "validation": {
+    "finalizedBlockRechecked": true,
+    "deploymentBlockRechecked": true,
+    "runtimeCodeHashesMatchManifest": true,
+    "tokenReferencesVesting": true,
+    "beneficiaryHasNoRuntimeCodeAtObservation": true,
+    "ownerMatchesManifestBeneficiary": true,
+    "scheduleMatchesManifest": true,
+    "allocationIntact": true,
+    "observationBeforeCliff": true,
+    "zeroReleasedBeforeCliff": true,
+    "zeroReleasableBeforeCliff": true,
+    "noPostDeploymentTokenMovement": true
+  },
+  "readOnlyExecution": {
+    "keystoreRead": false,
+    "signerUsed": false,
+    "signaturesCreated": 0,
+    "transactionsBroadcast": 0,
+    "transactionHashes": []
+  },
+  "scope": "Point-in-time finalized Base Sepolia observation before the cliff; not an audit, payout, transaction, or future guarantee.",
+  "economicValue": "none-promised-testnet-only"
+}

@@ -3,6 +3,7 @@ import {
   validateCompletedAllowanceEvidence,
   validatePreparedAllowancePlan,
 } from "./lib/base-sepolia-allowance-plan.js";
+import { validateVestingEvidence } from "./lib/base-sepolia-vesting-evidence.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import {
   FPGA_SOURCE_COMMIT,
@@ -228,6 +229,38 @@ try {
       englishHtml.includes("confirmed") &&
       englishHtml.includes("immediately cleared to zero"),
     "DE/EN-Website verlinkt den abgeschlossenen Allowance-Operationsnachweis nicht."
+  );
+
+  const vestingEvidenceResponse = await fetch(
+    `${origin}/operations/base-sepolia-vesting-readonly.json`
+  );
+  assert(
+    vestingEvidenceResponse.ok,
+    "Founder-Vesting-Read-only-Nachweis ist nicht erreichbar."
+  );
+  assert(
+    vestingEvidenceResponse.headers
+      .get("content-type")
+      ?.startsWith("application/json"),
+    "Founder-Vesting-Read-only-Nachweis wird nicht als JSON ausgeliefert."
+  );
+  validateVestingEvidence(await vestingEvidenceResponse.json());
+  assert(
+    html.includes(
+      'href="operations/base-sepolia-vesting-readonly.json"'
+    ) &&
+      html.includes("100.000 Testnet-REIST intakt") &&
+      html.includes("Block 44966505") &&
+      html.includes("Cliff am 2. August 2027") &&
+      html.includes("kein Audit") &&
+      englishHtml.includes(
+        'href="../operations/base-sepolia-vesting-readonly.json"'
+      ) &&
+      englishHtml.includes("100,000 testnet REIST intact") &&
+      englishHtml.includes("block 44966505") &&
+      englishHtml.includes("cliff on 2 August 2027") &&
+      englishHtml.includes("not an audit"),
+    "DE/EN-Website verlinkt oder begrenzt den Founder-Vesting-Nachweis nicht korrekt."
   );
 
   const contributions = await fetch(`${origin}/data/contributions.json`);

@@ -3,6 +3,7 @@ import {
   validateCompletedAllowanceEvidence,
   validatePreparedAllowancePlan,
 } from "./lib/base-sepolia-allowance-plan.js";
+import { validateVestingEvidence } from "./lib/base-sepolia-vesting-evidence.js";
 import {
   CANONICAL_PAPER_DOI,
   CANONICAL_PAPER_URL,
@@ -317,6 +318,45 @@ assert(
     englishHome.body.includes("confirmed") &&
     englishHome.body.includes("immediately cleared to zero"),
   "Live-Startseiten verlinken den abgeschlossenen Allowance-Operationsnachweis nicht."
+);
+
+const vestingEvidenceCheck = await request(
+  "/operations/base-sepolia-vesting-readonly.json"
+);
+assertStatus(
+  vestingEvidenceCheck,
+  200,
+  "Founder-Vesting-Read-only-Nachweis"
+);
+assert(
+  vestingEvidenceCheck.response.headers
+    .get("content-type")
+    ?.startsWith("application/json"),
+  "Founder-Vesting-Read-only-Nachweis besitzt nicht application/json."
+);
+let liveVestingEvidence;
+try {
+  liveVestingEvidence = JSON.parse(vestingEvidenceCheck.body);
+} catch {
+  fail("Founder-Vesting-Read-only-Nachweis ist kein gültiges JSON.");
+}
+validateVestingEvidence(liveVestingEvidence);
+assert(
+  home.body.includes(
+    'href="operations/base-sepolia-vesting-readonly.json"'
+  ) &&
+    home.body.includes("100.000 Testnet-REIST intakt") &&
+    home.body.includes("Block 44966505") &&
+    home.body.includes("Cliff am 2. August 2027") &&
+    home.body.includes("kein Audit") &&
+    englishHome.body.includes(
+      'href="../operations/base-sepolia-vesting-readonly.json"'
+    ) &&
+    englishHome.body.includes("100,000 testnet REIST intact") &&
+    englishHome.body.includes("block 44966505") &&
+    englishHome.body.includes("cliff on 2 August 2027") &&
+    englishHome.body.includes("not an audit"),
+  "Live-Startseiten verlinken oder begrenzen den Founder-Vesting-Nachweis nicht korrekt."
 );
 
 for (const document of publicDocumentBuilds) {

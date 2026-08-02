@@ -6,6 +6,10 @@ import {
   validateCompletedAllowanceEvidence,
   validatePreparedAllowancePlan,
 } from "./lib/base-sepolia-allowance-plan.js";
+import {
+  validateVestingEvidence,
+  validateVestingPublicConfiguration,
+} from "./lib/base-sepolia-vesting-evidence.js";
 import { publicDocumentBuilds } from "./lib/render-markdown.js";
 import { PUBLIC_SITE_ORIGIN, publicSiteUrl } from "./lib/site-publication.js";
 import {
@@ -177,6 +181,7 @@ const requiredFiles = [
   "operations/README.md",
   "operations/base-sepolia-allowance-roundtrip.json",
   "operations/base-sepolia-smoke-transfer.json",
+  "operations/base-sepolia-vesting-readonly.json",
   "docs/SCIENTIFIC_BASIS.md",
   "docs/PROJECT_STATUS.md",
   "docs/TOKENOMICS.md",
@@ -345,6 +350,17 @@ for (const file of collectFiles(root)) {
 
 const project = readJson("data/project.json");
 const testnetRoles = readJson("data/testnet-roles.json");
+const baseSepoliaDeployment = readJson("deployments/base-sepolia.json");
+const completedVestingEvidence = readJson(
+  "operations/base-sepolia-vesting-readonly.json"
+);
+validateVestingPublicConfiguration(
+  baseSepoliaDeployment,
+  testnetRoles,
+  project,
+  true
+);
+validateVestingEvidence(completedVestingEvidence);
 const projectPackage = readJson("package.json");
 const preparedAllowancePlan = readJson(
   "plans/base-sepolia-allowance-smoke.json"

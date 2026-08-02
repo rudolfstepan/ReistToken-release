@@ -20,6 +20,9 @@ Stand: 2. August 2026.
 - bestätigter Allowance-Roundtrip mit temporär `1 REIST`, unmittelbarem
   Widerruf auf `0` und
   [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-allowance-roundtrip.json),
+- rein lesender Founder-Vesting-Nachweis am finalisierten Base-Sepolia-Block
+  `44966505` mit
+  [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-vesting-readonly.json),
 - öffentlich einsehbare REIST-FPGA-Quellen am geprüften Commit
   `42c11dc941c23ff4b3f84fd606791d285b4311e9`,
 - deutsche und englische statische Website mit automatischer Sprachwahl.
@@ -51,14 +54,36 @@ folgende Endprüfungen:
 
 Der Vorgang war ein technischer ERC-20-Test. Er war weder Token-Transfer noch
 Bounty, Beitrag, Verkauf oder Mainnet-Operation. Die lokale Prüfung umfasst
-15 Contract-Tests sowie 14 Tests für Deployment-Recovery und gebundene
-Operationspläne.
+15 Contract-Tests sowie 16 automatisierte Prüfungen für Deployment-Recovery
+und gebundene Operationsnachweise.
+
+## Founder-Vesting-Nachweis: abgeschlossen
+
+Eine ausschließlich lesende RPC-Prüfung hat den Founder-Vesting-Zustand am
+finalisierten Block `44966505` mit Hash
+`0xa738b375aff6433fe7382bd0e939d0ba39cf8631616eba88fe751f2d2202c965`
+gebunden. Der
+[Operationsnachweis](../operations/base-sepolia-vesting-readonly.json)
+dokumentiert:
+
+- Vesting-Bestand: unverändert `100.000 REIST`,
+- Owner: veröffentlichter Founder-Beneficiary,
+- vor dem Cliff: `released = 0`, `releasable = 0` und `vested = 0`,
+- nach der initialen Zuteilung: keine weiteren eingehenden oder ausgehenden
+  REIST-Transfers,
+- Zeitplan: Start 2. August 2026, Cliff 2. August 2027, Ende 1. August 2029.
+
+Das Enddatum ergibt sich aus der Vertragsdauer von exakt `3 × 365` Tagen. Die
+Prüfung las nur finalisierte On-chain-Daten; sie verwendete keinen Keystore,
+erzeugte keine Signatur und sendete keine Transaktion. Sie ist weder Audit noch
+Auszahlung oder Garantie für spätere Zustände.
 
 ## Noch offen
 
-- Vesting-Read-only-Nachweis in den vollständigen Testnet-Bericht aufnehmen,
 - erstes echtes öffentliches Pilot-Bounty aktivieren und unabhängig
   abschließen,
+- Bounty-/Contribution-Fluss prüfen und den konsolidierten Abschlussbericht
+  des vollständigen Testnet-Smoke-Tests veröffentlichen,
 - Benchmark-Dokumentation und FPGA-CI/Lizenzumfang bereinigen,
 - externe Contract-Prüfung, unabhängige Signer, Multisigs und Incident-Plan,
 - rechtliche und steuerliche Prüfung vor jeder Mainnet-, Verkaufs- oder
