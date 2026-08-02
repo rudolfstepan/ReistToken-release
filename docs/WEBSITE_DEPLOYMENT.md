@@ -14,8 +14,9 @@ npm run smoke:site
 `npm run smoke:site` erzeugt `dist/` neu. Der Build enthält die statischen
 DE/EN-Seiten, zehn gerenderte HTML-Dokumente, `404.html`, `robots.txt`,
 `sitemap.xml`, öffentliche JSON-Daten, Vertragsquellen und `LICENSE.txt`.
-Markdown-Quellen, Node-Abhängigkeiten, Tests, Schlüssel und die nginx-Datei
-gehören nicht in den Webroot.
+Zu den JSON-Daten gehören das Deployment-Manifest und der veröffentlichte
+Treasury-Operationsnachweis. Markdown-Quellen, Node-Abhängigkeiten, Tests,
+Schlüssel und die nginx-Datei gehören nicht in den Webroot.
 
 ## 2. Webroot synchronisieren
 

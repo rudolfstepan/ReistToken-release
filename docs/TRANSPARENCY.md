@@ -13,6 +13,9 @@ Stand: 2. August 2026.
   Snapshot den reproduzierbaren Deployment-Quellstand festhält,
 - privater GitHub-Kanal für sensible Sicherheitsmeldungen,
 - maschinenlesbare Bounty-, Beitrags- und Projektdaten,
+- gebundener technischer Treasury-Test mit bestätigtem Test-ETH-Funding,
+  `1 REIST`-Transfer und
+  [maschinenlesbarem Operationsnachweis](../operations/base-sepolia-smoke-transfer.json),
 - trackerfreie statische Projektseite.
 
 ## Was noch nicht existiert
@@ -27,6 +30,11 @@ Stand: 2. August 2026.
 Der Base-Sepolia-Pilot besitzt keinen zugesicherten wirtschaftlichen Wert. Er
 ist weder ein Verkaufsangebot noch eine Zusage für ein späteres
 Mainnet-Deployment.
+
+Der technische Treasury-Transfer ist keine Prämienauszahlung, kein
+akzeptierter Beitrag und noch kein vollständiger Testnet-Smoke-Test. Allowance-,
+Vesting-, Bounty- und Website-Prüfungen dieses vollständigen Gates bleiben
+offen.
 
 ## Deployment-Manifest
 

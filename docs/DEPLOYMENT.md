@@ -256,6 +256,15 @@ Der Treasury-Transfer ist kein Bounty, keine Contribution und noch nicht der
 vollständige Smoke-Test dieser Checkliste. Nach erfolgreicher Ausführung wird
 ein öffentliches, maschinenlesbares Operations-Manifest erzeugt.
 
+Der gebundene Schritt wurde am 2. August 2026 erfolgreich ausgeführt. Der
+[Operationsnachweis](../operations/base-sepolia-smoke-transfer.json) bindet
+die Funding-Transaktion
+[`0xe3f9e726…9a2864af`](https://sepolia.basescan.org/tx/0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af)
+und den Transfer von exakt `1 REIST`
+[`0x308a8c07…f2bdcde8`](https://sepolia.basescan.org/tx/0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8)
+an kanonische Receipts und die geprüften Endstände. Die übrigen Punkte der
+vollständigen Smoke-Test-Checkliste bleiben offen.
+
 ## Mainnet-Gate
 
 Ein Mainnet-Deployment verlangt die vollständige

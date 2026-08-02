@@ -73,6 +73,8 @@
     "testnetDeployment": true,
     "mainnetDeployment": false,
     "sourceVerified": true,
+    "technicalTreasurySmoke": true,
+    "fullTestnetSmoke": false,
     "externalAudit": false,
     "publicSale": false,
     "dexLiquidity": false,

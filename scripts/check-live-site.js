@@ -193,8 +193,46 @@ assert(
 assert(
   liveProject.framework?.publicPaper?.doi === CANONICAL_PAPER_DOI &&
     liveProject.framework?.publicPaper?.url === CANONICAL_PAPER_URL &&
-    liveProject.framework?.tokenSourceRepository === PUBLIC_RELEASE_REPOSITORY,
-  "Live-Projektmetadaten enthalten nicht die kanonische Paper- und Repository-Identität."
+    liveProject.framework?.tokenSourceRepository === PUBLIC_RELEASE_REPOSITORY &&
+    liveProject.status?.technicalTreasurySmoke === true &&
+    liveProject.status?.fullTestnetSmoke === false,
+  "Live-Projektmetadaten enthalten nicht die kanonische Identität und den korrekten Smoke-Status."
+);
+assert(
+  home.body.includes('href="operations/base-sepolia-smoke-transfer.json"') &&
+    home.body.includes("verbleibender vollständiger Testnet-Smoke") &&
+    englishHome.body.includes(
+      'href="../operations/base-sepolia-smoke-transfer.json"'
+    ) &&
+    englishHome.body.includes("remaining full testnet smoke checks"),
+  "Live-Startseiten trennen technischen und vollständigen Smoke-Status nicht."
+);
+
+const smokeOperationCheck = await request(
+  "/operations/base-sepolia-smoke-transfer.json"
+);
+assertStatus(smokeOperationCheck, 200, "Treasury-Operationsnachweis");
+assert(
+  smokeOperationCheck.response.headers
+    .get("content-type")
+    ?.startsWith("application/json"),
+  "Treasury-Operationsnachweis besitzt nicht application/json."
+);
+let liveSmokeOperation;
+try {
+  liveSmokeOperation = JSON.parse(smokeOperationCheck.body);
+} catch {
+  fail("Treasury-Operationsnachweis ist kein gültiges JSON.");
+}
+assert(
+  liveSmokeOperation.status === "completed" &&
+    liveSmokeOperation.chainId === 84532 &&
+    liveSmokeOperation.transactions?.funding?.hash ===
+      "0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af" &&
+    liveSmokeOperation.transactions?.tokenTransfer?.hash ===
+      "0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8" &&
+    liveSmokeOperation.economicValue === "none-promised-testnet-only",
+  "Live-Treasury-Operationsnachweis besitzt nicht den bestätigten Stand."
 );
 
 for (const document of publicDocumentBuilds) {

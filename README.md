@@ -13,6 +13,7 @@ wissenschaftlicher Richtigkeit und kein Renditeversprechen.
 | Projektwebsite | veröffentlicht unter `reist-token.intracom.at` |
 | Öffentlicher Quellcode | [`ReistToken-release`](https://github.com/rudolfstepan/ReistToken-release) |
 | Base Sepolia | Testnet-Pilot aktiv, Chain-ID `84532` |
+| Technischer Treasury-Test | erfolgreich; [öffentlicher Operationsnachweis](operations/base-sepolia-smoke-transfer.json) |
 | Base Mainnet | gesperrt / nicht konfiguriert |
 | Verkauf oder Liquidität | nicht vorhanden |
 | Externes Audit | nicht durchgeführt |
@@ -36,12 +37,17 @@ BaseScan einsehbar:
 | Token | [`0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68`](https://sepolia.basescan.org/address/0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68#code) |
 | Founder-Vesting | [`0x0A062Ff80791a96bda452A72094c98E87e3E67e6`](https://sepolia.basescan.org/address/0x0A062Ff80791a96bda452A72094c98E87e3E67e6#code) |
 | Deployment-Transaktion | [`0x4d8f54cd…f38f021c`](https://sepolia.basescan.org/tx/0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c) |
+| Treasury-Funding | [`0xe3f9e726…9a2864af`](https://sepolia.basescan.org/tx/0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af) |
+| Treasury-Transfer | [`0x308a8c07…f2bdcde8`](https://sepolia.basescan.org/tx/0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8) |
 | Quellstand | Tag `v0.1.0-predeployment.2`, Commit `e3a732afcc0a6ced913621edcef49f81046979bf` |
 
 Das vollständige, maschinenlesbare Manifest steht unter
 [`deployments/base-sepolia.json`](deployments/base-sepolia.json). Dieses
 Deployment ist ausschließlich ein technischer Testnet-Pilot. Es ist kein
 Mainnet-Asset, kein Verkaufsangebot und kein Nachweis eines externen Audits.
+Der gebundene Treasury-Funktionstest ist getrennt unter
+[`operations/base-sepolia-smoke-transfer.json`](operations/base-sepolia-smoke-transfer.json)
+dokumentiert; er ist weder ein Bounty noch ein akzeptierter Beitrag.
 
 ## Vertrag
 

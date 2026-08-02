@@ -158,6 +158,7 @@ const requiredFiles = [
   "scripts/tests/base-sepolia-smoke-plan.test.js",
   "scripts/smoke-site.js",
   "operations/README.md",
+  "operations/base-sepolia-smoke-transfer.json",
   "docs/SCIENTIFIC_BASIS.md",
   "docs/TOKENOMICS.md",
   "docs/BOUNTIES.md",
@@ -436,8 +437,15 @@ if (totalAmount !== BigInt(project.token.totalSupply)) {
 if (totalPercentage !== 100) {
   fail("Projekt-JSON: Zuteilungsprozente ergeben nicht 100.");
 }
-if (project.status.mainnetDeployment !== false) {
-  fail("Mainnet darf im aktuellen Projektstatus nicht als deployed markiert sein.");
+if (
+  project.status.mainnetDeployment !== false ||
+  project.status.technicalTreasurySmoke !== true ||
+  project.status.fullTestnetSmoke !== false ||
+  project.status.externalAudit !== false ||
+  project.status.activeBounties !== 0 ||
+  project.status.acceptedContributions !== 0
+) {
+  fail("Projektstatus bildet die abgeschlossenen und offenen Gates nicht korrekt ab.");
 }
 
 const bountyData = readJson("data/bounties.json");
@@ -803,6 +811,77 @@ if (existsSync(manifestPath)) {
   }
   if (project.status.sourceVerified !== manifest.verification?.sourceVerified) {
     fail("Projekt- und Manifeststatus widersprechen sich bei der Source-Verifikation.");
+  }
+  const smokeOperation = readJson(
+    "operations/base-sepolia-smoke-transfer.json"
+  );
+  const fundingOperation = smokeOperation.transactions?.funding;
+  const tokenOperation = smokeOperation.transactions?.tokenTransfer;
+  const hashPattern = /^0x[a-fA-F0-9]{64}$/;
+  const decimalPattern = /^(?:0|[1-9]\d*)$/;
+  if (
+    smokeOperation.schemaVersion !== 1 ||
+    smokeOperation.operationId !== "reist-base-sepolia-treasury-smoke-v1" ||
+    smokeOperation.status !== "completed" ||
+    smokeOperation.network !== "Base Sepolia" ||
+    smokeOperation.chainId !== 84532 ||
+    !isIsoInstant(smokeOperation.completedAt) ||
+    !/^[a-fA-F0-9]{40}$/.test(smokeOperation.toolingCommit || "") ||
+    smokeOperation.purpose !==
+      "Technical treasury smoke test; not a bounty or contribution." ||
+    smokeOperation.economicValue !== "none-promised-testnet-only" ||
+    smokeOperation.sourceDeployment?.manifest !==
+      "deployments/base-sepolia.json" ||
+    smokeOperation.sourceDeployment?.transactionHash !==
+      manifest.transactionHash ||
+    smokeOperation.sourceDeployment?.token !== manifest.contracts?.token ||
+    smokeOperation.sourceDeployment?.sourceVerified !== true ||
+    smokeOperation.amounts?.fundingWei !== "5000000000000" ||
+    smokeOperation.amounts?.tokenBaseUnits !== "1000000000000000000" ||
+    smokeOperation.feeCapsWei?.funding !== "500000000000" ||
+    smokeOperation.feeCapsWei?.token !== "1000000000000" ||
+    smokeOperation.feeCapsWei?.total !== "1500000000000" ||
+    !hashPattern.test(fundingOperation?.hash || "") ||
+    !hashPattern.test(fundingOperation?.blockHash || "") ||
+    fundingOperation?.from !== publicTestnetRoles.deployer ||
+    fundingOperation?.to !== publicTestnetRoles.researchRewardsTreasury ||
+    fundingOperation?.nonce !== 1 ||
+    !Number.isSafeInteger(fundingOperation?.blockNumber) ||
+    fundingOperation.blockNumber <= 0 ||
+    !decimalPattern.test(fundingOperation?.feeWei || "") ||
+    !hashPattern.test(tokenOperation?.hash || "") ||
+    !hashPattern.test(tokenOperation?.blockHash || "") ||
+    tokenOperation?.from !== publicTestnetRoles.researchRewardsTreasury ||
+    tokenOperation?.to !== manifest.contracts?.token ||
+    tokenOperation?.recipient !== publicTestnetRoles.ecosystemTreasury ||
+    tokenOperation?.nonce !== 0 ||
+    !Number.isSafeInteger(tokenOperation?.blockNumber) ||
+    tokenOperation.blockNumber <= fundingOperation.blockNumber ||
+    !decimalPattern.test(tokenOperation?.feeWei || "") ||
+    fundingOperation.hash === tokenOperation.hash ||
+    smokeOperation.validation?.confirmationsAfterEach !== 2 ||
+    smokeOperation.validation?.canonicalReceipts !== true ||
+    smokeOperation.validation?.exactBalanceDeltas !== true ||
+    smokeOperation.validation?.baselineResearchReist !== "700000" ||
+    smokeOperation.validation?.baselineEcosystemReist !== "200000" ||
+    !decimalPattern.test(smokeOperation.finalBalances?.researchEthWei || "") ||
+    smokeOperation.finalBalances?.researchTokenBaseUnits !==
+      "699999000000000000000000" ||
+    smokeOperation.finalBalances?.ecosystemTokenBaseUnits !==
+      "200001000000000000000000"
+  ) {
+    fail("Öffentlicher Treasury-Operationsnachweis ist inkonsistent.");
+  }
+  const fundingFee = BigInt(fundingOperation.feeWei);
+  const tokenFee = BigInt(tokenOperation.feeWei);
+  if (
+    fundingFee > BigInt(smokeOperation.feeCapsWei.funding) ||
+    tokenFee > BigInt(smokeOperation.feeCapsWei.token) ||
+    fundingFee + tokenFee > BigInt(smokeOperation.feeCapsWei.total) ||
+    BigInt(smokeOperation.finalBalances.researchEthWei) !==
+      BigInt(smokeOperation.amounts.fundingWei) - tokenFee
+  ) {
+    fail("Treasury-Operationsnachweis verletzt Gebühren- oder Bilanzgrenzen.");
   }
   if (!/^[a-fA-F0-9]{40}$/.test(manifest.source?.sourceCommit || "")) {
     fail("Deployment-Manifest ist nicht an einen Git-Commit gebunden.");

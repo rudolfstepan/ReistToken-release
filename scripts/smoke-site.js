@@ -88,6 +88,11 @@ try {
   assert(project.ok, "Projekt-JSON ist nicht erreichbar.");
   const projectData = await project.json();
   assert(projectData.token.symbol === "REIST", "Falsches Token-Symbol im Build.");
+  assert(
+    projectData.status.technicalTreasurySmoke === true &&
+      projectData.status.fullTestnetSmoke === false,
+    "Technischer und vollständiger Smoke-Status sind nicht sauber getrennt."
+  );
   if (projectData.status.testnetDeployment) {
     assert(
       projectData.status.sourceVerified === true,
@@ -121,6 +126,35 @@ try {
       "DE/EN-Website zeigt den verifizierten Deployment-Stand nicht vollstaendig."
     );
   }
+
+  const smokeResponse = await fetch(
+    `${origin}/operations/base-sepolia-smoke-transfer.json`
+  );
+  assert(smokeResponse.ok, "Treasury-Operationsnachweis ist nicht erreichbar.");
+  assert(
+    smokeResponse.headers.get("content-type")?.startsWith("application/json"),
+    "Treasury-Operationsnachweis wird nicht als JSON ausgeliefert."
+  );
+  const smokeOperation = await smokeResponse.json();
+  assert(
+    smokeOperation.status === "completed" &&
+      smokeOperation.chainId === 84532 &&
+      smokeOperation.amounts?.fundingWei === "5000000000000" &&
+      smokeOperation.amounts?.tokenBaseUnits === "1000000000000000000" &&
+      smokeOperation.transactions?.funding?.hash ===
+        "0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af" &&
+      smokeOperation.transactions?.tokenTransfer?.hash ===
+        "0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8" &&
+      smokeOperation.economicValue === "none-promised-testnet-only",
+    "Treasury-Operationsnachweis besitzt nicht den bestätigten Testnet-Stand."
+  );
+  assert(
+    html.includes('href="operations/base-sepolia-smoke-transfer.json"') &&
+      englishHtml.includes(
+        'href="../operations/base-sepolia-smoke-transfer.json"'
+      ),
+    "DE/EN-Website verlinkt den Treasury-Operationsnachweis nicht."
+  );
 
   const contributions = await fetch(`${origin}/data/contributions.json`);
   assert(contributions.ok, "Beitragsregister ist nicht erreichbar.");

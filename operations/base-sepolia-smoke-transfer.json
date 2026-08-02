@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "operationId": "reist-base-sepolia-treasury-smoke-v1",
+  "status": "completed",
+  "network": "Base Sepolia",
+  "chainId": 84532,
+  "toolingCommit": "433d20e6764e6ebb76e042a5cdeb95f6dd2c7e3d",
+  "completedAt": "2026-08-02T17:34:38.000Z",
+  "purpose": "Technical treasury smoke test; not a bounty or contribution.",
+  "sourceDeployment": {
+    "manifest": "deployments/base-sepolia.json",
+    "transactionHash": "0x4d8f54cd5cf2950ab1b2032c8f042ac16b3cc20fb65fca5221c0933df38f021c",
+    "sourceVerified": true,
+    "token": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68"
+  },
+  "amounts": {
+    "fundingWei": "5000000000000",
+    "tokenBaseUnits": "1000000000000000000"
+  },
+  "feeCapsWei": {
+    "funding": "500000000000",
+    "token": "1000000000000",
+    "total": "1500000000000"
+  },
+  "transactions": {
+    "funding": {
+      "hash": "0xe3f9e7265530e1cc3b8e636d98c038d416360aecd02a36b5e0549bcc9a2864af",
+      "from": "0xCfE0Cbb18351C31E00778fEa42b4b260112Aa48e",
+      "to": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+      "nonce": 1,
+      "blockNumber": 44961891,
+      "blockHash": "0x39771f392c1ddc81cc0f9530012639361f00e94acd227b7a8f46ae071cbdf7ae",
+      "feeWei": "132029816358"
+    },
+    "tokenTransfer": {
+      "hash": "0x308a8c07593179744c6a72b9d1992274282300064e9e31bf36cbbd18f2bdcde8",
+      "from": "0x439DdfaBF2B27e1da37904da61970eC48D19AaF8",
+      "to": "0xF2960B84525dF8Da9C038EA85AE5e3B4D0C26A68",
+      "recipient": "0xE079E0aaA76A84dBE117E9b0316eB1b416e82DbC",
+      "nonce": 0,
+      "blockNumber": 44961895,
+      "blockHash": "0x46aeeab7236a462083e9d975a890bab5607e562bf0abd6a1c4036c9eda3038e3",
+      "feeWei": "212843816358"
+    }
+  },
+  "validation": {
+    "confirmationsAfterEach": 2,
+    "canonicalReceipts": true,
+    "exactBalanceDeltas": true,
+    "baselineResearchReist": "700000",
+    "baselineEcosystemReist": "200000"
+  },
+  "finalBalances": {
+    "researchEthWei": "4787156183642",
+    "researchTokenBaseUnits": "699999000000000000000000",
+    "ecosystemTokenBaseUnits": "200001000000000000000000"
+  },
+  "economicValue": "none-promised-testnet-only"
+}

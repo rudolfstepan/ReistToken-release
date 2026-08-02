@@ -39,6 +39,16 @@ if (existsSync(deploymentManifest)) {
   );
 }
 
+const smokeOperation = resolve(
+  "operations",
+  "base-sepolia-smoke-transfer.json"
+);
+mkdirSync(resolve(output, "operations"), { recursive: true });
+copyFileSync(
+  smokeOperation,
+  resolve(output, "operations", "base-sepolia-smoke-transfer.json")
+);
+
 renderPublicDocuments(output);
 const projectData = JSON.parse(readFileSync(resolve("data", "project.json"), "utf8"));
 writeDiscoveryFiles(output, publicDocumentBuilds, projectData.lastUpdated);

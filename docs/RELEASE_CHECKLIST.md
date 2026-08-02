@@ -14,6 +14,7 @@
 - [x] öffentliche Repository-URL festgelegt und Release-Commit gepusht
 - [x] Deployment-Transaktion und Manifest veröffentlicht
 - [x] Quellcode von Token und Vesting im Explorer verifiziert
+- [x] gebundener technischer Treasury-Transfer mit öffentlichem Operationsnachweis
 - [ ] erstes Pilot-Bounty als öffentliches Issue aktiviert
 
 ## Wissenschaftliche Konsistenz
